@@ -1,0 +1,66 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const navItems = [
+  { name: "Home", href: "/" },
+  { name: "Wizard", href: "/wizard" },
+  { name: "Library", href: "/library" },
+  { name: "Vault", href: "/vault" },
+];
+
+export default function Sidebar() {
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
+  return (
+    <aside className="w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex flex-col justify-between py-6 px-5 flex-shrink-0">
+      <div className="flex flex-col gap-8">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5">
+          <span className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-white">
+            Claude Config
+          </span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#0D6E6E]" />
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-1">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex items-center gap-3 px-3.5 py-3 rounded text-sm transition-colors ${
+                isActive(item.href)
+                  ? "text-[#0D6E6E] font-medium bg-[#f0f0f01a]"
+                  : "text-[#888888] hover:text-[#AAAAAA]"
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      {/* Footer */}
+      <div className="flex flex-col gap-3">
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#888888] text-[13px] hover:text-[#AAAAAA] transition-colors"
+        >
+          → GitHub
+        </a>
+        <span className="font-[family-name:var(--font-jetbrains)] text-[11px] text-[#666666]">
+          v1.0.0
+        </span>
+      </div>
+    </aside>
+  );
+}

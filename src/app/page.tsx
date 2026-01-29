@@ -1,65 +1,130 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { Layout, PageHeader, FeatureCard } from "@/components";
+
+type ModeType = "guided" | "manual";
 
 export default function Home() {
+  const [selectedMode, setSelectedMode] = useState<ModeType>("manual");
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <Layout>
+      <div className="flex flex-col h-full overflow-auto">
+        <PageHeader
+          title="Configuration Generator"
+          subtitle="Create, manage and share your Claude Code configuration files with elegance."
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* Hero Section */}
+        <div className="flex-1 bg-[#FAFAFA] px-14 pb-8 min-h-0">
+          {/* Mode Selector */}
+          <div className="bg-[#F0F0F0] rounded-2xl p-10 flex flex-col items-center gap-4 mb-8">
+            <h2 className="font-[family-name:var(--font-newsreader)] text-[28px] font-medium text-[#0D6E6E] text-center">
+              Comment veux-tu configurer ?
+            </h2>
+            <p className="text-[15px] text-[#1A1A1A] text-center">
+              Choisis ton approche préférée.
+            </p>
+
+            <div className="flex gap-4 mt-2">
+              {/* Bouton Guidé */}
+              <button
+                onClick={() => setSelectedMode("guided")}
+                className={`flex flex-col items-center gap-2 px-8 py-5 rounded-lg transition-all w-40 border ${
+                  selectedMode === "guided"
+                    ? "bg-[#0D6E6E] border-[#0D6E6E]"
+                    : "bg-white border-[#E07B54]"
+                }`}
+              >
+                <span className={`text-3xl ${selectedMode === "guided" ? "text-white" : "text-[#E07B54]"}`}>✦</span>
+                <span
+                  className={`text-sm font-medium ${
+                    selectedMode === "guided" ? "text-white" : "text-[#1A1A1A]"
+                  }`}
+                >
+                  Guidé
+                </span>
+                <span className={`text-[11px] text-center ${selectedMode === "guided" ? "text-white/70" : "text-[#888888]"}`}>
+                  Wizard pas à pas
+                </span>
+              </button>
+
+              {/* Bouton Manuel */}
+              <button
+                onClick={() => setSelectedMode("manual")}
+                className={`flex flex-col items-center gap-2 px-8 py-5 rounded-lg transition-all w-40 border ${
+                  selectedMode === "manual"
+                    ? "bg-[#0D6E6E] border-[#0D6E6E]"
+                    : "bg-white border-[#E07B54]"
+                }`}
+              >
+                <span className={`text-3xl ${selectedMode === "manual" ? "text-white" : "text-[#E07B54]"}`}>⌨</span>
+                <span
+                  className={`text-sm font-medium ${
+                    selectedMode === "manual" ? "text-white" : "text-[#1A1A1A]"
+                  }`}
+                >
+                  Manuel
+                </span>
+                <span
+                  className={`text-[11px] text-center ${
+                    selectedMode === "manual" ? "text-white/70" : "text-[#888888]"
+                  }`}
+                >
+                  Édition directe
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Feature Cards */}
+          <div className="grid grid-cols-3 gap-5">
+            <FeatureCard
+              icon="✦"
+              iconBg="#0D6E6E"
+              title="Wizard Mode"
+              description="Answer guided questions to generate your perfect configuration step by step."
+              buttonText="Start Wizard →"
+              buttonHref="/wizard"
+              buttonVariant="primary"
+              stats={[
+                { value: "5 steps", label: "Quick setup", highlight: true },
+                { value: "~2 min", label: "Average time" },
+              ]}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+            <FeatureCard
+              icon="⚡"
+              iconBg="#E07B54"
+              title="Expert Mode"
+              description="Skip the wizard and directly edit your configuration files with full control."
+              buttonText="Open Editor"
+              buttonHref="/expert"
+              buttonVariant="secondary"
+              stats={[
+                { value: "Full control", label: "Advanced users", highlight: true },
+                { value: "YAML/JSON", label: "Formats" },
+              ]}
+              disabled={selectedMode === "guided"}
+            />
+
+            <FeatureCard
+              icon="◈"
+              iconBg="#1A1A1A"
+              title="Template Library"
+              description="Browse and use pre-made templates for common development setups."
+              buttonText="Browse Templates"
+              buttonHref="/library"
+              buttonVariant="secondary"
+              stats={[
+                { value: "20+", label: "Templates" },
+                { value: "Community", label: "Contributed" },
+              ]}
+            />
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }
