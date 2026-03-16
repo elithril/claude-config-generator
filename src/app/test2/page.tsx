@@ -126,23 +126,22 @@ export default function Test2HomePage() {
 
           {/* Top: title */}
           <div className="relative z-10">
-            <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px] mb-5 block">
+            <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px] mb-6 block">
               CLAUDE CODE CONFIG
             </span>
-            <h1 className="font-[family-name:var(--font-newsreader)] text-[34px] lg:text-[44px] font-medium text-white tracking-[-2px] leading-[1.15] mb-6">
-              Configure<br />Claude Code<br />
-              <span className="text-[#0D6E6E]">en quelques clics.</span>
+            <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] mb-8">
+              Configure Claude Code <span className="text-[#0D6E6E]">en quelques clics.</span>
             </h1>
-            <p className="text-[15px] text-[#777777] leading-[1.8] max-w-sm">
-              Génère tes fichiers de configuration — CLAUDE.md, settings.json, hooks, MCP&nbsp;servers — prêts à déposer dans ton projet.
+            <p className="text-[16px] text-[#888888] leading-[1.8]">
+              Génère tes fichiers de configuration prêts à déposer dans ton projet — CLAUDE.md, settings.json, hooks, MCP&nbsp;servers, rules.
             </p>
           </div>
 
           {/* Middle: CTAs */}
-          <div className="relative z-10 flex flex-col gap-3 my-6 lg:my-0">
+          <div className="relative z-10 flex flex-col gap-3 my-8 lg:my-0">
             <button
               onClick={() => router.push("/wizard")}
-              className="group flex items-center justify-between px-5 py-3.5 bg-[#0D6E6E] rounded-lg hover:bg-[#0A5555] transition-colors"
+              className="group flex items-center justify-between px-5 py-4 bg-[#0D6E6E] rounded-lg hover:bg-[#0A5555] transition-colors"
             >
               <div className="flex items-center gap-3">
                 <span className="text-white text-lg">✦</span>
@@ -155,7 +154,7 @@ export default function Test2HomePage() {
             </button>
             <button
               onClick={() => router.push("/expert")}
-              className="group flex items-center justify-between px-5 py-3.5 border border-[#333333] rounded-lg hover:border-[#0D6E6E] transition-colors"
+              className="group flex items-center justify-between px-5 py-4 border border-[#333333] rounded-lg hover:border-[#0D6E6E] transition-colors"
             >
               <div className="flex items-center gap-3">
                 <span className="text-lg">⚡</span>
