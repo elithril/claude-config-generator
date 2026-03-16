@@ -14,9 +14,9 @@ const fr = {
   "home.terminalLines": "lignes",
 
   // === SIDEBAR ===
-  "sidebar.wizard": "Wizard",
-  "sidebar.expert": "Expert",
-  "sidebar.vault": "Vault",
+  "sidebar.wizard": "Assistant",
+  "sidebar.expert": "Éditeur",
+  "sidebar.vault": "Coffre",
   "sidebar.docs": "Documentation →",
 
   // === WIZARD ===
@@ -172,7 +172,7 @@ const fr = {
   // Wizard Preview
   "wizard.preview.title": "LIVE PREVIEW",
   "wizard.preview.files": "Fichiers",
-  "wizard.preview.rules": "Rules",
+  "wizard.preview.rules": "Règles",
   "wizard.preview.total": "Total",
   "wizard.preview.noContent": "// Aucun contenu",
 
