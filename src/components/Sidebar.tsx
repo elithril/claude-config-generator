@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Wizard", href: "/wizard" },
-  { name: "Library", href: "/library" },
-  { name: "Vault", href: "/vault" },
+  { name: "Home", href: "/", icon: "🏠" },
+  { name: "Wizard", href: "/wizard", icon: "🧙" },
+  { name: "Expert", href: "/expert", icon: "⚡" },
+  { name: "Library", href: "/library", icon: "📚" },
+  { name: "Vault", href: "/vault", icon: "🔐" },
 ];
 
 export default function Sidebar() {
@@ -41,6 +42,7 @@ export default function Sidebar() {
                   : "text-[#888888] hover:text-[#AAAAAA]"
               }`}
             >
+              <span>{item.icon}</span>
               {item.name}
             </Link>
           ))}

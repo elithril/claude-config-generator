@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Layout, PageHeader, FeatureCard } from "@/components";
+import { loadVault } from "@/lib/storage";
 
 type ModeType = "guided" | "manual";
 
 export default function Home() {
   const [selectedMode, setSelectedMode] = useState<ModeType>("manual");
+  const [vaultCount, setVaultCount] = useState(0);
+
+  useEffect(() => {
+    setVaultCount(loadVault().length);
+  }, []);
 
   return (
     <Layout>
@@ -123,6 +130,24 @@ export default function Home() {
               ]}
             />
           </div>
+
+          {/* Vault quick access */}
+          {vaultCount > 0 && (
+            <div className="mt-6 p-4 bg-white rounded-lg border border-[#E5E5E5] flex items-center justify-between">
+              <div>
+                <span className="text-sm font-medium text-[#1A1A1A]">
+                  {vaultCount} configuration{vaultCount > 1 ? "s" : ""} sauvegardee{vaultCount > 1 ? "s" : ""}
+                </span>
+                <p className="text-xs text-[#888888]">Restaurez ou exportez vos configs depuis le Vault.</p>
+              </div>
+              <Link
+                href="/vault"
+                className="text-sm font-medium text-[#0D6E6E] hover:underline"
+              >
+                Ouvrir le Vault
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
