@@ -228,7 +228,7 @@ export default function Test2HomePage() {
                 style={{ animationDelay: `${i * 50}ms`, animationFillMode: "both" }}
               >
                 <span className="text-[12px] font-mono text-[#333333] select-none w-5 text-right flex-shrink-0">{i + 1}</span>
-                <span className={`text-[13px] font-mono leading-[2] ${
+                <span className={`text-[13px] font-mono leading-[2] whitespace-pre ${
                   line === "" ? "h-[2em]" :
                   line.startsWith("#") ? "text-[#0D6E6E] font-medium" :
                   line.startsWith("//") ? "text-[#444444]" :
