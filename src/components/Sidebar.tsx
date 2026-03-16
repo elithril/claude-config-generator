@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const navItems = [
   { name: "Wizard", href: "/wizard" },
@@ -44,6 +45,7 @@ export default function Sidebar() {
         </div>
 
         <div className="flex flex-col gap-3">
+          <LanguageSwitcher variant="dark" />
           <a
             href="https://code.claude.com/docs"
             target="_blank"

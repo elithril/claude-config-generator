@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadVault } from "@/lib/storage";
+import { useT } from "@/i18n";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const FILE_LINES = [
   { file: "CLAUDE.md", lines: [
@@ -94,11 +96,11 @@ const FILE_LINES = [
 
 export default function Home() {
   const router = useRouter();
+  const t = useT();
   const [vaultCount, setVaultCount] = useState(0);
   const [activeFile, setActiveFile] = useState(0);
 
   useEffect(() => { setVaultCount(loadVault().length); }, []);
-  // Auto-cycle with reset on manual click
   const [cycleKey, setCycleKey] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => setActiveFile(f => (f + 1) % FILE_LINES.length), 5000);
@@ -107,54 +109,60 @@ export default function Home() {
 
   const selectFile = (i: number) => {
     setActiveFile(i);
-    setCycleKey(k => k + 1); // reset timer
+    setCycleKey(k => k + 1);
   };
 
   const currentFile = FILE_LINES[activeFile];
+  const vaultText = vaultCount > 1
+    ? t("home.vaultCount_other", { count: vaultCount })
+    : t("home.vaultCount_one", { count: vaultCount });
 
   return (
     <div className="flex flex-col h-full">
-      {/* Split hero — fills viewport, no scroll */}
       <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Left: dark — 40% */}
         <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-8 md:p-12 lg:p-14">
-          {/* Grid pattern */}
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }} />
 
-          {/* Top: title */}
+          {/* Top: title + language switcher */}
           <div className="relative z-10">
-            <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] mb-10">
-              Claude Code, optimisé pour <span className="text-[#0D6E6E] italic">ton</span> workflow.
-            </h1>
+            <div className="flex items-start justify-between mb-10">
+              <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] flex-1">
+                {t("home.title")} <span className="text-[#0D6E6E] italic">{t("home.titleHighlight")}</span> {t("home.titleEnd")}
+              </h1>
+              <div className="flex-shrink-0 ml-4 mt-2">
+                <LanguageSwitcher variant="dark" />
+              </div>
+            </div>
             <p className="text-[16px] text-[#888888] leading-[1.8]">
-              La plupart des devs utilisent Claude Code avec les réglages par défaut. Permissions, hooks, MCP&nbsp;servers, rules — en 2&nbsp;minutes, configure tout pour que Claude comprenne ton projet, respecte tes conventions, et travaille comme tu veux.
+              {t("home.description")}
             </p>
           </div>
 
-          {/* Value points — centered between description and CTAs */}
+          {/* Value points */}
           <div className="relative z-10 flex flex-col gap-3 my-auto">
             {[
-              { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
-              { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
-              { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
-            ].map(({ icon, text }) => (
-              <div key={text} className="flex items-center gap-3">
+              { icon: "✦", key: "home.value1" },
+              { icon: "↓", key: "home.value2" },
+              { icon: "◆", key: "home.value3" },
+            ].map(({ icon, key }) => (
+              <div key={key} className="flex items-center gap-3">
                 <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
-                <span className="text-[13px] text-[#777777]">{text}</span>
+                <span className="text-[13px] text-[#777777]">{t(key)}</span>
               </div>
             ))}
           </div>
 
-          {/* CTAs — centered between value points and vault/bottom */}
+          {/* CTAs */}
           <div className={`relative z-10 flex flex-col gap-3 ${vaultCount > 0 ? "my-auto" : "mb-auto"}`}>
             <button
               onClick={() => router.push("/wizard")}
               className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
             >
-              <span className="text-white text-[15px] font-medium">Optimiser mon setup</span>
+              <span className="text-white text-[15px] font-medium">{t("home.cta")}</span>
               <svg className="text-white/60 group-hover:text-white transition-colors" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
@@ -168,11 +176,11 @@ export default function Home() {
                 <polyline points="16 18 22 12 16 6" />
                 <polyline points="8 6 2 12 8 18" />
               </svg>
-              <span className="text-[13px] font-medium">Éditer directement</span>
+              <span className="text-[13px] font-medium">{t("home.ctaSecondary")}</span>
             </button>
           </div>
 
-          {/* Bottom: vault (only if configs exist) */}
+          {/* Vault */}
           {vaultCount > 0 && (
             <div className="relative z-10">
               <button
@@ -180,7 +188,7 @@ export default function Home() {
                 className="flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer border border-[#2A2A2A] hover:border-[#0D6E6E] transition-colors w-full"
               >
                 <span className="text-sm">🔐</span>
-                <span className="text-[12px] text-[#888888]">{vaultCount} config{vaultCount > 1 ? "s" : ""} sauvegardée{vaultCount > 1 ? "s" : ""}</span>
+                <span className="text-[12px] text-[#888888]">{vaultText}</span>
                 <span className="text-[#555555] text-xs ml-auto">→</span>
               </button>
             </div>
@@ -189,17 +197,15 @@ export default function Home() {
 
         {/* Right: code preview — 60% */}
         <div className="lg:w-[60%] bg-[#111111] flex flex-col relative overflow-hidden">
-          {/* Gradient blend from left panel */}
           <div className="hidden lg:block absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#1A1A1A] to-transparent z-10" />
 
-          {/* Top bar with tabs */}
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">
             <div className="flex gap-1">
               {FILE_LINES.map((f, i) => (
                 <button
                   key={f.file}
                   onClick={() => selectFile(i)}
-                  className={`px-3 py-1.5 rounded-md text-[11px] font-mono transition-all ${
+                  className={`px-3 py-1.5 rounded-md text-[11px] font-mono cursor-pointer transition-all ${
                     i === activeFile
                       ? "bg-[#0D6E6E]/20 text-[#0D6E6E] border border-[#0D6E6E]/30"
                       : "text-[#444444] hover:text-[#666666]"
@@ -216,7 +222,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Code area */}
           <div className="flex-1 px-6 lg:pl-28 pr-8 pb-6 overflow-auto relative z-20">
             {currentFile.lines.map((line, i) => (
               <div
@@ -239,9 +244,8 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Bottom: progress */}
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pb-5 relative z-20">
-            <span className="text-[10px] font-mono text-[#333333]">{currentFile.lines.length} lignes · UTF-8</span>
+            <span className="text-[10px] font-mono text-[#333333]">{currentFile.lines.length} {t("home.terminalLines")} · UTF-8</span>
             <div className="flex gap-2">
               {FILE_LINES.map((_, i) => (
                 <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === activeFile ? "bg-[#0D6E6E] w-6" : "bg-[#252525] w-1.5"}`} />
