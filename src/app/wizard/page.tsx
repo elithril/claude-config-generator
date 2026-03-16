@@ -543,7 +543,7 @@ export default function WizardPage() {
             </div>
           ))}
         </div>
-        <div className="flex gap-1 overflow-x-auto">
+        <div className="flex gap-1 overflow-x-auto pt-2">
           {generatedFiles.map((file) => (
             <button key={file.path} onClick={() => setSelectedPreviewFile(file.path)}
               className={`relative px-3 py-1.5 text-xs font-mono rounded-t whitespace-nowrap ${selectedPreviewFile === file.path ? "bg-white text-[#0D6E6E] font-semibold border border-b-0 border-[#E0E0E0]" : "text-[#888888] hover:text-[#666666]"}`}>
