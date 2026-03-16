@@ -8,3 +8,4 @@ export { default as QuestionCard } from "./QuestionCard";
 export { default as PreviewPanel } from "./PreviewPanel";
 export { default as ChoiceButton } from "./ChoiceButton";
 export { default as PageHeader } from "./PageHeader";
+export { default as FilePreview } from "./FilePreview";
