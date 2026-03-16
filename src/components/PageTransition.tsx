@@ -5,32 +5,35 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 
 export default function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const prevPath = useRef(pathname);
-  const [opacity, setOpacity] = useState(1);
-  const mountFrame = useRef(0);
+  const [currentPath, setCurrentPath] = useState(pathname);
+  const [ready, setReady] = useState(true);
+  const frameRef = useRef(0);
+
+  // Detect path change DURING render (synchronous, before paint)
+  // React will re-render before committing to DOM, so browser never sees opacity:1 flash
+  if (pathname !== currentPath) {
+    setCurrentPath(pathname);
+    setReady(false);
+  }
 
   useEffect(() => {
-    if (prevPath.current !== pathname) {
-      prevPath.current = pathname;
-      // Start invisible, wait for mount effects to settle, then fade in
-      setOpacity(0);
-      // Cancel any pending frame
-      cancelAnimationFrame(mountFrame.current);
-      // Wait 2 frames for React to finish mount + effects
-      mountFrame.current = requestAnimationFrame(() => {
-        mountFrame.current = requestAnimationFrame(() => {
-          setOpacity(1);
+    if (!ready) {
+      // Wait for mount effects to settle, then fade in
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = requestAnimationFrame(() => {
+        frameRef.current = requestAnimationFrame(() => {
+          setReady(true);
         });
       });
     }
-    return () => cancelAnimationFrame(mountFrame.current);
-  }, [pathname]);
+    return () => cancelAnimationFrame(frameRef.current);
+  }, [ready]);
 
   return (
     <div
       style={{
-        opacity,
-        transition: opacity === 1 ? "opacity 200ms ease-in" : "none",
+        opacity: ready ? 1 : 0,
+        transition: ready ? "opacity 180ms ease-in" : "none",
         minHeight: "100%",
       }}
     >
