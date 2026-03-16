@@ -126,16 +126,31 @@ export default function Test2HomePage() {
 
           {/* Top: title */}
           <div className="relative z-10">
-            <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] mb-8">
-              Claude Code, optimisé pour <span className="text-[#0D6E6E]">ton workflow.</span>
+            <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] mb-10">
+              Claude Code, optimisé pour <span className="text-[#0D6E6E] italic">ton</span> workflow.
             </h1>
             <p className="text-[16px] text-[#888888] leading-[1.8]">
               La plupart des devs utilisent Claude Code avec les réglages par défaut. Permissions, hooks, MCP&nbsp;servers, rules — en 2&nbsp;minutes, configure tout pour que Claude comprenne ton projet, respecte tes conventions, et travaille comme tu veux.
             </p>
           </div>
 
-          {/* Middle: CTA + value points */}
+          {/* Middle: value points + CTAs */}
           <div className="relative z-10 flex flex-col gap-6 my-8 lg:my-0">
+            {/* Value points */}
+            <div className="flex flex-col gap-3">
+              {[
+                { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
+                { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
+                { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
+              ].map(({ icon, text }) => (
+                <div key={text} className="flex items-center gap-3">
+                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
+                  <span className="text-[13px] text-[#777777]">{text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Primary CTA */}
             <button
               onClick={() => router.push("/wizard")}
               className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
@@ -149,28 +164,16 @@ export default function Test2HomePage() {
               </svg>
             </button>
 
-            <div className="flex flex-col gap-3">
-              {[
-                { icon: "✦", text: "Découvre les options que tu ne connaissais pas" },
-                { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
-                { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
-              ].map(({ icon, text }) => (
-                <div key={text} className="flex items-center gap-3">
-                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
-                  <span className="text-[13px] text-[#666666]">{text}</span>
-                </div>
-              ))}
-            </div>
-
+            {/* Secondary CTA — looks like a real button */}
             <button
               onClick={() => router.push("/expert")}
-              className="group flex items-center justify-center gap-2 cursor-pointer text-[13px] text-[#555555] hover:text-[#0D6E6E] transition-colors"
+              className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl cursor-pointer border border-[#333333] hover:border-[#0D6E6E] text-[#777777] hover:text-[#0D6E6E] transition-colors"
             >
-              <svg className="opacity-50 group-hover:opacity-100 transition-opacity" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="16 18 22 12 16 6" />
                 <polyline points="8 6 2 12 8 18" />
               </svg>
-              <span>Ou éditer directement les fichiers</span>
+              <span className="text-[13px] font-medium">Éditer directement</span>
             </button>
           </div>
 
