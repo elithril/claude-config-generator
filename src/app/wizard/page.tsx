@@ -487,7 +487,7 @@ export default function WizardPage() {
 
         <WizardProgress steps={allSteps} currentStep={activeStepIndex} />
 
-        <div key={`step-${showAdvancedSteps ? "adv-" + advancedStep : currentStep}-${wizardMode}`} className="flex flex-col gap-4 mt-6 flex-1 animate-fade-in">{renderStepContent()}</div>
+        <div key={`step-${showAdvancedSteps ? "adv-" + advancedStep : currentStep}`} className="flex flex-col gap-4 mt-6 flex-1 animate-fade-in">{renderStepContent()}</div>
 
         {buttonText && (
           <div className="flex gap-4 mt-6">
