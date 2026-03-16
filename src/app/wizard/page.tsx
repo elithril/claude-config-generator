@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   WizardProgress,
@@ -50,6 +50,26 @@ export default function WizardPage() {
 
   const generatedFiles = useMemo(() => generateAllFiles(config), [config]);
   const totalSize = generatedFiles.reduce((acc, f) => acc + f.size, 0);
+
+  // Track which files changed recently for visual indicator
+  const prevContents = useRef<Record<string, string>>({});
+  const [changedFiles, setChangedFiles] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const newChanged = new Set<string>();
+    for (const file of generatedFiles) {
+      const prev = prevContents.current[file.path];
+      if (prev !== undefined && prev !== file.content) {
+        newChanged.add(file.path);
+      }
+      prevContents.current[file.path] = file.content;
+    }
+    if (newChanged.size > 0) {
+      setChangedFiles(newChanged);
+      const timer = setTimeout(() => setChangedFiles(new Set()), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [generatedFiles]);
 
   const getContextualFile = useCallback(() => {
     if (!showAdvanced) {
@@ -380,8 +400,11 @@ export default function WizardPage() {
           <div className="flex gap-1 overflow-x-auto">
             {generatedFiles.map((file) => (
               <button key={file.path} onClick={() => setSelectedPreviewFile(file.path)}
-                className={`px-3 py-1.5 text-xs font-mono rounded-t whitespace-nowrap ${selectedPreviewFile === file.path ? "bg-white text-[#0D6E6E] font-semibold border border-b-0 border-[#E0E0E0]" : "text-[#888888] hover:text-[#666666]"}`}>
+                className={`relative px-3 py-1.5 text-xs font-mono rounded-t whitespace-nowrap ${selectedPreviewFile === file.path ? "bg-white text-[#0D6E6E] font-semibold border border-b-0 border-[#E0E0E0]" : "text-[#888888] hover:text-[#666666]"}`}>
                 {file.path.split("/").pop()}
+                {changedFiles.has(file.path) && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#0D6E6E] rounded-full animate-pulse" />
+                )}
               </button>
             ))}
           </div>

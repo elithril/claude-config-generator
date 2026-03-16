@@ -75,20 +75,14 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   // Language
   settings.language = config.language === "fr" ? "french" : config.language === "es" ? "spanish" : "english";
 
-  // Model
-  if (config.model && config.model !== "claude-sonnet-4-6") {
-    settings.model = config.model;
-  }
+  // Model — always write so user sees it in preview
+  settings.model = config.model;
 
   // Extended thinking
-  if (config.extendedThinking) {
-    settings.alwaysThinkingEnabled = true;
-  }
+  settings.alwaysThinkingEnabled = config.extendedThinking;
 
   // Attribution
-  if (!config.includeCoAuthoredBy) {
-    settings.includeCoAuthoredBy = false;
-  }
+  settings.includeCoAuthoredBy = config.includeCoAuthoredBy;
 
   // Sandbox
   if (config.sandboxEnabled) {
