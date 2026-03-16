@@ -195,6 +195,32 @@ export default function WizardPage() {
                   <ChoiceButton emoji="📚" label="Pédagogue" selected={config.tone === "pedagogue"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pedagogue" })} />
                 </div>
               </QuestionCard>
+              <QuestionCard title="Quel modèle utiliser par défaut ?">
+                <RadioOption selected={config.model === "claude-sonnet-4-6"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-sonnet-4-6" })} title="Sonnet 4.6" description="Équilibré. Rapide et capable. Recommandé." />
+                <RadioOption selected={config.model === "claude-opus-4-6"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-opus-4-6" })} title="Opus 4.6" description="Le plus puissant. Raisonnement profond, tâches complexes." />
+                <RadioOption selected={config.model === "claude-haiku-4-5"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-haiku-4-5" })} title="Haiku 4.5" description="Le plus rapide. Tâches simples, itérations rapides." />
+              </QuestionCard>
+              {/* Preferences */}
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Préférences</h4>
+                <div className="flex flex-col gap-3">
+                  <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
+                    <div>
+                      <span className="text-sm font-medium text-[#1A1A1A]">Extended thinking</span>
+                      <p className="text-xs text-[#888888]">Claude réfléchit plus longtemps avant de répondre. Meilleur pour les tâches complexes.</p>
+                    </div>
+                    <input type="checkbox" checked={config.extendedThinking} onChange={(e) => dispatch({ type: "SET_FIELD", field: "extendedThinking", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
+                  </label>
+                  <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
+                    <div>
+                      <span className="text-sm font-medium text-[#1A1A1A]">Co-authored-by Claude</span>
+                      <p className="text-xs text-[#888888]">Ajoute une ligne d&apos;attribution dans les commits git.</p>
+                    </div>
+                    <input type="checkbox" checked={config.includeCoAuthoredBy} onChange={(e) => dispatch({ type: "SET_FIELD", field: "includeCoAuthoredBy", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
+                  </label>
+                </div>
+              </div>
+              {/* CLAUDE.md import */}
               <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
                 <h4 className="text-sm font-medium text-[#1A1A1A] mb-2">CLAUDE.md</h4>
                 <p className="text-xs text-[#888888] mb-3">
@@ -217,6 +243,22 @@ export default function WizardPage() {
                 <RadioOption selected={config.responseStyle === "detailed"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "detailed" })} title="Détaillé et pédagogue" description="Explications complètes avec exemples." />
                 <RadioOption selected={config.responseStyle === "technical"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "technical" })} title="Technique et précis" description="Références doc, complexité, trade-offs." />
               </QuestionCard>
+              <QuestionCard title="Quand Claude veut utiliser un outil...">
+                <RadioOption selected={config.permissionMode === "default"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "default" })} title="Demander à chaque fois" description="Claude demande confirmation pour chaque action." />
+                <RadioOption selected={config.permissionMode === "plan"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "plan" })} title="Mode Plan" description="Claude propose un plan avant d'agir, tu valides l'ensemble." />
+                <RadioOption selected={config.permissionMode === "acceptEdits"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "acceptEdits" })} title="Auto-édition" description="Les modifications de fichiers sont auto-approuvées. Le reste demande confirmation." />
+                <RadioOption selected={config.permissionMode === "dontAsk"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "dontAsk" })} title="Confiance totale" description="Claude agit sans demander. Déconseillé aux débutants." />
+              </QuestionCard>
+              {/* Sandbox */}
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
+                <label className="flex items-center justify-between cursor-pointer">
+                  <div>
+                    <span className="text-sm font-medium text-[#1A1A1A]">Sandbox Bash</span>
+                    <p className="text-xs text-[#888888]">Isole les commandes Bash du filesystem et du réseau. Recommandé pour la sécurité (macOS/Linux).</p>
+                  </div>
+                  <input type="checkbox" checked={config.sandboxEnabled} onChange={(e) => dispatch({ type: "SET_FIELD", field: "sandboxEnabled", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
+                </label>
+              </div>
               <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
                 <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Règles personnalisées</h4>
                 <div className="mb-4">

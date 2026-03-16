@@ -51,28 +51,21 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   };
 
   // Permissions
-  const permissions: Record<string, string[]> = {};
-  if (config.permissions.allow.length > 0) {
-    permissions.allow = config.permissions.allow;
-  }
-  if (config.permissions.deny.length > 0) {
-    permissions.deny = config.permissions.deny;
-  }
+  let allowRules = [...config.permissions.allow];
+  let denyRules = [...config.permissions.deny];
 
   // Bundle presets
   if (config.bundle === "safe") {
-    permissions.deny = [
-      ...(permissions.deny || []),
-      "Bash(rm -rf *)",
-      "Bash(git push --force *)",
-    ];
+    denyRules = [...denyRules, "Bash(rm -rf *)", "Bash(git push --force *)"];
   } else if (config.bundle === "dev") {
-    permissions.allow = [
-      ...(permissions.allow || []),
-      "Bash(npm run *)",
-      "Bash(npx *)",
-      "Bash(git *)",
-    ];
+    allowRules = [...allowRules, "Bash(npm run *)", "Bash(npx *)", "Bash(git *)"];
+  }
+
+  const permissions: Record<string, unknown> = {};
+  if (allowRules.length > 0) permissions.allow = allowRules;
+  if (denyRules.length > 0) permissions.deny = denyRules;
+  if (config.permissionMode && config.permissionMode !== "default") {
+    permissions.defaultMode = config.permissionMode;
   }
 
   if (Object.keys(permissions).length > 0) {
@@ -81,6 +74,29 @@ export function generateSettingsJson(config: ClaudeConfig): string {
 
   // Language
   settings.language = config.language === "fr" ? "french" : config.language === "es" ? "spanish" : "english";
+
+  // Model
+  if (config.model && config.model !== "claude-sonnet-4-6") {
+    settings.model = config.model;
+  }
+
+  // Extended thinking
+  if (config.extendedThinking) {
+    settings.alwaysThinkingEnabled = true;
+  }
+
+  // Attribution
+  if (!config.includeCoAuthoredBy) {
+    settings.includeCoAuthoredBy = false;
+  }
+
+  // Sandbox
+  if (config.sandboxEnabled) {
+    settings.sandbox = {
+      enabled: true,
+      autoAllowBashIfSandboxed: true,
+    };
+  }
 
   // Hooks
   const enabledHooks = config.hooks.filter((h) => h.enabled);

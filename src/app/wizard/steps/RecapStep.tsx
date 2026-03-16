@@ -46,7 +46,7 @@ export default function RecapStep() {
         <h3 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A] mb-4">
           Résumé de ta configuration
         </h3>
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
           <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">Bundle</span>
             <p className="font-medium text-[#1A1A1A]">{config.bundle === "safe" ? "Safe Mode" : "Dev Rapide"}</p>
@@ -60,8 +60,20 @@ export default function RecapStep() {
             <p className="font-medium text-[#1A1A1A]">{config.tone === "cool" ? "Cool" : config.tone === "pro" ? "Pro" : "Pédagogue"}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
+            <span className="text-[#888888] text-xs">Modèle</span>
+            <p className="font-medium text-[#1A1A1A]">{config.model === "claude-sonnet-4-6" ? "Sonnet 4.6" : config.model === "claude-opus-4-6" ? "Opus 4.6" : "Haiku 4.5"}</p>
+          </div>
+          <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">Style</span>
             <p className="font-medium text-[#1A1A1A]">{config.responseStyle === "concise" ? "Concis" : config.responseStyle === "detailed" ? "Détaillé" : "Technique"}</p>
+          </div>
+          <div className="p-3 bg-[#FAFAFA] rounded">
+            <span className="text-[#888888] text-xs">Permissions</span>
+            <p className="font-medium text-[#1A1A1A]">{
+              config.permissionMode === "default" ? "Demander" :
+              config.permissionMode === "plan" ? "Mode Plan" :
+              config.permissionMode === "acceptEdits" ? "Auto-édition" : "Confiance totale"
+            }</p>
           </div>
         </div>
       </div>

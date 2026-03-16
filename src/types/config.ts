@@ -4,6 +4,8 @@ export type BundleType = "safe" | "dev";
 export type LanguageType = "fr" | "en" | "es";
 export type ToneType = "cool" | "pro" | "pedagogue";
 export type ResponseStyleType = "concise" | "detailed" | "technical";
+export type ModelType = "claude-sonnet-4-6" | "claude-opus-4-6" | "claude-haiku-4-5";
+export type PermissionModeType = "default" | "plan" | "acceptEdits" | "dontAsk";
 
 // === HOOKS ===
 
@@ -80,9 +82,14 @@ export interface ClaudeConfig {
   // Step 2 - Personality
   language: LanguageType;
   tone: ToneType;
+  model: ModelType;
+  extendedThinking: boolean;
+  includeCoAuthoredBy: boolean;
 
   // Step 3 - Permissions
   responseStyle: ResponseStyleType;
+  permissionMode: PermissionModeType;
+  sandboxEnabled: boolean;
   permissions: Permissions;
 
   // Step 4 - Advanced toggle

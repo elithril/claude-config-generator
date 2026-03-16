@@ -221,7 +221,12 @@ export function getDefaultConfig(): ClaudeConfig {
     bundle: "safe",
     language: "fr",
     tone: "pro",
+    model: "claude-sonnet-4-6",
+    extendedThinking: false,
+    includeCoAuthoredBy: true,
     responseStyle: "concise",
+    permissionMode: "default",
+    sandboxEnabled: false,
     permissions: {
       allow: [],
       deny: ["Read(./.env)", "Read(./.env.*)", "Read(./secrets/**)"],
