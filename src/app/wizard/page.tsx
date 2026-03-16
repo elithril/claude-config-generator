@@ -470,9 +470,9 @@ export default function WizardPage() {
   const currentFile = generatedFiles.find((f) => f.path === selectedPreviewFile) || generatedFiles[0];
 
   return (
-    <div className="flex flex-col lg:flex-row h-full min-h-screen">
+    <div className="flex flex-col lg:flex-row h-full">
       {/* Left Panel */}
-      <div className="flex-1 flex flex-col bg-[#FAFAFA] min-h-0">
+      <div className="flex-1 flex flex-col bg-[#FAFAFA] min-h-0 h-full">
         {/* Fixed header */}
         <div className="flex-shrink-0 p-4 md:p-8 pb-0">
           {/* Breadcrumb + Mode toggle */}

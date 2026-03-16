@@ -31,10 +31,10 @@ export default function PageTransition({ children }: { children: ReactNode }) {
 
   return (
     <div
+      className="flex-1 flex flex-col min-h-0"
       style={{
         opacity: ready ? 1 : 0,
         transition: ready ? "opacity 180ms ease-in" : "none",
-        minHeight: "100%",
       }}
     >
       {children}
