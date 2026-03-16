@@ -550,7 +550,7 @@ export default function WizardPage() {
         </div>
 
         {/* Content */}
-        <div className="px-4 md:px-8 py-6">
+        <div className="px-4 md:px-8 pt-4 pb-2">
           <div className={`flex flex-col gap-4 transition-opacity duration-150 ease-in-out ${stepTransition ? "opacity-0" : "opacity-100"}`}>
             {renderStepContent()}
           </div>
