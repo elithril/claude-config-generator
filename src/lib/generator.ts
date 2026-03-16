@@ -78,11 +78,19 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   // Model — always write so user sees it in preview
   settings.model = config.model;
 
+  // Effort level
+  settings.effortLevel = config.effortLevel;
+
   // Extended thinking
   settings.alwaysThinkingEnabled = config.extendedThinking;
 
   // Attribution
   settings.includeCoAuthoredBy = config.includeCoAuthoredBy;
+
+  // Environment variables
+  if (config.envVars && Object.keys(config.envVars).length > 0) {
+    settings.env = config.envVars;
+  }
 
   // Sandbox
   if (config.sandboxEnabled) {
@@ -145,6 +153,10 @@ export function generateMcpJson(config: ClaudeConfig): string | null {
 
     if (server.env && Object.keys(server.env).length > 0) {
       serverConfig.env = server.env;
+    }
+
+    if (server.headers && Object.keys(server.headers).length > 0) {
+      serverConfig.headers = server.headers;
     }
 
     mcpServers[server.name.toLowerCase().replace(/\s+/g, "-")] = serverConfig;

@@ -222,6 +222,7 @@ export function getDefaultConfig(): ClaudeConfig {
     language: "fr",
     tone: "pro",
     model: "claude-sonnet-4-6",
+    effortLevel: "high",
     extendedThinking: false,
     includeCoAuthoredBy: true,
     responseStyle: "concise",
@@ -239,6 +240,7 @@ export function getDefaultConfig(): ClaudeConfig {
     rules: DEFAULT_RULES,
     claudeMdContent: "",
     claudeMdImported: false,
+    envVars: {},
     claudeIgnoreContent: "",
   };
 }

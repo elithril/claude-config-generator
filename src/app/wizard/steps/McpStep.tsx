@@ -14,6 +14,9 @@ export default function McpStep() {
   const [customEnvKey, setCustomEnvKey] = useState("");
   const [customEnvValue, setCustomEnvValue] = useState("");
   const [customEnv, setCustomEnv] = useState<Record<string, string>>({});
+  const [customHeaderKey, setCustomHeaderKey] = useState("");
+  const [customHeaderValue, setCustomHeaderValue] = useState("");
+  const [customHeaders, setCustomHeaders] = useState<Record<string, string>>({});
 
   const toggleMcpServer = (serverId: string) => {
     const updated = config.mcpServers.map((s: McpServer) =>
@@ -41,6 +44,7 @@ export default function McpStep() {
         url: customUrl.trim(),
       }),
       ...(Object.keys(customEnv).length > 0 ? { env: customEnv } : {}),
+      ...(Object.keys(customHeaders).length > 0 ? { headers: customHeaders } : {}),
       enabled: true,
       icon: "🔧",
     };
@@ -56,6 +60,7 @@ export default function McpStep() {
     setCustomUrl("");
     setCustomCommand("");
     setCustomEnv({});
+    setCustomHeaders({});
     setShowAddForm(false);
   };
 
@@ -236,6 +241,32 @@ export default function McpStep() {
                 </div>
               )}
             </div>
+
+            {/* Headers (HTTP only) */}
+            {customTransport === "http" && (
+              <div>
+                <label className="text-xs font-medium text-[#666666] mb-1 block">Headers HTTP (optionnel)</label>
+                <div className="flex gap-2 mb-2">
+                  <input type="text" value={customHeaderKey} onChange={(e) => setCustomHeaderKey(e.target.value)} placeholder="Authorization" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                  <input type="text" value={customHeaderValue} onChange={(e) => setCustomHeaderValue(e.target.value)} placeholder="Bearer $MY_TOKEN" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                  <button onClick={() => {
+                    if (!customHeaderKey.trim()) return;
+                    setCustomHeaders({ ...customHeaders, [customHeaderKey.trim()]: customHeaderValue.trim() });
+                    setCustomHeaderKey(""); setCustomHeaderValue("");
+                  }} className="px-2 py-1.5 text-xs bg-[#F0F0F0] text-[#666666] rounded hover:bg-[#E5E5E5]">+</button>
+                </div>
+                {Object.keys(customHeaders).length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {Object.entries(customHeaders).map(([k, v]) => (
+                      <span key={k} className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F5F5F5] text-[#666666] text-[10px] rounded font-mono">
+                        {k}: {v}
+                        <button onClick={() => { const h = { ...customHeaders }; delete h[k]; setCustomHeaders(h); }} className="hover:text-[#dc2626]">×</button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Actions */}
             <div className="flex gap-2 justify-end pt-2">

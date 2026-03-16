@@ -6,6 +6,7 @@ export type ToneType = "cool" | "pro" | "pedagogue";
 export type ResponseStyleType = "concise" | "detailed" | "technical";
 export type ModelType = "claude-sonnet-4-6" | "claude-opus-4-6" | "claude-haiku-4-5";
 export type PermissionModeType = "default" | "plan" | "acceptEdits" | "dontAsk";
+export type EffortLevelType = "low" | "medium" | "high";
 
 // === HOOKS ===
 
@@ -40,6 +41,7 @@ export interface McpServer {
   args?: string[];
   url?: string;
   env?: Record<string, string>;
+  headers?: Record<string, string>;
   enabled: boolean;
   popular?: boolean;
   icon?: string;
@@ -83,6 +85,7 @@ export interface ClaudeConfig {
   language: LanguageType;
   tone: ToneType;
   model: ModelType;
+  effortLevel: EffortLevelType;
   extendedThinking: boolean;
   includeCoAuthoredBy: boolean;
 
@@ -109,6 +112,9 @@ export interface ClaudeConfig {
   // CLAUDE.md
   claudeMdContent: string;
   claudeMdImported: boolean;
+
+  // Environment variables
+  envVars: Record<string, string>;
 
   // .claudeignore
   claudeIgnoreContent: string;

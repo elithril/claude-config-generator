@@ -31,6 +31,8 @@ export default function WizardPage() {
   const [advancedStep, setAdvancedStep] = useState(0);
   const [allowInput, setAllowInput] = useState("");
   const [denyInput, setDenyInput] = useState("");
+  const [envKey, setEnvKey] = useState("");
+  const [envValue, setEnvValue] = useState("");
 
   useEffect(() => {
     dispatch({ type: "RESET" });
@@ -219,6 +221,14 @@ export default function WizardPage() {
                 <RadioOption selected={config.model === "claude-opus-4-6"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-opus-4-6" })} title="Opus 4.6" description="Le plus puissant. Raisonnement profond, tâches complexes." />
                 <RadioOption selected={config.model === "claude-haiku-4-5"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-haiku-4-5" })} title="Haiku 4.5" description="Le plus rapide. Tâches simples, itérations rapides." />
               </QuestionCard>
+              <QuestionCard title="Niveau d'effort">
+                <p className="text-xs text-[#888888] -mt-2 mb-2">Contrôle la profondeur de réflexion de Claude. Plus c'est haut, plus il est minutieux.</p>
+                <div className="flex gap-3">
+                  <ChoiceButton emoji="⚡" label="Low" selected={config.effortLevel === "low"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "low" })} />
+                  <ChoiceButton emoji="⚖️" label="Medium" selected={config.effortLevel === "medium"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "medium" })} />
+                  <ChoiceButton emoji="🧠" label="High" selected={config.effortLevel === "high"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "high" })} />
+                </div>
+              </QuestionCard>
               {/* Preferences */}
               <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
                 <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Préférences</h4>
@@ -316,26 +326,57 @@ export default function WizardPage() {
 
         case 3:
           return (
-            <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
-              <h3 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A] mb-2">Ta config de base est prête !</h3>
-              <p className="text-[15px] text-[#666666] mb-6">Tu peux l&apos;utiliser maintenant ou aller plus loin.</p>
-              <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Tu veux affiner avec des options avancées ?</h4>
-              <div className="flex flex-col gap-3">
-                {[
-                  { field: "enableHooks" as const, label: "Hooks (automatisation)", desc: "Scripts qui s'exécutent automatiquement après certaines actions de Claude." },
-                  { field: "enableMCP" as const, label: "MCP Servers (outils externes)", desc: "Connecte Claude à des APIs, bases de données, services..." },
-                  { field: "enableRules" as const, label: "Rules modulaires", desc: "Règles spécifiques pour différents types de fichiers." },
-                ].map(({ field, label, desc }) => (
-                  <label key={field} className="flex items-start gap-3 p-4 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
-                    <input type="checkbox" checked={config[field]} onChange={(e) => dispatch({ type: "SET_FIELD", field, value: e.target.checked })} className="mt-1 w-4 h-4 accent-[#0D6E6E]" />
-                    <div>
-                      <span className="font-medium text-[#1A1A1A]">{label}</span>
-                      <p className="text-[13px] text-[#666666]">{desc}</p>
-                    </div>
-                  </label>
-                ))}
+            <>
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
+                <h3 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A] mb-2">Ta config de base est prête !</h3>
+                <p className="text-[15px] text-[#666666] mb-6">Tu peux l&apos;utiliser maintenant ou aller plus loin.</p>
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Tu veux affiner avec des options avancées ?</h4>
+                <div className="flex flex-col gap-3">
+                  {[
+                    { field: "enableHooks" as const, label: "Hooks (automatisation)", desc: "Scripts qui s'exécutent automatiquement après certaines actions de Claude." },
+                    { field: "enableMCP" as const, label: "MCP Servers (outils externes)", desc: "Connecte Claude à des APIs, bases de données, services..." },
+                    { field: "enableRules" as const, label: "Rules modulaires", desc: "Règles spécifiques pour différents types de fichiers." },
+                  ].map(({ field, label, desc }) => (
+                    <label key={field} className="flex items-start gap-3 p-4 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
+                      <input type="checkbox" checked={config[field]} onChange={(e) => dispatch({ type: "SET_FIELD", field, value: e.target.checked })} className="mt-1 w-4 h-4 accent-[#0D6E6E]" />
+                      <div>
+                        <span className="font-medium text-[#1A1A1A]">{label}</span>
+                        <p className="text-[13px] text-[#666666]">{desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+
+              {/* Environment variables */}
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">Variables d&apos;environnement</h4>
+                <p className="text-xs text-[#888888] mb-3">Variables globales injectées dans chaque session Claude Code.</p>
+                <div className="flex gap-2 mb-2">
+                  <input type="text" value={envKey} onChange={(e) => setEnvKey(e.target.value)} placeholder="NOM_VARIABLE" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                  <input type="text" value={envValue} onChange={(e) => setEnvValue(e.target.value)} placeholder="valeur" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                  <button onClick={() => {
+                    if (!envKey.trim()) return;
+                    dispatch({ type: "SET_FIELD", field: "envVars", value: { ...config.envVars, [envKey.trim()]: envValue.trim() } });
+                    setEnvKey(""); setEnvValue("");
+                  }} className="px-3 py-1.5 text-xs bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]">+</button>
+                </div>
+                {Object.keys(config.envVars).length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {Object.entries(config.envVars).map(([k, v]) => (
+                      <span key={k} className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F5F5F5] text-[#666666] text-[10px] rounded font-mono border border-[#E5E5E5]">
+                        {k}={v}
+                        <button onClick={() => {
+                          const updated = { ...config.envVars };
+                          delete updated[k];
+                          dispatch({ type: "SET_FIELD", field: "envVars", value: updated });
+                        }} className="hover:text-[#dc2626]">×</button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
           );
       }
     }

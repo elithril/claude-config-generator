@@ -64,6 +64,10 @@ export default function RecapStep() {
             <p className="font-medium text-[#1A1A1A]">{config.model === "claude-sonnet-4-6" ? "Sonnet 4.6" : config.model === "claude-opus-4-6" ? "Opus 4.6" : "Haiku 4.5"}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
+            <span className="text-[#888888] text-xs">Effort</span>
+            <p className="font-medium text-[#1A1A1A]">{config.effortLevel === "low" ? "Low" : config.effortLevel === "medium" ? "Medium" : "High"}</p>
+          </div>
+          <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">Style</span>
             <p className="font-medium text-[#1A1A1A]">{config.responseStyle === "concise" ? "Concis" : config.responseStyle === "detailed" ? "Détaillé" : "Technique"}</p>
           </div>
