@@ -21,7 +21,12 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Claude Config Generator",
-  description: "Create, manage and share your Claude Code configuration files with elegance.",
+  description: "Créez, gérez et partagez vos fichiers de configuration Claude Code avec élégance.",
+  openGraph: {
+    title: "Claude Config Generator",
+    description: "Générateur visuel de configuration pour Claude Code — Wizard guidé, éditeur expert, bibliothèque de templates.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

@@ -50,12 +50,12 @@ export default function Sidebar() {
 
         <div className="flex flex-col gap-3">
           <a
-            href="https://github.com"
+            href="https://code.claude.com/docs"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#888888] text-[13px] hover:text-[#AAAAAA] transition-colors"
           >
-            GitHub
+            Documentation →
           </a>
           <span className="font-[family-name:var(--font-jetbrains)] text-[11px] text-[#666666]">
             v1.0.0
