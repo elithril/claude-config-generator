@@ -134,22 +134,22 @@ export default function Test2HomePage() {
             </p>
           </div>
 
-          {/* Middle: value points + CTAs */}
-          <div className="relative z-10 flex flex-col gap-6 my-8 lg:my-0">
-            {/* Value points */}
-            <div className="flex flex-col gap-3">
-              {[
-                { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
-                { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
-                { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
-              ].map(({ icon, text }) => (
-                <div key={text} className="flex items-center gap-3">
-                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
-                  <span className="text-[13px] text-[#777777]">{text}</span>
-                </div>
-              ))}
-            </div>
+          {/* Value points — centered between description and CTAs */}
+          <div className="relative z-10 flex flex-col gap-3 my-auto">
+            {[
+              { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
+              { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
+              { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
+            ].map(({ icon, text }) => (
+              <div key={text} className="flex items-center gap-3">
+                <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
+                <span className="text-[13px] text-[#777777]">{text}</span>
+              </div>
+            ))}
+          </div>
 
+          {/* CTAs */}
+          <div className="relative z-10 flex flex-col gap-3">
             {/* Primary CTA */}
             <button
               onClick={() => router.push("/wizard")}
