@@ -13,24 +13,30 @@ export type EffortLevelType = "low" | "medium" | "high";
 export type HookEventType =
   | "PreToolUse"
   | "PostToolUse"
+  | "PostToolUseFailure"
+  | "UserPromptSubmit"
   | "Stop"
-  | "SessionStart";
+  | "SessionStart"
+  | "PreCompact"
+  | "PostCompact";
 
-export type HookActionType = "command" | "prompt";
+export type HookActionType = "command" | "prompt" | "http" | "agent";
 
 export interface HookEntry {
   id: string;
   event: HookEventType;
   matcher?: string;
   action: HookActionType;
-  command: string;
+  command: string;  // command for "command" type, prompt text for "prompt"/"agent", url for "http"
   description: string;
   enabled: boolean;
+  timeout?: number;
+  async?: boolean;
 }
 
 // === MCP SERVERS ===
 
-export type McpTransportType = "stdio" | "http" | "sse";
+export type McpTransportType = "stdio" | "http";
 
 export interface McpServer {
   id: string;

@@ -45,6 +45,31 @@ export const DEFAULT_HOOKS: HookEntry[] = [
     description: "Charger le contexte au démarrage",
     enabled: false,
   },
+  {
+    id: "hook-validate-prompt",
+    event: "UserPromptSubmit",
+    action: "command",
+    command: ".claude/hooks/validate-prompt.sh",
+    description: "Valider le prompt utilisateur avant envoi",
+    enabled: false,
+  },
+  {
+    id: "hook-on-failure",
+    event: "PostToolUseFailure",
+    matcher: "Bash",
+    action: "command",
+    command: "echo 'Tool failed' >> .claude/failure.log",
+    description: "Logger les échecs de commandes Bash",
+    enabled: false,
+  },
+  {
+    id: "hook-ai-review-stop",
+    event: "Stop",
+    action: "prompt",
+    command: "Vérifie que toutes les tâches demandées sont complètes et que le code compile: $ARGUMENTS",
+    description: "Vérification IA avant de terminer",
+    enabled: false,
+  },
 ];
 
 export const DEFAULT_MCP_SERVERS: McpServer[] = [

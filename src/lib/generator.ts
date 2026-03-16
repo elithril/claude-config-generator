@@ -112,8 +112,23 @@ export function generateSettingsJson(config: ClaudeConfig): string {
 
       const hookDef: Record<string, unknown> = {
         type: hook.action,
-        command: hook.command,
       };
+
+      // Different fields depending on hook type
+      if (hook.action === "command") {
+        hookDef.command = hook.command;
+      } else if (hook.action === "prompt" || hook.action === "agent") {
+        hookDef.prompt = hook.command; // "command" field stores the prompt text
+      } else if (hook.action === "http") {
+        hookDef.url = hook.command; // "command" field stores the URL
+      }
+
+      if (hook.timeout) {
+        hookDef.timeout = hook.timeout;
+      }
+      if (hook.async) {
+        hookDef.async = true;
+      }
 
       const entry: { matcher?: string; hooks: Array<Record<string, unknown>> } = {
         hooks: [hookDef],

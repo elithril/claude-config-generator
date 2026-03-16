@@ -41,10 +41,20 @@ export default function HooksStep() {
                   className="mt-0.5 w-4 h-4 accent-[#0D6E6E]"
                 />
                 <div className="flex-1">
-                  <span className="text-sm font-medium text-[#1A1A1A]">{hook.description}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-[#1A1A1A]">{hook.description}</span>
+                    <span className={`px-1.5 py-0.5 text-[10px] rounded ${
+                      hook.action === "command" ? "bg-[#F0F0F0] text-[#666666]" :
+                      hook.action === "prompt" ? "bg-purple-50 text-purple-700" :
+                      hook.action === "agent" ? "bg-orange-50 text-orange-700" :
+                      "bg-blue-50 text-blue-700"
+                    }`}>
+                      {hook.action}
+                    </span>
+                  </div>
                   {hook.enabled && (
-                    <p className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666] mt-1 bg-[#F5F5F5] px-2 py-1 rounded">
-                      {hook.command}
+                    <p className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666] mt-1 bg-[#F5F5F5] px-2 py-1 rounded break-all">
+                      {hook.action === "prompt" || hook.action === "agent" ? "prompt: " : ""}{hook.command}
                     </p>
                   )}
                   {hook.matcher && (
