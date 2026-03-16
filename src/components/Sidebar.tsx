@@ -4,32 +4,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { name: "Home", href: "/" },
   { name: "Wizard", href: "/wizard" },
   { name: "Expert", href: "/expert" },
-  { name: "Library", href: "/library" },
   { name: "Vault", href: "/vault" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
-  const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
-  };
+  const isActive = (href: string) => pathname.startsWith(href);
 
   return (
     <>
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col justify-between py-6 px-5 flex-shrink-0">
         <div className="flex flex-col gap-8">
-          <div className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
             <span className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-white">
               Claude Config
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#0D6E6E]" />
-          </div>
+          </Link>
 
           <nav className="flex flex-col gap-1">
             {navItems.map((item) => (
