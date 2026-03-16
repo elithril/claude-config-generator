@@ -130,10 +130,10 @@ export default function Test2HomePage() {
               CLAUDE CODE CONFIG
             </span>
             <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] mb-8">
-              Configure Claude Code <span className="text-[#0D6E6E]">en quelques clics.</span>
+              Tes fichiers Claude Code, <span className="text-[#0D6E6E]">générés pour toi.</span>
             </h1>
             <p className="text-[16px] text-[#888888] leading-[1.8]">
-              Génère tes fichiers de configuration prêts à déposer dans ton projet — CLAUDE.md, settings.json, hooks, MCP&nbsp;servers, rules.
+              Permissions, hooks, MCP servers, rules — réponds à quelques questions ou édite directement. Télécharge le ZIP, dépose-le dans ton projet.
             </p>
           </div>
 
@@ -179,13 +179,6 @@ export default function Test2HomePage() {
                 <span className="text-[#555555] text-xs ml-auto">→</span>
               </button>
             )}
-            <div className="flex flex-wrap gap-1.5">
-              {["CLAUDE.md", "settings.json", ".claudeignore", ".mcp.json", "rules/"].map(file => (
-                <span key={file} className="px-2 py-1 rounded text-[10px] font-mono text-[#555555] bg-[#252525]">
-                  {file}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
