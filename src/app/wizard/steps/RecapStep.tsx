@@ -88,25 +88,26 @@ export default function RecapStep() {
         <h3 className="font-[family-name:var(--font-newsreader)] text-lg font-medium text-[#1A1A1A] mb-4">
           Fichiers générés
         </h3>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           {generatedFiles.map((file) => (
             <div
               key={file.path}
-              className="flex items-center gap-3 p-3 bg-[#F0FAFA] border border-[#0D6E6E] rounded-lg"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-[#FAFAFA]"
             >
-              <div className="w-6 h-6 bg-[#0D6E6E] rounded flex items-center justify-center">
-                <span className="text-white text-xs font-bold">✓</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="font-[family-name:var(--font-jetbrains)] text-sm font-semibold text-[#1A1A1A] truncate block">
-                  {file.path}
-                </span>
-              </div>
-              <span className="font-[family-name:var(--font-jetbrains)] text-xs text-[#888888] flex-shrink-0">
+              <span className="text-[#0D6E6E] text-sm flex-shrink-0">📄</span>
+              <span className="font-[family-name:var(--font-jetbrains)] text-[13px] text-[#1A1A1A] truncate flex-1">
+                {file.path}
+              </span>
+              <span className="font-[family-name:var(--font-jetbrains)] text-[11px] text-[#AAAAAA] flex-shrink-0">
                 {formatFileSize(file.size)}
               </span>
             </div>
           ))}
+          <div className="flex items-center gap-2 pt-2 mt-1 border-t border-[#E5E5E5]">
+            <span className="text-xs text-[#888888]">{generatedFiles.length} fichiers</span>
+            <span className="text-xs text-[#CCCCCC]">·</span>
+            <span className="text-xs text-[#888888]">{formatFileSize(generatedFiles.reduce((a, f) => a + f.size, 0))} total</span>
+          </div>
         </div>
       </div>
 
