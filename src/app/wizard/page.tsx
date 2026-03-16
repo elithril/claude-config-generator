@@ -503,7 +503,7 @@ export default function WizardPage() {
             <p className="text-[14px] text-[#666666] mt-1">{stepMeta.subtitle}</p>
           </div>
 
-          <WizardProgress steps={allSteps} currentStep={activeStepIndex} />
+          {allSteps.length > 1 && <WizardProgress steps={allSteps} currentStep={activeStepIndex} />}
         </div>
 
         {/* Scrollable content */}
