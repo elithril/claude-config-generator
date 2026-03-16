@@ -556,8 +556,8 @@ export default function WizardPage() {
           </div>
         </div>
 
-        {/* Sticky bottom buttons */}
-        <div className="sticky bottom-0 z-10 px-4 md:px-8 py-4 pb-20 md:pb-4 border-t border-[#E5E5E5] bg-[#FAFAFA]">
+        {/* Buttons */}
+        <div className="px-4 md:px-8 py-6 pb-20 md:pb-6">
           {buttonText ? (
             <div className="flex gap-4">
               <Button variant="outline" onClick={handleBack}>{t("wizard.back")}</Button>
