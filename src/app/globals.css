@@ -64,37 +64,20 @@ body {
   animation: slide-in-from-right 0.3s ease-out;
 }
 
-/* Page transitions */
-.page-transition {
-  will-change: opacity, transform;
-}
-
-.page-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.page-exit {
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity 150ms ease-in, transform 150ms ease-in;
-}
-
-.page-enter {
-  opacity: 1;
-  transform: translateY(0);
-  animation: page-slide-in 250ms ease-out;
-}
-
-@keyframes page-slide-in {
+/* Page enter animation — triggered by key change in PageTransition */
+@keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.animate-page-enter {
+  animation: page-enter 0.3s ease-out;
 }
 
 /* Fade-in for wizard step transitions */
