@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
+import { useT } from "@/i18n";
 import { loadVault, deleteVaultEntry, toggleStar } from "@/lib/storage";
 import { generateAllFiles } from "@/lib/generator";
 import { downloadAsZip, formatFileSize } from "@/lib/download";
@@ -14,6 +15,7 @@ export default function VaultPage() {
   const router = useRouter();
   const { dispatch } = useConfig();
   const { addToast } = useToast();
+  const t = useT();
   const [vault, setVault] = useState<SavedConfig[]>([]);
   const [sortBy, setSortBy] = useState<"date" | "name">("date");
 
@@ -47,13 +49,13 @@ export default function VaultPage() {
   }, [vault]);
 
   const stats = useMemo(() => [
-    { value: String(vault.length), label: "Configs sauvees" },
+    { value: String(vault.length), label: t("vault.savedConfigs") },
     {
       value: String(vault.filter((c) => c.starred).length),
-      label: "Favorites",
+      label: t("vault.favorites"),
       highlight: true,
     },
-  ], [vault]);
+  ], [vault, t]);
 
   const handleToggleStar = (id: string) => {
     toggleStar(id);
@@ -64,23 +66,23 @@ export default function VaultPage() {
     try {
       const files = generateAllFiles(entry.config);
       await downloadAsZip(files, entry.name);
-      addToast(`"${entry.name}" exporte`);
+      addToast(t("toast.exported", { name: entry.name }));
     } catch {
-      addToast("Erreur lors de l'export", "error");
+      addToast(t("toast.downloadError"), "error");
     }
   };
 
   const handleRestore = (entry: SavedConfig) => {
     dispatch({ type: "SET_CONFIG", config: entry.config });
-    addToast(`"${entry.name}" restaure`);
+    addToast(t("toast.restored", { name: entry.name }));
     router.push("/expert");
   };
 
   const handleDelete = (entry: SavedConfig) => {
-    if (!window.confirm(`Supprimer "${entry.name}" ?`)) return;
+    if (!window.confirm(t("vault.confirmDelete", { name: entry.name }))) return;
     deleteVaultEntry(entry.id);
     refreshVault();
-    addToast(`"${entry.name}" supprime`);
+    addToast(t("toast.deleted", { name: entry.name }));
   };
 
   const formatDate = (dateStr: string) => {
@@ -91,19 +93,19 @@ export default function VaultPage() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "À l'instant";
-    if (diffMins < 60) return `Il y a ${diffMins}min`;
-    if (diffHours < 24) return `Il y a ${diffHours}h`;
-    if (diffDays < 7) return `Il y a ${diffDays}j`;
+    if (diffMins < 1) return t("vault.justNow");
+    if (diffMins < 60) return t("vault.minutesAgo", { count: diffMins });
+    if (diffHours < 24) return t("vault.hoursAgo", { count: diffHours });
+    if (diffDays < 7) return t("vault.daysAgo", { count: diffDays });
     return date.toLocaleDateString("fr-FR");
   };
 
   return (
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
-          breadcrumb="VAULT / MY CONFIGS"
-          title="Configuration Vault"
-          subtitle="Vos configurations sauvegardées."
+          breadcrumb={t("vault.breadcrumb")}
+          title={t("vault.title")}
+          subtitle={t("vault.subtitle")}
         />
 
         {/* Stats */}
@@ -139,25 +141,25 @@ export default function VaultPage() {
         <div className="flex-1 px-6 md:px-10 overflow-auto pb-20 md:pb-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A]">
-              Configurations
+              {t("vault.configurations")}
             </h2>
             <button
               onClick={() => setSortBy(sortBy === "date" ? "name" : "date")}
               className="text-xs text-[#888888] hover:text-[#666666]"
             >
-              Tri : {sortBy === "date" ? "Date" : "Nom"} ▾
+              {t("vault.sort")} : {sortBy === "date" ? t("vault.sortDate") : t("vault.sortName")} ▾
             </button>
           </div>
 
           {sortedVault.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-md border border-[#E5E5E5]">
-              <p className="text-[#888888] text-sm mb-2">Aucune configuration sauvegardée.</p>
-              <p className="text-[#AAAAAA] text-xs mb-4">Lancez le Wizard ou utilisez un template pour commencer.</p>
+              <p className="text-[#888888] text-sm mb-2">{t("vault.empty")}</p>
+              <p className="text-[#AAAAAA] text-xs mb-4">{t("vault.emptyHint")}</p>
               <button
                 onClick={() => router.push("/wizard")}
                 className="text-sm text-[#0D6E6E] hover:underline"
               >
-                Lancer le Wizard
+                {t("vault.startWizard")}
               </button>
             </div>
           ) : (
@@ -188,7 +190,7 @@ export default function VaultPage() {
                         <div className="flex items-center gap-2 text-xs text-[#888888]">
                           <span>{formatDate(entry.updatedAt)}</span>
                           <span>.</span>
-                          <span>{info.fileCount} fichiers</span>
+                          <span>{info.fileCount} {t("vault.files")}</span>
                           <span>.</span>
                           <span>{formatFileSize(info.totalSize)}</span>
                         </div>
@@ -211,19 +213,19 @@ export default function VaultPage() {
                         onClick={() => handleRestore(entry)}
                         className="text-[12px] font-medium text-[#0D6E6E] hover:underline px-2"
                       >
-                        Restore
+                        {t("vault.restore")}
                       </button>
                       <button
                         onClick={() => handleExport(entry)}
                         className="text-[12px] font-medium text-[#0D6E6E] hover:underline px-2"
                       >
-                        Export
+                        {t("vault.export")}
                       </button>
                       <button
                         onClick={() => handleDelete(entry)}
                         className="text-[12px] font-medium text-red-500 hover:underline px-2"
                       >
-                        Suppr
+                        {t("vault.delete")}
                       </button>
                     </div>
                   </div>

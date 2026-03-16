@@ -17,6 +17,7 @@ import { downloadAsZip, downloadSingleFile, formatFileSize } from "@/lib/downloa
 import { saveToVault } from "@/lib/storage";
 import type { GeneratedFile } from "@/types";
 import Modal from "@/components/Modal";
+import { useT } from "@/i18n";
 
 const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
   ssr: false,
@@ -64,6 +65,7 @@ const DOC_LINKS = [
 export default function ExpertPage() {
   const { config, dispatch } = useConfig();
   const { addToast } = useToast();
+  const t = useT();
   const [activeTab, setActiveTab] = useState("CLAUDE.md");
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [saveName, setSaveName] = useState("");
@@ -173,9 +175,9 @@ export default function ExpertPage() {
     setIsDownloading(true);
     try {
       await downloadAsZip(allFiles);
-      addToast("Configuration téléchargée !");
+      addToast(t("toast.downloaded"));
     } catch {
-      addToast("Erreur lors du téléchargement", "error");
+      addToast(t("toast.downloadError"), "error");
     } finally {
       setIsDownloading(false);
     }
@@ -192,7 +194,7 @@ export default function ExpertPage() {
       ...(localClaudeIgnore !== null ? { claudeIgnoreContent: localClaudeIgnore } : {}),
     };
     saveToVault(saveName.trim(), configSnapshot);
-    addToast("Sauvegardé dans le Vault");
+    addToast(t("toast.saved"));
     setShowSaveDialog(false);
     setSaveName("");
   };
@@ -201,9 +203,9 @@ export default function ExpertPage() {
     <>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
-          breadcrumb="EXPERT MODE"
-          title="Éditeur de Configuration"
-          subtitle="Édite directement tes fichiers de configuration Claude Code."
+          breadcrumb={t("expert.breadcrumb")}
+          title={t("expert.title")}
+          subtitle={t("expert.subtitle")}
         />
 
         {/* Editor Area */}
@@ -241,31 +243,31 @@ export default function ExpertPage() {
             {/* Action bar */}
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center gap-4 text-xs text-[#888888]">
-                <span>{allFiles.length} fichiers</span>
+                <span>{allFiles.length} {t("common.files")}</span>
                 <span>{formatFileSize(totalSize)}</span>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => {
                     const file = allFiles.find(f => f.path === activeTab) || allFiles.find(f => f.path.endsWith(activeTab));
-                    if (file) { downloadSingleFile(file); addToast(`${file.path} téléchargé`); }
+                    if (file) { downloadSingleFile(file); addToast(t("toast.fileSaved", { path: file.path })); }
                   }}
                   className="px-4 py-2 text-sm text-[#888888] border border-[#E5E5E5] rounded-lg hover:bg-[#FAFAFA] transition-colors"
                 >
-                  Fichier seul
+                  {t("expert.singleFile")}
                 </button>
                 <button
                   onClick={() => setShowSaveDialog(true)}
                   className="px-4 py-2 text-sm text-[#0D6E6E] border border-[#0D6E6E] rounded-lg hover:bg-[#F0FAFA] transition-colors"
                 >
-                  Sauver dans le Vault
+                  {t("expert.saveVault")}
                 </button>
                 <button
                   onClick={handleDownload}
                   disabled={isDownloading}
                   className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded-lg hover:bg-[#0A5555] transition-colors disabled:opacity-60"
                 >
-                  {isDownloading ? "Téléchargement..." : "Télécharger le ZIP"}
+                  {isDownloading ? t("expert.downloading") : t("expert.download")}
                 </button>
               </div>
             </div>
@@ -275,7 +277,7 @@ export default function ExpertPage() {
           <div className="hidden lg:flex w-80 flex-col gap-4 bg-[#F8F8F8] border border-[#E5E5E5] rounded-lg p-5 flex-shrink-0">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[#1A1A1A]">
-                Documentation
+                {t("expert.docs")}
               </span>
               <a
                 href="https://code.claude.com/docs"
@@ -308,28 +310,28 @@ export default function ExpertPage() {
 
             {/* Quick tips */}
             <div className="mt-auto p-3 bg-[#F0FAFA] border border-[#0D6E6E] rounded-md">
-              <span className="text-[13px] font-medium text-[#0D6E6E]">Astuce</span>
+              <span className="text-[13px] font-medium text-[#0D6E6E]">{t("expert.tip")}</span>
               <p className="text-xs text-[#666666] mt-1">
-                Les modifications dans l&apos;editeur sont en temps reel. Telecharge le ZIP quand tu es satisfait.
+                {t("expert.tipText")}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      <Modal open={showSaveDialog} onClose={() => setShowSaveDialog(false)} title="Nom de la configuration">
+      <Modal open={showSaveDialog} onClose={() => setShowSaveDialog(false)} title={t("modal.saveTitle")}>
         <input
           type="text"
           value={saveName}
           onChange={(e) => setSaveName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSaveToVault()}
-          placeholder="Ma config Claude..."
+          placeholder={t("modal.savePlaceholder")}
           className="w-full px-3 py-2 border border-[#E5E5E5] rounded mb-4 focus:outline-none focus:border-[#0D6E6E]"
           autoFocus
         />
         <div className="flex gap-2 justify-end">
-          <button onClick={() => setShowSaveDialog(false)} className="px-4 py-2 text-sm text-[#666666] hover:text-[#1A1A1A]">Annuler</button>
-          <button onClick={handleSaveToVault} className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]">Sauvegarder</button>
+          <button onClick={() => setShowSaveDialog(false)} className="px-4 py-2 text-sm text-[#666666] hover:text-[#1A1A1A]">{t("modal.cancel")}</button>
+          <button onClick={handleSaveToVault} className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]">{t("modal.save")}</button>
         </div>
       </Modal>
     </>

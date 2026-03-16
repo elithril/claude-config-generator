@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useT } from "@/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
-
-const navItems = [
-  { name: "Wizard", href: "/wizard" },
-  { name: "Expert", href: "/expert" },
-  { name: "Vault", href: "/vault" },
-];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const t = useT();
+
+  const navItems = [
+    { name: t("sidebar.wizard"), href: "/wizard" },
+    { name: t("sidebar.expert"), href: "/expert" },
+    { name: t("sidebar.vault"), href: "/vault" },
+  ];
 
   const isActive = (href: string) => pathname.startsWith(href);
 
@@ -30,7 +32,7 @@ export default function Sidebar() {
           <nav className="flex flex-col gap-1">
             {navItems.map((item) => (
               <Link
-                key={item.name}
+                key={item.href}
                 href={item.href}
                 className={`px-3.5 py-3 rounded text-[14px] transition-colors ${
                   isActive(item.href)
@@ -52,7 +54,7 @@ export default function Sidebar() {
             rel="noopener noreferrer"
             className="text-[#888888] text-[13px] hover:text-[#AAAAAA] transition-colors"
           >
-            Documentation →
+            {t("sidebar.docs")}
           </a>
           <span className="font-[family-name:var(--font-jetbrains)] text-[11px] text-[#666666]">
             v1.0.0
@@ -64,7 +66,7 @@ export default function Sidebar() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex justify-around py-2 px-1">
         {navItems.map((item) => (
           <Link
-            key={item.name}
+            key={item.href}
             href={item.href}
             className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded text-[11px] ${
               isActive(item.href)

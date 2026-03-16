@@ -12,6 +12,7 @@ import {
 } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
+import { useT } from "@/i18n";
 import { generateAllFiles } from "@/lib/generator";
 import { formatFileSize } from "@/lib/download";
 import type { RuleEntry } from "@/types";
@@ -26,6 +27,7 @@ export default function WizardPage() {
   const router = useRouter();
   const { config, dispatch } = useConfig();
   const { addToast } = useToast();
+  const t = useT();
   const [currentStep, setCurrentStep] = useState(0);
   const [showAdvancedSteps, setShowAdvancedSteps] = useState(false);
   const [advancedStep, setAdvancedStep] = useState(0);
@@ -178,27 +180,27 @@ export default function WizardPage() {
   const stepMeta = useMemo(() => {
     if (!showAdvancedSteps) {
       const meta = [
-        { breadcrumb: "WIZARD / CHOIX INITIAL", title: "Configuration Wizard", subtitle: "Choisis un preset pour démarrer rapidement." },
-        { breadcrumb: "SECTION 1 / PERSONNALITÉ", title: "Comment Claude doit se comporter ?", subtitle: "Ces réponses configurent le fichier CLAUDE.md et settings.json" },
-        { breadcrumb: "SECTION 2 / PERMISSIONS", title: "Que peut faire Claude ?", subtitle: "Configure les permissions et le style de réponse." },
-        { breadcrumb: "WIZARD / PRESQUE FINI", title: "Ta config de base est prête !", subtitle: "Tu peux l'utiliser maintenant ou aller plus loin." },
+        { breadcrumb: t("wizard.step1.breadcrumb"), title: t("wizard.step1.title"), subtitle: t("wizard.step1.subtitle") },
+        { breadcrumb: t("wizard.step2.breadcrumb"), title: t("wizard.step2.title"), subtitle: t("wizard.step2.subtitle") },
+        { breadcrumb: t("wizard.step3.breadcrumb"), title: t("wizard.step3.title"), subtitle: t("wizard.step3.subtitle") },
+        { breadcrumb: t("wizard.step4.breadcrumb"), title: t("wizard.step4.title"), subtitle: t("wizard.step4.subtitle") },
       ];
       return meta[currentStep] || meta[0];
     }
     const stepKey = advancedSteps[advancedStep]?.key;
     const map: Record<string, { breadcrumb: string; title: string; subtitle: string }> = {
-      hooks: { breadcrumb: "SECTION 3 / AUTOMATISATION", title: "Configure les Hooks", subtitle: "Scripts qui s'exécutent automatiquement avant/après les actions." },
-      mcp: { breadcrumb: "SECTION 4 / OUTILS EXTERNES", title: "Configure les MCP Servers", subtitle: "Connecte Claude à des APIs, bases de données, services..." },
-      rules: { breadcrumb: "SECTION 5 / RÈGLES AVANCÉES", title: "Configure les Rules modulaires", subtitle: "Règles spécifiques par dossier ou type de fichier." },
-      recap: { breadcrumb: "WIZARD / TERMINÉ", title: "Ta configuration est prête !", subtitle: "Sélectionne les fichiers à télécharger." },
+      hooks: { breadcrumb: t("wizard.hooks.breadcrumb"), title: t("wizard.hooks.title"), subtitle: t("wizard.hooks.subtitle") },
+      mcp: { breadcrumb: t("wizard.mcp.breadcrumb"), title: t("wizard.mcp.title"), subtitle: t("wizard.mcp.subtitle") },
+      rules: { breadcrumb: t("wizard.rules.breadcrumb"), title: t("wizard.rules.title"), subtitle: t("wizard.rules.subtitle") },
+      recap: { breadcrumb: t("wizard.recap.breadcrumb"), title: t("wizard.recap.title"), subtitle: t("wizard.recap.subtitle") },
     };
     return map[stepKey || "recap"];
-  }, [showAdvancedSteps, currentStep, advancedStep, advancedSteps]);
+  }, [showAdvancedSteps, currentStep, advancedStep, advancedSteps, t]);
 
   const isRecap = showAdvancedSteps && advancedSteps[advancedStep]?.key === "recap";
   const buttonText = !showAdvancedSteps && currentStep === 3
-    ? (config.enableHooks || config.enableMCP || config.enableRules ? "Affiner →" : "Finaliser")
-    : isRecap ? null : "Continue →";
+    ? (config.enableHooks || config.enableMCP || config.enableRules ? t("wizard.refine") : t("wizard.finalize"))
+    : isRecap ? null : t("wizard.continue");
 
   const adv = wizardMode === "advanced";
 
@@ -208,31 +210,31 @@ export default function WizardPage() {
       switch (currentStep) {
         case 0:
           return (
-            <QuestionCard title="Quel setup te correspond ?">
-              <RadioOption selected={config.bundle === "safe"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "safe" })} emoji="🛡️" title="Safe Mode" description="Demande confirmation avant chaque action. Idéal pour débuter." detail="→ CLAUDE.md · settings.json · .claudeignore" />
-              <RadioOption selected={config.bundle === "dev"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "dev" })} emoji="⚡" title="Dev Rapide" description="Write auto, Bash limité. Pour les devs qui veulent aller vite." detail="→ CLAUDE.md · settings.json · .claudeignore" />
+            <QuestionCard title={t("wizard.step1.question")}>
+              <RadioOption selected={config.bundle === "safe"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "safe" })} emoji="🛡️" title={t("wizard.step1.safe")} description={t("wizard.step1.safeDesc")} detail={t("wizard.step1.safeDetail")} />
+              <RadioOption selected={config.bundle === "dev"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "dev" })} emoji="⚡" title={t("wizard.step1.dev")} description={t("wizard.step1.devDesc")} detail={t("wizard.step1.devDetail")} />
             </QuestionCard>
           );
 
         case 1:
           return (
             <>
-              <QuestionCard title="Claude doit te parler en...">
-                <RadioOption selected={config.language === "fr"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "fr" })} emoji="🇫🇷" title="Français" />
-                <RadioOption selected={config.language === "en"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "en" })} emoji="🇬🇧" title="English" />
-                <RadioOption selected={config.language === "es"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "es" })} emoji="🇪🇸" title="Español" />
+              <QuestionCard title={t("wizard.step2.language")}>
+                <RadioOption selected={config.language === "fr"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "fr" })} emoji="🇫🇷" title={t("wizard.step2.french")} />
+                <RadioOption selected={config.language === "en"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "en" })} emoji="🇬🇧" title={t("wizard.step2.english")} />
+                <RadioOption selected={config.language === "es"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "es" })} emoji="🇪🇸" title={t("wizard.step2.spanish")} />
               </QuestionCard>
-              <QuestionCard title="Tu préfères qu'il soit...">
+              <QuestionCard title={t("wizard.step2.tone")}>
                 <div className="flex gap-3">
-                  <ChoiceButton emoji="😎" label="Cool" selected={config.tone === "cool"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "cool" })} />
-                  <ChoiceButton emoji="👔" label="Pro" selected={config.tone === "pro"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pro" })} />
-                  <ChoiceButton emoji="📚" label="Pédagogue" selected={config.tone === "pedagogue"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pedagogue" })} />
+                  <ChoiceButton emoji="😎" label={t("wizard.step2.cool")} selected={config.tone === "cool"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "cool" })} />
+                  <ChoiceButton emoji="👔" label={t("wizard.step2.pro")} selected={config.tone === "pro"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pro" })} />
+                  <ChoiceButton emoji="📚" label={t("wizard.step2.pedagogue")} selected={config.tone === "pedagogue"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pedagogue" })} />
                 </div>
               </QuestionCard>
-              <QuestionCard title="Quel modèle utiliser par défaut ?">
-                <RadioOption selected={config.model === "claude-sonnet-4-6"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-sonnet-4-6" })} title="Sonnet 4.6" description="Équilibré. Rapide et capable. Recommandé." />
-                <RadioOption selected={config.model === "claude-opus-4-6"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-opus-4-6" })} title="Opus 4.6" description="Le plus puissant. Raisonnement profond, tâches complexes." />
-                <RadioOption selected={config.model === "claude-haiku-4-5"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-haiku-4-5" })} title="Haiku 4.5" description="Le plus rapide. Tâches simples, itérations rapides." />
+              <QuestionCard title={t("wizard.step2.model")}>
+                <RadioOption selected={config.model === "claude-sonnet-4-6"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-sonnet-4-6" })} title={t("wizard.step2.sonnet")} description={t("wizard.step2.sonnetDesc")} />
+                <RadioOption selected={config.model === "claude-opus-4-6"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-opus-4-6" })} title={t("wizard.step2.opus")} description={t("wizard.step2.opusDesc")} />
+                <RadioOption selected={config.model === "claude-haiku-4-5"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-haiku-4-5" })} title={t("wizard.step2.haiku")} description={t("wizard.step2.haikuDesc")} />
               </QuestionCard>
 
               {/* === ADVANCED ONLY === */}
@@ -301,16 +303,16 @@ export default function WizardPage() {
         case 2:
           return (
             <>
-              <QuestionCard title="Comment Claude doit-il répondre ?">
-                <RadioOption selected={config.responseStyle === "concise"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "concise" })} title="Concis et direct" description="Diffs uniquement, pas de blabla." />
-                <RadioOption selected={config.responseStyle === "detailed"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "detailed" })} title="Détaillé et pédagogue" description="Explications complètes avec exemples." />
-                <RadioOption selected={config.responseStyle === "technical"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "technical" })} title="Technique et précis" description="Références doc, complexité, trade-offs." />
+              <QuestionCard title={t("wizard.step3.responseStyle")}>
+                <RadioOption selected={config.responseStyle === "concise"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "concise" })} title={t("wizard.step3.concise")} description={t("wizard.step3.conciseDesc")} />
+                <RadioOption selected={config.responseStyle === "detailed"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "detailed" })} title={t("wizard.step3.detailed")} description={t("wizard.step3.detailedDesc")} />
+                <RadioOption selected={config.responseStyle === "technical"} onClick={() => dispatch({ type: "SET_FIELD", field: "responseStyle", value: "technical" })} title={t("wizard.step3.technical")} description={t("wizard.step3.technicalDesc")} />
               </QuestionCard>
-              <QuestionCard title="Quand Claude veut utiliser un outil...">
-                <RadioOption selected={config.permissionMode === "default"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "default" })} title="Demander à chaque fois" description="Claude demande confirmation pour chaque action." />
-                <RadioOption selected={config.permissionMode === "plan"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "plan" })} title="Mode Plan" description="Claude propose un plan avant d'agir, tu valides l'ensemble." />
-                <RadioOption selected={config.permissionMode === "acceptEdits"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "acceptEdits" })} title="Auto-édition" description="Les modifications de fichiers sont auto-approuvées. Le reste demande confirmation." />
-                <RadioOption selected={config.permissionMode === "dontAsk"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "dontAsk" })} title="Confiance totale" description="Claude agit sans demander. Déconseillé aux débutants." />
+              <QuestionCard title={t("wizard.step3.permissionMode")}>
+                <RadioOption selected={config.permissionMode === "default"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "default" })} title={t("wizard.step3.modeDefault")} description={t("wizard.step3.modeDefaultDesc")} />
+                <RadioOption selected={config.permissionMode === "plan"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "plan" })} title={t("wizard.step3.modePlan")} description={t("wizard.step3.modePlanDesc")} />
+                <RadioOption selected={config.permissionMode === "acceptEdits"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "acceptEdits" })} title={t("wizard.step3.modeAcceptEdits")} description={t("wizard.step3.modeAcceptEditsDesc")} />
+                <RadioOption selected={config.permissionMode === "dontAsk"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "dontAsk" })} title={t("wizard.step3.modeDontAsk")} description={t("wizard.step3.modeDontAskDesc")} />
               </QuestionCard>
 
               {/* === ADVANCED ONLY === */}
@@ -518,13 +520,13 @@ export default function WizardPage() {
                 onClick={() => setWizardMode("quick")}
                 className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "quick" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
               >
-                Quick
+                {t("wizard.quick")}
               </button>
               <button
                 onClick={() => setWizardMode("advanced")}
                 className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "advanced" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
               >
-                Advanced
+                {t("wizard.advanced")}
               </button>
             </div>
           </div>
@@ -548,12 +550,12 @@ export default function WizardPage() {
         <div className="flex-shrink-0 px-4 md:px-8 py-4 pb-20 md:pb-4 border-t border-[#E5E5E5] bg-[#FAFAFA]">
           {buttonText ? (
             <div className="flex gap-4">
-              <Button variant="outline" onClick={handleBack}>Back</Button>
+              <Button variant="outline" onClick={handleBack}>{t("wizard.back")}</Button>
               <Button variant="primary" onClick={handleMainAction}>{buttonText}</Button>
             </div>
           ) : isRecap ? (
             <div className="flex gap-4">
-              <Button variant="outline" onClick={handleBack}>Back</Button>
+              <Button variant="outline" onClick={handleBack}>{t("wizard.back")}</Button>
             </div>
           ) : null}
         </div>
@@ -561,12 +563,12 @@ export default function WizardPage() {
 
       {/* Right Panel - Preview */}
       <div className="hidden lg:flex w-[520px] bg-[#F0F0F0] border-l border-[#E0E0E0] p-8 flex-col gap-4 overflow-auto">
-        <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">LIVE PREVIEW</span>
+        <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">{t("wizard.preview.title")}</span>
         <div className="flex gap-3">
           {[
-            { value: generatedFiles.length, label: "Fichiers", highlight: true },
-            { value: config.rules.filter((r: RuleEntry) => r.enabled).length, label: "Rules" },
-            { value: formatFileSize(totalSize), label: "Total" },
+            { value: generatedFiles.length, label: t("wizard.preview.files"), highlight: true },
+            { value: config.rules.filter((r: RuleEntry) => r.enabled).length, label: t("wizard.preview.rules") },
+            { value: formatFileSize(totalSize), label: t("wizard.preview.total") },
           ].map((m, i) => (
             <div key={i} className="flex-1 bg-white rounded-md border border-[#E0E0E0] p-3 flex flex-col gap-1">
               <span className={`font-[family-name:var(--font-jetbrains)] text-xl font-semibold ${m.highlight ? "text-[#0D6E6E]" : "text-[#1A1A1A]"}`}>{m.value}</span>
@@ -588,7 +590,7 @@ export default function WizardPage() {
             <span className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666]">{selectedPreviewFile}</span>
           </div>
           <pre className="p-4 text-xs font-[family-name:var(--font-jetbrains)] leading-5 text-[#333333] whitespace-pre-wrap break-words">
-            {currentFile?.content || "// Aucun contenu"}
+            {currentFile?.content || t("wizard.preview.noContent")}
           </pre>
         </div>
       </div>
