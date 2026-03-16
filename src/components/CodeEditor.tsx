@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import CodeMirror from "@uiw/react-codemirror";
+import CodeMirror, { EditorView } from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { markdown } from "@codemirror/lang-markdown";
-import { EditorView } from "@codemirror/view";
 
 interface CodeEditorProps {
   value: string;
