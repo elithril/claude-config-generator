@@ -1,99 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Layout, PageHeader } from "@/components";
-
-interface Template {
-  id: string;
-  icon: string;
-  iconBg: string;
-  iconColor: string;
-  title: string;
-  description: string;
-  uses: string;
-  popular?: boolean;
-}
-
-const templates: Template[] = [
-  {
-    id: "1",
-    icon: "⚙",
-    iconBg: "#F0FAFA",
-    iconColor: "#0D6E6E",
-    title: "Node.js Backend",
-    description:
-      "Production-ready Node.js configuration with ESLint, Prettier, and TypeScript.",
-    uses: "2.4k uses",
-    popular: true,
-  },
-  {
-    id: "2",
-    icon: "◈",
-    iconBg: "#FFF5F0",
-    iconColor: "#E65C00",
-    title: "React Frontend",
-    description:
-      "Modern React setup with Vite, TailwindCSS, and testing utilities.",
-    uses: "1.8k uses",
-  },
-  {
-    id: "3",
-    icon: "⬡",
-    iconBg: "#F5F0FF",
-    iconColor: "#7C3AED",
-    title: "Docker Compose",
-    description:
-      "Multi-container Docker setup for microservices architecture.",
-    uses: "956 uses",
-  },
-  {
-    id: "4",
-    icon: "⚡",
-    iconBg: "#FFF5F0",
-    iconColor: "#E07B54",
-    title: "Python FastAPI",
-    description:
-      "High-performance Python API with async support and auto-documentation.",
-    uses: "1.2k uses",
-  },
-  {
-    id: "5",
-    icon: "☁",
-    iconBg: "#F0F0F0",
-    iconColor: "#666666",
-    title: "AWS Lambda",
-    description:
-      "Serverless functions with proper IAM roles and deployment scripts.",
-    uses: "780 uses",
-  },
-  {
-    id: "6",
-    icon: "🔒",
-    iconBg: "#F0FAFA",
-    iconColor: "#0D6E6E",
-    title: "Security Hardened",
-    description:
-      "Maximum security configuration with strict permissions and auditing.",
-    uses: "540 uses",
-  },
-];
+import { useConfig } from "@/context/ConfigContext";
+import { useToast } from "@/context/ToastContext";
+import { TEMPLATES } from "@/data/templates";
 
 export default function LibraryPage() {
+  const router = useRouter();
+  const { dispatch } = useConfig();
+  const { addToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const filteredTemplates = templates.filter(
-    (t) =>
-      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const categories = useMemo(() => {
+    const cats = new Set(TEMPLATES.map((t) => t.category));
+    return ["All", ...Array.from(cats).sort()];
+  }, []);
+
+  const filteredTemplates = useMemo(() => {
+    return TEMPLATES.filter((t) => {
+      const matchesSearch =
+        !searchQuery ||
+        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchQuery, selectedCategory]);
+
+  const handleUseTemplate = (templateId: string) => {
+    const template = TEMPLATES.find((t) => t.id === templateId);
+    if (!template) return;
+    dispatch({ type: "LOAD_TEMPLATE", config: template.config });
+    addToast(`Template "${template.title}" charge`);
+    router.push("/expert");
+  };
+
+  const formatUses = (uses: number) => {
+    if (uses >= 1000) return `${(uses / 1000).toFixed(1)}k uses`;
+    return `${uses} uses`;
+  };
 
   return (
     <Layout>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
           title="Template Library"
-          subtitle="Browse and use pre-built configuration templates."
+          subtitle="Parcourez et utilisez des templates de configuration pre-configures."
         />
 
         {/* Search Bar */}
@@ -102,64 +57,86 @@ export default function LibraryPage() {
             <span className="text-[#888888]">⌕</span>
             <input
               type="text"
-              placeholder="Search templates..."
+              placeholder="Rechercher des templates..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 text-sm text-[#1A1A1A] placeholder:text-[#AAAAAA] outline-none bg-transparent"
             />
           </div>
-          <button className="flex items-center gap-2 bg-white border border-[#E5E5E5] rounded px-4 py-3">
-            <span className="text-sm text-[#666666]">{selectedCategory}</span>
-            <span className="text-xs text-[#888888]">▾</span>
-          </button>
+          <div className="relative">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="appearance-none bg-white border border-[#E5E5E5] rounded px-4 py-3 pr-8 text-sm text-[#666666] cursor-pointer outline-none"
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#888888] pointer-events-none">▾</span>
+          </div>
         </div>
 
         {/* Templates Grid */}
         <div className="flex-1 px-10 py-6 overflow-auto">
-          <div className="grid grid-cols-3 gap-6">
-            {filteredTemplates.map((template) => (
-              <div
-                key={template.id}
-                className="flex flex-col gap-4 p-6 bg-white rounded-md border border-[#E5E5E5] h-[220px]"
-              >
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
-                    style={{
-                      backgroundColor: template.iconBg,
-                      color: template.iconColor,
-                    }}
-                  >
-                    {template.icon}
+          {filteredTemplates.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-[#888888] text-sm">Aucun template ne correspond a votre recherche.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-6">
+              {filteredTemplates.map((template) => (
+                <div
+                  key={template.id}
+                  className="flex flex-col gap-4 p-6 bg-white rounded-md border border-[#E5E5E5] h-[220px] hover:border-[#0D6E6E] transition-colors"
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
+                      style={{
+                        backgroundColor: template.iconBg,
+                        color: template.iconColor,
+                      }}
+                    >
+                      {template.icon}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {template.popular && (
+                        <span className="text-[10px] font-semibold text-[#0D6E6E] bg-[#F0FAFA] px-2 py-1 rounded-full">
+                          Popular
+                        </span>
+                      )}
+                      <span className="text-[10px] text-[#888888] bg-[#F5F5F5] px-2 py-1 rounded-full">
+                        {template.category}
+                      </span>
+                    </div>
                   </div>
-                  {template.popular && (
-                    <span className="text-[10px] font-semibold text-[#0D6E6E] bg-[#F0FAFA] px-2 py-1 rounded-full">
-                      Popular
+
+                  {/* Content */}
+                  <h3 className="font-[family-name:var(--font-newsreader)] text-lg font-medium text-[#1A1A1A]">
+                    {template.title}
+                  </h3>
+                  <p className="text-[13px] text-[#666666] leading-[1.5] flex-1">
+                    {template.description}
+                  </p>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between">
+                    <span className="font-[family-name:var(--font-jetbrains)] text-[11px] text-[#888888]">
+                      {formatUses(template.uses)}
                     </span>
-                  )}
+                    <button
+                      onClick={() => handleUseTemplate(template.id)}
+                      className="text-[13px] font-medium text-[#0D6E6E] hover:underline"
+                    >
+                      Use
+                    </button>
+                  </div>
                 </div>
-
-                {/* Content */}
-                <h3 className="font-[family-name:var(--font-newsreader)] text-lg font-medium text-[#1A1A1A]">
-                  {template.title}
-                </h3>
-                <p className="text-[13px] text-[#666666] leading-[1.5] flex-1">
-                  {template.description}
-                </p>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between">
-                  <span className="font-[family-name:var(--font-jetbrains)] text-[11px] text-[#888888]">
-                    {template.uses}
-                  </span>
-                  <button className="text-[13px] font-medium text-[#0D6E6E] hover:underline">
-                    Use →
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Layout>
