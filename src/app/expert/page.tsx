@@ -16,6 +16,7 @@ import {
 import { downloadAsZip, downloadSingleFile, formatFileSize } from "@/lib/download";
 import { saveToVault } from "@/lib/storage";
 import type { GeneratedFile } from "@/types";
+import Modal from "@/components/Modal";
 
 const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
   ssr: false,
@@ -316,37 +317,21 @@ export default function ExpertPage() {
         </div>
       </div>
 
-      {/* Save dialog */}
-      {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-label="Sauvegarder la configuration">
-          <div className="bg-white rounded-lg p-6 w-[400px]">
-            <h3 className="text-lg font-medium text-[#1A1A1A] mb-4">Nom de la configuration</h3>
-            <input
-              type="text"
-              value={saveName}
-              onChange={(e) => setSaveName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSaveToVault()}
-              placeholder="Ma config Claude..."
-              className="w-full px-3 py-2 border border-[#E5E5E5] rounded mb-4 focus:outline-none focus:border-[#0D6E6E]"
-              autoFocus
-            />
-            <div className="flex gap-2 justify-end">
-              <button
-                onClick={() => setShowSaveDialog(false)}
-                className="px-4 py-2 text-sm text-[#666666] hover:text-[#1A1A1A]"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleSaveToVault}
-                className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]"
-              >
-                Sauvegarder
-              </button>
-            </div>
-          </div>
+      <Modal open={showSaveDialog} onClose={() => setShowSaveDialog(false)} title="Nom de la configuration">
+        <input
+          type="text"
+          value={saveName}
+          onChange={(e) => setSaveName(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSaveToVault()}
+          placeholder="Ma config Claude..."
+          className="w-full px-3 py-2 border border-[#E5E5E5] rounded mb-4 focus:outline-none focus:border-[#0D6E6E]"
+          autoFocus
+        />
+        <div className="flex gap-2 justify-end">
+          <button onClick={() => setShowSaveDialog(false)} className="px-4 py-2 text-sm text-[#666666] hover:text-[#1A1A1A]">Annuler</button>
+          <button onClick={handleSaveToVault} className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]">Sauvegarder</button>
         </div>
-      )}
+      </Modal>
     </>
   );
 }
