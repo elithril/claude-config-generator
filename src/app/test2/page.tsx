@@ -134,59 +134,58 @@ export default function Test2HomePage() {
             </p>
           </div>
 
-          {/* Value points — top of middle zone */}
-          <div className="relative z-10 flex flex-col gap-3 mt-auto">
-            {[
-              { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
-              { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
-              { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
-            ].map(({ icon, text }) => (
-              <div key={text} className="flex items-center gap-3">
-                <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
-                <span className="text-[13px] text-[#777777]">{text}</span>
-              </div>
-            ))}
+          {/* Value points + CTAs — centered in available space */}
+          <div className="relative z-10 flex flex-col gap-6 my-auto">
+            <div className="flex flex-col gap-3">
+              {[
+                { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
+                { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
+                { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
+              ].map(({ icon, text }) => (
+                <div key={text} className="flex items-center gap-3">
+                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
+                  <span className="text-[13px] text-[#777777]">{text}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => router.push("/wizard")}
+                className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
+              >
+                <span className="text-white text-[15px] font-medium">Optimiser mon setup</span>
+                <svg className="text-white/60 group-hover:text-white transition-colors" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </button>
+              <button
+                onClick={() => router.push("/expert")}
+                className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl cursor-pointer border border-[#333333] hover:border-[#0D6E6E] text-[#777777] hover:text-[#0D6E6E] transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
+                <span className="text-[13px] font-medium">Éditer directement</span>
+              </button>
+            </div>
           </div>
 
-          {/* CTAs — centered between value points and vault */}
-          <div className="relative z-10 flex flex-col gap-3 my-auto">
-            <button
-              onClick={() => router.push("/wizard")}
-              className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
-            >
-              <span className="text-white text-[15px] font-medium">
-                Optimiser mon setup
-              </span>
-              <svg className="text-white/60 group-hover:text-white transition-colors" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </button>
-            <button
-              onClick={() => router.push("/expert")}
-              className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl cursor-pointer border border-[#333333] hover:border-[#0D6E6E] text-[#777777] hover:text-[#0D6E6E] transition-colors"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="16 18 22 12 16 6" />
-                <polyline points="8 6 2 12 8 18" />
-              </svg>
-              <span className="text-[13px] font-medium">Éditer directement</span>
-            </button>
-          </div>
-
-          {/* Bottom: vault + file chips */}
-          <div className="relative z-10 flex flex-col gap-3">
-            {vaultCount > 0 && (
+          {/* Bottom: vault (only if configs exist) */}
+          {vaultCount > 0 && (
+            <div className="relative z-10">
               <button
                 onClick={() => router.push("/vault")}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-[#2A2A2A] hover:border-[#0D6E6E] transition-colors"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer border border-[#2A2A2A] hover:border-[#0D6E6E] transition-colors w-full"
               >
                 <span className="text-sm">🔐</span>
                 <span className="text-[12px] text-[#888888]">{vaultCount} config{vaultCount > 1 ? "s" : ""} sauvegardée{vaultCount > 1 ? "s" : ""}</span>
                 <span className="text-[#555555] text-xs ml-auto">→</span>
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Right: code preview — 60% */}
