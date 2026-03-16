@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Layout, PageHeader, FeatureCard } from "@/components";
+import { PageHeader, FeatureCard } from "@/components";
 import { loadVault } from "@/lib/storage";
 
 type ModeType = "guided" | "manual";
@@ -16,7 +16,6 @@ export default function Home() {
   }, []);
 
   return (
-    <Layout>
       <div className="flex flex-col h-full overflow-auto">
         <PageHeader
           title="Configuration Generator"
@@ -150,6 +149,5 @@ export default function Home() {
           )}
         </div>
       </div>
-    </Layout>
   );
 }

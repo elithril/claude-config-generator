@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Layout,
   WizardProgress,
   RadioOption,
   QuestionCard,
@@ -335,7 +334,6 @@ export default function WizardPage() {
   const currentFile = generatedFiles.find((f) => f.path === selectedPreviewFile);
 
   return (
-    <Layout>
       <div className="flex flex-col lg:flex-row h-full min-h-screen">
         {/* Left Panel */}
         <div className="flex-1 flex flex-col bg-[#FAFAFA] p-4 md:p-8 pb-20 md:pb-8 overflow-auto">
@@ -397,6 +395,5 @@ export default function WizardPage() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

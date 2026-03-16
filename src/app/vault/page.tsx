@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Layout, PageHeader } from "@/components";
+import { PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
 import { loadVault, deleteVaultEntry, toggleStar } from "@/lib/storage";
@@ -99,7 +99,6 @@ export default function VaultPage() {
   };
 
   return (
-    <Layout>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
           breadcrumb="VAULT / MY CONFIGS"
@@ -234,6 +233,5 @@ export default function VaultPage() {
           )}
         </div>
       </div>
-    </Layout>
   );
 }

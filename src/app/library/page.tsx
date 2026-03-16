@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Layout, PageHeader } from "@/components";
+import { PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
 import { TEMPLATES } from "@/data/templates";
@@ -44,7 +44,6 @@ export default function LibraryPage() {
   };
 
   return (
-    <Layout>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
           breadcrumb="TEMPLATES / ALL"
@@ -140,6 +139,5 @@ export default function LibraryPage() {
           )}
         </div>
       </div>
-    </Layout>
   );
 }

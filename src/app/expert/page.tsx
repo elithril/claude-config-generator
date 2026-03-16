@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { Layout, PageHeader } from "@/components";
+import { PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
 import {
@@ -197,7 +197,7 @@ export default function ExpertPage() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
           breadcrumb="EXPERT MODE"
@@ -347,6 +347,6 @@ export default function ExpertPage() {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }
