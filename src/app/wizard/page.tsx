@@ -38,9 +38,12 @@ export default function WizardPage() {
   const [wizardMode, setWizardMode] = useState<"quick" | "advanced">("quick");
   const [stepTransition, setStepTransition] = useState(false);
 
-  useEffect(() => {
+  // Reset config on first mount only (not on re-renders)
+  const hasReset = useRef(false);
+  if (!hasReset.current) {
+    hasReset.current = true;
     dispatch({ type: "RESET" });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }
 
   const advancedSteps = useMemo(() => {
     const steps: { key: string; label: string }[] = [];
