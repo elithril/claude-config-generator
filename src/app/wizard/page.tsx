@@ -539,7 +539,7 @@ export default function WizardPage() {
 
         {/* Scrollable content */}
         <div ref={scrollRef} className="flex-1 overflow-auto px-4 md:px-8 py-4">
-          <div className={`flex flex-col gap-4 transition-all duration-150 ease-in-out ${stepTransition ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"}`}>
+          <div className={`flex flex-col gap-4 transition-opacity duration-150 ease-in-out ${stepTransition ? "opacity-0" : "opacity-100"}`}>
             {renderStepContent()}
           </div>
         </div>
