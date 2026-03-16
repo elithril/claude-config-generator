@@ -138,23 +138,39 @@ export default function Test2HomePage() {
           </div>
 
           {/* Middle: CTAs */}
-          <div className="relative z-10 flex flex-col gap-4 my-8 lg:my-0">
+          <div className="relative z-10 flex flex-col gap-5 my-8 lg:my-0">
             <button
               onClick={() => router.push("/wizard")}
-              className="group w-full py-4 px-6 bg-[#0D6E6E] rounded-xl hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99]"
+              className="group w-full flex items-center gap-4 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
             >
-              <span className="text-white text-[15px] font-medium">
-                Commencer le wizard →
-              </span>
-              <span className="block text-white/50 text-[12px] mt-1">
-                Guidé, 4 étapes, ~2 min
-              </span>
+              <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14.5 4h-5L7 7H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-3l-2.5-3z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </div>
+              <div className="flex-1 text-left">
+                <span className="text-white text-[15px] font-medium block">
+                  Commencer le wizard
+                </span>
+                <span className="text-white/50 text-[12px]">
+                  Guidé, 4 étapes, ~2 min
+                </span>
+              </div>
+              <svg className="text-white/40 group-hover:text-white/80 transition-colors flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
             </button>
             <button
               onClick={() => router.push("/expert")}
-              className="group text-[13px] text-[#666666] hover:text-[#0D6E6E] transition-colors"
+              className="group flex items-center justify-center gap-2 cursor-pointer text-[13px] text-[#666666] hover:text-[#0D6E6E] transition-colors py-1"
             >
-              Ou passer directement à l&apos;éditeur →
+              <svg className="opacity-60 group-hover:opacity-100 transition-opacity" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+              <span>Ou passer directement à l&apos;éditeur</span>
             </button>
           </div>
 
