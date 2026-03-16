@@ -5,9 +5,91 @@ import { useRouter } from "next/navigation";
 import { loadVault } from "@/lib/storage";
 
 const FILE_LINES = [
-  { file: "CLAUDE.md", lines: ["# Configuration Claude Code", "", "## Langue", "Toujours répondre en français.", "", "## Ton", "Professionnel et direct.", "", "## Style de réponse", "Réponses concises. Diffs uniquement."] },
-  { file: "settings.json", lines: ['{', '  "$schema": "https://json.schemastore.org/...",', '  "model": "claude-sonnet-4-6",', '  "language": "french",', '  "effortLevel": "high",', '  "alwaysThinkingEnabled": false,', '  "permissions": {', '    "allow": ["Bash(npm run *)"],', '    "deny": ["Read(./.env)"]', '  }', '}'] },
-  { file: ".claudeignore", lines: ["# Dependencies", "node_modules/", "", "# Build output", "dist/", ".next/", "build/", "", "# Environment", ".env", ".env.*"] },
+  { file: "CLAUDE.md", lines: [
+    "# Configuration Claude Code",
+    "",
+    "## Langue",
+    "Toujours répondre en français.",
+    "",
+    "## Ton",
+    "Professionnel et direct. Pas de politesses",
+    "superflues.",
+    "",
+    "## Style de réponse",
+    "Réponses concises. Pour le code, montre",
+    "uniquement les blocs modifiés (diffs) avec",
+    "le chemin du fichier au-dessus.",
+    "",
+    "## Sécurité",
+    "- Ne jamais exécuter de commandes destructrices",
+    "- Toujours vérifier les fichiers avant modification",
+    "- Préférer les opérations réversibles",
+  ]},
+  { file: "settings.json", lines: [
+    '{',
+    '  "$schema": "https://json.schemastore.org/claude-code-settings.json",',
+    '  "model": "claude-sonnet-4-6",',
+    '  "language": "french",',
+    '  "effortLevel": "high",',
+    '  "alwaysThinkingEnabled": true,',
+    '  "permissions": {',
+    '    "allow": [',
+    '      "Bash(npm run *)",',
+    '      "Bash(npx *)",',
+    '      "Bash(git *)"',
+    '    ],',
+    '    "deny": [',
+    '      "Read(./.env)",',
+    '      "Read(./.env.*)",',
+    '      "Bash(rm -rf *)"',
+    '    ],',
+    '    "defaultMode": "acceptEdits"',
+    '  },',
+    '  "hooks": {',
+    '    "PostToolUse": [{',
+    '      "matcher": "Write|Edit",',
+    '      "hooks": [{ "type": "command",',
+    '        "command": "npx eslint --fix $FILE" }]',
+    '    }]',
+    '  }',
+    '}',
+  ]},
+  { file: ".mcp.json", lines: [
+    '{',
+    '  "mcpServers": {',
+    '    "github": {',
+    '      "type": "http",',
+    '      "url": "https://api.githubcopilot.com/mcp/"',
+    '    },',
+    '    "chrome-devtools": {',
+    '      "command": "npx",',
+    '      "args": ["-y", "chrome-devtools-mcp@latest"]',
+    '    },',
+    '    "sentry": {',
+    '      "type": "http",',
+    '      "url": "https://mcp.sentry.dev/mcp"',
+    '    }',
+    '  }',
+    '}',
+  ]},
+  { file: ".claudeignore", lines: [
+    "# Dependencies",
+    "node_modules/",
+    "",
+    "# Build output",
+    "dist/",
+    ".next/",
+    "build/",
+    "",
+    "# Environment",
+    ".env",
+    ".env.*",
+    "",
+    "# Secrets",
+    "secrets/",
+    "*.pem",
+    "*.key",
+  ]},
 ];
 
 export default function Test2HomePage() {
@@ -16,10 +98,17 @@ export default function Test2HomePage() {
   const [activeFile, setActiveFile] = useState(0);
 
   useEffect(() => { setVaultCount(loadVault().length); }, []);
+  // Auto-cycle with reset on manual click
+  const [cycleKey, setCycleKey] = useState(0);
   useEffect(() => {
-    const timer = setInterval(() => setActiveFile(f => (f + 1) % FILE_LINES.length), 4000);
+    const timer = setInterval(() => setActiveFile(f => (f + 1) % FILE_LINES.length), 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [cycleKey]);
+
+  const selectFile = (i: number) => {
+    setActiveFile(i);
+    setCycleKey(k => k + 1); // reset timer
+  };
 
   const currentFile = FILE_LINES[activeFile];
 
@@ -28,7 +117,7 @@ export default function Test2HomePage() {
       {/* Split hero — fills viewport, no scroll */}
       <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Left: dark — 40% */}
-        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-6 md:p-10 lg:p-12">
+        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-8 md:p-12 lg:p-14">
           {/* Grid pattern */}
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
@@ -37,15 +126,15 @@ export default function Test2HomePage() {
 
           {/* Top: title */}
           <div className="relative z-10">
-            <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px] mb-4 block">
+            <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px] mb-5 block">
               CLAUDE CODE CONFIG
             </span>
-            <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[42px] font-medium text-white tracking-[-2px] leading-[1.1] mb-4">
+            <h1 className="font-[family-name:var(--font-newsreader)] text-[34px] lg:text-[44px] font-medium text-white tracking-[-2px] leading-[1.15] mb-6">
               Configure<br />Claude Code<br />
               <span className="text-[#0D6E6E]">en quelques clics.</span>
             </h1>
-            <p className="text-[14px] text-[#666666] leading-[1.7] max-w-xs">
-              Génère CLAUDE.md, settings.json, hooks, MCP&nbsp;servers et .claudeignore — prêts à déposer.
+            <p className="text-[15px] text-[#777777] leading-[1.8] max-w-sm">
+              Génère tes fichiers de configuration — CLAUDE.md, settings.json, hooks, MCP&nbsp;servers — prêts à déposer dans ton projet.
             </p>
           </div>
 
@@ -112,7 +201,7 @@ export default function Test2HomePage() {
               {FILE_LINES.map((f, i) => (
                 <button
                   key={f.file}
-                  onClick={() => setActiveFile(i)}
+                  onClick={() => selectFile(i)}
                   className={`px-3 py-1.5 rounded-md text-[11px] font-mono transition-all ${
                     i === activeFile
                       ? "bg-[#0D6E6E]/20 text-[#0D6E6E] border border-[#0D6E6E]/30"
