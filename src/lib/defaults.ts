@@ -73,10 +73,11 @@ export const DEFAULT_HOOKS: HookEntry[] = [
 ];
 
 export const DEFAULT_MCP_SERVERS: McpServer[] = [
+  // === Popular ===
   {
     id: "mcp-github",
     name: "GitHub",
-    description: "Gestion de repos, PRs, issues",
+    description: "Gestion de repos, PRs, issues via l'API GitHub",
     transport: "http",
     url: "https://api.githubcopilot.com/mcp/",
     enabled: false,
@@ -84,15 +85,15 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     icon: "🐙",
   },
   {
-    id: "mcp-filesystem",
-    name: "Filesystem",
-    description: "Accès au système de fichiers local",
+    id: "mcp-chrome-devtools",
+    name: "Chrome DevTools",
+    description: "Automatisation du navigateur, screenshots, debugging, tests",
     transport: "stdio",
     command: "npx",
-    args: ["-y", "@modelcontextprotocol/server-filesystem", "."],
+    args: ["-y", "chrome-devtools-mcp@latest"],
     enabled: false,
     popular: true,
-    icon: "📁",
+    icon: "🌐",
   },
   {
     id: "mcp-postgres",
@@ -100,7 +101,7 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     description: "Requêtes et exploration de BDD PostgreSQL",
     transport: "stdio",
     command: "npx",
-    args: ["-y", "@bytebase/dbhub", "--dsn", "postgresql://user:pass@localhost:5432/db"],
+    args: ["-y", "@bytebase/dbhub", "--dsn", "postgresql://localhost:5432/mydb"],
     enabled: false,
     popular: true,
     icon: "🐘",
@@ -108,13 +109,14 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
   {
     id: "mcp-sentry",
     name: "Sentry",
-    description: "Monitoring d'erreurs et debugging",
+    description: "Monitoring d'erreurs et debugging production",
     transport: "http",
     url: "https://mcp.sentry.dev/mcp",
     enabled: false,
     popular: true,
     icon: "🔍",
   },
+  // === Others ===
   {
     id: "mcp-notion",
     name: "Notion",
@@ -136,27 +138,25 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     icon: "💬",
   },
   {
-    id: "mcp-memory",
-    name: "Memory",
-    description: "Mémoire persistante pour Claude",
-    transport: "stdio",
-    command: "npx",
-    args: ["-y", "@modelcontextprotocol/server-memory"],
+    id: "mcp-linear",
+    name: "Linear",
+    description: "Gestion de tickets, projets et sprints Linear",
+    transport: "http",
+    url: "https://mcp.linear.app/mcp",
     enabled: false,
     popular: false,
-    icon: "🧠",
+    icon: "📋",
   },
   {
-    id: "mcp-brave-search",
-    name: "Brave Search",
-    description: "Recherche web via Brave",
+    id: "mcp-playwright",
+    name: "Playwright",
+    description: "Tests E2E et automatisation navigateur headless",
     transport: "stdio",
     command: "npx",
-    args: ["-y", "@anthropic/mcp-server-brave-search"],
-    env: { BRAVE_API_KEY: "" },
+    args: ["-y", "@anthropic-ai/mcp-server-playwright"],
     enabled: false,
     popular: false,
-    icon: "🌐",
+    icon: "🎭",
   },
 ];
 

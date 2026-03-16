@@ -119,10 +119,10 @@ describe("generateMcpJson", () => {
   it("should include command for stdio transport", () => {
     const config = makeConfig({ enableMCP: true });
     config.mcpServers = config.mcpServers.map((s) =>
-      s.id === "mcp-filesystem" ? { ...s, enabled: true } : s
+      s.id === "mcp-chrome-devtools" ? { ...s, enabled: true } : s
     );
     const result = JSON.parse(generateMcpJson(config)!);
-    expect(result.mcpServers["filesystem"].command).toBe("npx");
+    expect(result.mcpServers["chrome-devtools"].command).toBe("npx");
   });
 
   it("should include url for http transport", () => {
