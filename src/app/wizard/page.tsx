@@ -331,7 +331,7 @@ export default function WizardPage() {
     return null;
   };
 
-  const currentFile = generatedFiles.find((f) => f.path === selectedPreviewFile);
+  const currentFile = generatedFiles.find((f) => f.path === selectedPreviewFile) || generatedFiles[0];
 
   return (
       <div className="flex flex-col lg:flex-row h-full min-h-screen">

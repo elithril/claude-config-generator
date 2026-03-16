@@ -137,17 +137,17 @@ export default function ExpertPage() {
     const files: GeneratedFile[] = [];
 
     const claudeMd = localClaudeMd ?? generatedClaudeMd;
-    files.push({ path: "CLAUDE.md", content: claudeMd, size: new Blob([claudeMd]).size });
+    files.push({ path: "CLAUDE.md", content: claudeMd, size: new TextEncoder().encode(claudeMd).length });
 
     const settings = localSettings ?? generatedSettings;
-    files.push({ path: ".claude/settings.json", content: settings, size: new Blob([settings]).size });
+    files.push({ path: ".claude/settings.json", content: settings, size: new TextEncoder().encode(settings).length });
 
     const claudeIgnore = localClaudeIgnore ?? generatedClaudeIgnore;
-    files.push({ path: ".claudeignore", content: claudeIgnore, size: new Blob([claudeIgnore]).size });
+    files.push({ path: ".claudeignore", content: claudeIgnore, size: new TextEncoder().encode(claudeIgnore).length });
 
     if (config.enableMCP && generatedMcpJson) {
       const mcpContent = localMcpJson ?? generatedMcpJson;
-      files.push({ path: ".mcp.json", content: mcpContent, size: new Blob([mcpContent]).size });
+      files.push({ path: ".mcp.json", content: mcpContent, size: new TextEncoder().encode(mcpContent).length });
     }
 
     files.push(...generatedRules);

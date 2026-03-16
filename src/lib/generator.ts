@@ -206,7 +206,7 @@ export function generateRuleFiles(config: ClaudeConfig): GeneratedFile[] {
       return {
         path: `.claude/rules/${rule.filename}`,
         content,
-        size: new Blob([content]).size,
+        size: new TextEncoder().encode(content).length,
       };
     });
 }
@@ -216,20 +216,20 @@ export function generateAllFiles(config: ClaudeConfig): GeneratedFile[] {
 
   // CLAUDE.md
   const claudeMd = generateClaudeMd(config);
-  files.push({ path: "CLAUDE.md", content: claudeMd, size: new Blob([claudeMd]).size });
+  files.push({ path: "CLAUDE.md", content: claudeMd, size: new TextEncoder().encode(claudeMd).length });
 
   // settings.json
   const settingsJson = generateSettingsJson(config);
-  files.push({ path: ".claude/settings.json", content: settingsJson, size: new Blob([settingsJson]).size });
+  files.push({ path: ".claude/settings.json", content: settingsJson, size: new TextEncoder().encode(settingsJson).length });
 
   // .claudeignore
   const claudeIgnore = generateClaudeIgnore(config);
-  files.push({ path: ".claudeignore", content: claudeIgnore, size: new Blob([claudeIgnore]).size });
+  files.push({ path: ".claudeignore", content: claudeIgnore, size: new TextEncoder().encode(claudeIgnore).length });
 
   // .mcp.json
   const mcpJson = generateMcpJson(config);
   if (mcpJson) {
-    files.push({ path: ".mcp.json", content: mcpJson, size: new Blob([mcpJson]).size });
+    files.push({ path: ".mcp.json", content: mcpJson, size: new TextEncoder().encode(mcpJson).length });
   }
 
   // Rules
