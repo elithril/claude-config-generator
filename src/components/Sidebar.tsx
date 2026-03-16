@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { name: "Home", href: "/", icon: "🏠" },
-  { name: "Wizard", href: "/wizard", icon: "🧙" },
-  { name: "Expert", href: "/expert", icon: "⚡" },
-  { name: "Library", href: "/library", icon: "📚" },
-  { name: "Vault", href: "/vault", icon: "🔐" },
+  { name: "Home", href: "/" },
+  { name: "Wizard", href: "/wizard" },
+  { name: "Expert", href: "/expert" },
+  { name: "Library", href: "/library" },
+  { name: "Vault", href: "/vault" },
 ];
 
 export default function Sidebar() {
@@ -36,13 +36,12 @@ export default function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3 px-3.5 py-3 rounded text-sm transition-colors ${
+              className={`px-3.5 py-3 rounded text-[14px] transition-colors ${
                 isActive(item.href)
-                  ? "text-[#0D6E6E] font-medium bg-[#f0f0f01a]"
+                  ? "text-[#0D6E6E] font-medium bg-[#ffffff0a]"
                   : "text-[#888888] hover:text-[#AAAAAA]"
               }`}
             >
-              <span>{item.icon}</span>
               {item.name}
             </Link>
           ))}

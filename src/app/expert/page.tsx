@@ -176,6 +176,7 @@ export default function ExpertPage() {
     <Layout>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
+          breadcrumb="EXPERT MODE"
           title="Editeur de Configuration"
           subtitle="Edite directement tes fichiers de configuration Claude Code."
         />

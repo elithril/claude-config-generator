@@ -89,6 +89,7 @@ export default function VaultPage() {
     <Layout>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
+          breadcrumb="VAULT / MY CONFIGS"
           title="Configuration Vault"
           subtitle="Vos configurations sauvegardees."
         />

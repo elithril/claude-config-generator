@@ -47,6 +47,7 @@ export default function LibraryPage() {
     <Layout>
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
+          breadcrumb="TEMPLATES / ALL"
           title="Template Library"
           subtitle="Parcourez et utilisez des templates de configuration pre-configures."
         />
