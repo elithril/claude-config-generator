@@ -37,6 +37,8 @@ export default function WizardPage() {
   // Quick vs Advanced wizard mode
   const [wizardMode, setWizardMode] = useState<"quick" | "advanced">("quick");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [stepTransition, setStepTransition] = useState(false);
+  const isTransitioning = useRef(false);
 
   // Reset config on first mount only (not on re-renders)
   const hasReset = useRef(false);
@@ -76,6 +78,8 @@ export default function WizardPage() {
       if (prev !== undefined && prev !== file.content) newChanged.add(file.path);
       prevContents.current[file.path] = file.content;
     }
+    // Skip change detection during step transitions to avoid stutter
+    if (isTransitioning.current) return;
     if (newChanged.size > 0) {
       setChangedFiles(newChanged);
       // If the currently selected file didn't change, switch to one that did
@@ -112,10 +116,21 @@ export default function WizardPage() {
     }
   }, [stepKey, showAdvancedSteps, currentStep, advancedStep, advancedSteps, generatedFiles]);
 
-  // === Navigation ===
+  // === Navigation with transition ===
   const navigateTo = (action: () => void) => {
-    action();
-    scrollRef.current?.scrollTo({ top: 0 });
+    isTransitioning.current = true;
+    setStepTransition(true);
+    setTimeout(() => {
+      action();
+      scrollRef.current?.scrollTo({ top: 0 });
+      setStepTransition(false);
+      // Allow change detection again after React settles
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          isTransitioning.current = false;
+        });
+      });
+    }, 150);
   };
 
   const handleNext = () => {
@@ -524,7 +539,7 @@ export default function WizardPage() {
 
         {/* Scrollable content */}
         <div ref={scrollRef} className="flex-1 overflow-auto px-4 md:px-8 py-4">
-          <div className="flex flex-col gap-4">
+          <div className={`flex flex-col gap-4 transition-all duration-150 ease-in-out ${stepTransition ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"}`}>
             {renderStepContent()}
           </div>
         </div>
