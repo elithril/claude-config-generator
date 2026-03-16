@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadVault } from "@/lib/storage";
-import { useT } from "@/i18n";
+import { useI18n } from "@/i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-const FILE_LINES = [
-  { file: "CLAUDE.md", lines: [
+const CLAUDE_MD: Record<string, string[]> = {
+  fr: [
     "# Configuration Claude Code",
     "",
     "## Langue",
@@ -26,8 +26,31 @@ const FILE_LINES = [
     "- Ne jamais exécuter de commandes destructrices",
     "- Toujours vérifier les fichiers avant modification",
     "- Préférer les opérations réversibles",
-  ]},
-  { file: "settings.json", lines: [
+  ],
+  en: [
+    "# Claude Code Configuration",
+    "",
+    "## Language",
+    "Always respond in English.",
+    "",
+    "## Tone",
+    "Professional and direct. No unnecessary",
+    "pleasantries.",
+    "",
+    "## Response Style",
+    "Concise responses. For code, show only",
+    "modified blocks (diffs) with the file",
+    "path above.",
+    "",
+    "## Security",
+    "- Never execute destructive commands",
+    "- Always verify files before modification",
+    "- Prefer reversible operations",
+  ],
+};
+
+const SETTINGS_JSON: Record<string, string[]> = {
+  fr: [
     '{',
     '  "$schema": "https://json.schemastore.org/claude-code-settings.json",',
     '  "model": "claude-sonnet-4-6",',
@@ -55,7 +78,39 @@ const FILE_LINES = [
     '    }]',
     '  }',
     '}',
-  ]},
+  ],
+  en: [
+    '{',
+    '  "$schema": "https://json.schemastore.org/claude-code-settings.json",',
+    '  "model": "claude-sonnet-4-6",',
+    '  "language": "english",',
+    '  "effortLevel": "high",',
+    '  "alwaysThinkingEnabled": true,',
+    '  "permissions": {',
+    '    "allow": [',
+    '      "Bash(npm run *)",',
+    '      "Bash(npx *)",',
+    '      "Bash(git *)"',
+    '    ],',
+    '    "deny": [',
+    '      "Read(./.env)",',
+    '      "Read(./.env.*)",',
+    '      "Bash(rm -rf *)"',
+    '    ],',
+    '    "defaultMode": "acceptEdits"',
+    '  },',
+    '  "hooks": {',
+    '    "PostToolUse": [{',
+    '      "matcher": "Write|Edit",',
+    '      "hooks": [{ "type": "command",',
+    '        "command": "npx eslint --fix $FILE" }]',
+    '    }]',
+    '  }',
+    '}',
+  ],
+};
+
+const SHARED_FILES = [
   { file: ".mcp.json", lines: [
     '{',
     '  "mcpServers": {',
@@ -94,16 +149,25 @@ const FILE_LINES = [
   ]},
 ];
 
+function getFileLines(locale: string) {
+  return [
+    { file: "CLAUDE.md", lines: CLAUDE_MD[locale] || CLAUDE_MD.fr },
+    { file: "settings.json", lines: SETTINGS_JSON[locale] || SETTINGS_JSON.fr },
+    ...SHARED_FILES,
+  ];
+}
+
 export default function Home() {
   const router = useRouter();
-  const t = useT();
+  const { locale, t } = useI18n();
   const [vaultCount, setVaultCount] = useState(0);
   const [activeFile, setActiveFile] = useState(0);
+  const fileLines = getFileLines(locale);
 
   useEffect(() => { setVaultCount(loadVault().length); }, []);
   const [cycleKey, setCycleKey] = useState(0);
   useEffect(() => {
-    const timer = setInterval(() => setActiveFile(f => (f + 1) % FILE_LINES.length), 5000);
+    const timer = setInterval(() => setActiveFile(f => (f + 1) % fileLines.length), 5000);
     return () => clearInterval(timer);
   }, [cycleKey]);
 
@@ -112,7 +176,7 @@ export default function Home() {
     setCycleKey(k => k + 1);
   };
 
-  const currentFile = FILE_LINES[activeFile];
+  const currentFile = fileLines[activeFile];
   const vaultText = vaultCount > 1
     ? t("home.vaultCount_other", { count: vaultCount })
     : t("home.vaultCount_one", { count: vaultCount });
@@ -201,7 +265,7 @@ export default function Home() {
 
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">
             <div className="flex gap-1">
-              {FILE_LINES.map((f, i) => (
+              {fileLines.map((f, i) => (
                 <button
                   key={f.file}
                   onClick={() => selectFile(i)}
@@ -247,7 +311,7 @@ export default function Home() {
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pb-5 relative z-20">
             <span className="text-[10px] font-mono text-[#333333]">{currentFile.lines.length} {t("home.terminalLines")} · UTF-8</span>
             <div className="flex gap-2">
-              {FILE_LINES.map((_, i) => (
+              {fileLines.map((_, i) => (
                 <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === activeFile ? "bg-[#0D6E6E] w-6" : "bg-[#252525] w-1.5"}`} />
               ))}
             </div>
