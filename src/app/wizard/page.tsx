@@ -61,6 +61,12 @@ export default function WizardPage() {
   const generatedFiles = useMemo(() => generateAllFiles(config), [config]);
   const totalSize = generatedFiles.reduce((acc, f) => acc + f.size, 0);
 
+  // === Preview file selection ===
+  const [selectedPreviewFile, setSelectedPreviewFile] = useState("CLAUDE.md");
+  const selectedPreviewRef = useRef(selectedPreviewFile);
+  selectedPreviewRef.current = selectedPreviewFile;
+
+  // Track file changes for dot indicator + auto-switch
   const prevContents = useRef<Record<string, string>>({});
   const [changedFiles, setChangedFiles] = useState<Set<string>>(new Set());
 
@@ -73,35 +79,39 @@ export default function WizardPage() {
     }
     if (newChanged.size > 0) {
       setChangedFiles(newChanged);
-      // Auto-switch to the most relevant changed file
-      // Priority: settings.json > .mcp.json > rules > CLAUDE.md > .claudeignore
-      const priority = [".claude/settings.json", ".mcp.json", "CLAUDE.md", ".claudeignore"];
-      const bestMatch = priority.find(p => newChanged.has(p))
-        || [...newChanged].find(f => f.startsWith(".claude/rules/"))
-        || [...newChanged][0];
-      if (bestMatch && !newChanged.has(selectedPreviewRef.current)) {
-        setSelectedPreviewFile(bestMatch);
+      // If the currently selected file didn't change, switch to one that did
+      if (!newChanged.has(selectedPreviewRef.current)) {
+        const priority = [".claude/settings.json", ".mcp.json", "CLAUDE.md", ".claudeignore"];
+        const bestMatch = priority.find(p => newChanged.has(p))
+          || [...newChanged].find(f => f.startsWith(".claude/rules/"))
+          || [...newChanged][0];
+        if (bestMatch) setSelectedPreviewFile(bestMatch);
       }
       const timer = setTimeout(() => setChangedFiles(new Set()), 1500);
       return () => clearTimeout(timer);
     }
   }, [generatedFiles]);
 
-  const getContextualFile = useCallback(() => {
-    if (!showAdvancedSteps) return currentStep === 2 ? ".claude/settings.json" : "CLAUDE.md";
-    const stepKey = advancedSteps[advancedStep]?.key;
-    switch (stepKey) {
-      case "hooks": return ".claude/settings.json";
-      case "mcp": return ".mcp.json";
-      case "rules": return generatedFiles.find(f => f.path.startsWith(".claude/rules/"))?.path || "CLAUDE.md";
-      default: return "CLAUDE.md";
+  // Set contextual file ONLY on step changes (not on config/file changes)
+  const stepKey = showAdvancedSteps ? `adv-${advancedStep}` : `basic-${currentStep}`;
+  const prevStepKey = useRef(stepKey);
+  useEffect(() => {
+    if (prevStepKey.current !== stepKey) {
+      prevStepKey.current = stepKey;
+      // Pick default file for this step
+      if (!showAdvancedSteps) {
+        setSelectedPreviewFile(currentStep === 2 ? ".claude/settings.json" : "CLAUDE.md");
+      } else {
+        const key = advancedSteps[advancedStep]?.key;
+        if (key === "hooks") setSelectedPreviewFile(".claude/settings.json");
+        else if (key === "mcp") setSelectedPreviewFile(".mcp.json");
+        else if (key === "rules") {
+          const ruleFile = generatedFiles.find(f => f.path.startsWith(".claude/rules/"));
+          setSelectedPreviewFile(ruleFile?.path || "CLAUDE.md");
+        } else setSelectedPreviewFile("CLAUDE.md");
+      }
     }
-  }, [showAdvancedSteps, currentStep, advancedStep, advancedSteps, generatedFiles]);
-
-  const [selectedPreviewFile, setSelectedPreviewFile] = useState("CLAUDE.md");
-  const selectedPreviewRef = useRef(selectedPreviewFile);
-  selectedPreviewRef.current = selectedPreviewFile;
-  useEffect(() => { setSelectedPreviewFile(getContextualFile()); }, [getContextualFile]);
+  }, [stepKey, showAdvancedSteps, currentStep, advancedStep, advancedSteps, generatedFiles]);
 
   // === Navigation with transition ===
   const transitionTo = (action: () => void) => {
