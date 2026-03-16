@@ -249,7 +249,7 @@ export function getDefaultConfig(): ClaudeConfig {
     model: "claude-sonnet-4-6",
     effortLevel: "high",
     extendedThinking: false,
-    includeCoAuthoredBy: true,
+    attribution: { commit: "🤖 Generated with Claude Code", pr: "" },
     outputStyle: "",
     autoMemoryEnabled: true,
     includeGitInstructions: true,
@@ -259,6 +259,7 @@ export function getDefaultConfig(): ClaudeConfig {
     disallowedTools: [],
     permissions: {
       allow: [],
+      ask: [],
       deny: ["Read(./.env)", "Read(./.env.*)", "Read(./secrets/**)"],
     },
     enableHooks: false,

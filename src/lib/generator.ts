@@ -63,6 +63,7 @@ export function generateSettingsJson(config: ClaudeConfig): string {
 
   const permissions: Record<string, unknown> = {};
   if (allowRules.length > 0) permissions.allow = allowRules;
+  if (config.permissions.ask && config.permissions.ask.length > 0) permissions.ask = config.permissions.ask;
   if (denyRules.length > 0) permissions.deny = denyRules;
   if (config.permissionMode && config.permissionMode !== "default") {
     permissions.defaultMode = config.permissionMode;
@@ -85,7 +86,9 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   settings.alwaysThinkingEnabled = config.extendedThinking;
 
   // Attribution
-  settings.includeCoAuthoredBy = config.includeCoAuthoredBy;
+  if (config.attribution) {
+    settings.attribution = config.attribution;
+  }
 
   // Output style
   if (config.outputStyle) {

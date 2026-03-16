@@ -247,13 +247,14 @@ export default function WizardPage() {
                     </div>
                     <input type="checkbox" checked={config.extendedThinking} onChange={(e) => dispatch({ type: "SET_FIELD", field: "extendedThinking", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                   </label>
-                  <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
-                    <div>
-                      <span className="text-sm font-medium text-[#1A1A1A]">Co-authored-by Claude</span>
-                      <p className="text-xs text-[#888888]">Ajoute une ligne d&apos;attribution dans les commits git.</p>
+                  <div className="p-3 border border-[#E5E5E5] rounded">
+                    <span className="text-sm font-medium text-[#1A1A1A]">Attribution git</span>
+                    <p className="text-xs text-[#888888] mb-2">Texte ajouté aux commits et PRs créés par Claude.</p>
+                    <div className="flex flex-col gap-2">
+                      <input type="text" value={config.attribution.commit} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, commit: e.target.value } })} placeholder="Message de commit (vide = pas d'attribution)" className="px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                      <input type="text" value={config.attribution.pr} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, pr: e.target.value } })} placeholder="Message PR (vide = pas d'attribution)" className="px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
                     </div>
-                    <input type="checkbox" checked={config.includeCoAuthoredBy} onChange={(e) => dispatch({ type: "SET_FIELD", field: "includeCoAuthoredBy", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
-                  </label>
+                  </div>
                   <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
                     <div>
                       <span className="text-sm font-medium text-[#1A1A1A]">Auto-mémoire</span>
@@ -340,6 +341,34 @@ export default function WizardPage() {
                       <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-xs rounded border border-green-200">
                         {rule}
                         <button onClick={() => dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, allow: config.permissions.allow.filter((_, j) => j !== i) } })} className="hover:text-green-900">×</button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label className="text-xs font-medium text-[#666666] mb-2 block">Ask (demander confirmation)</label>
+                  <div className="flex gap-2 mb-2">
+                    <input type="text" value="" onChange={() => {}} onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const val = (e.target as HTMLInputElement).value.trim();
+                        if (!val) return;
+                        dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, ask: [...(config.permissions.ask || []), val] } });
+                        (e.target as HTMLInputElement).value = "";
+                      }
+                    }} placeholder="Bash(git push *)" className="flex-1 px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
+                    <button onClick={(e) => {
+                      const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
+                      const val = input.value.trim();
+                      if (!val) return;
+                      dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, ask: [...(config.permissions.ask || []), val] } });
+                      input.value = "";
+                    }} className="px-3 py-2 text-sm bg-[#ca8a04] text-white rounded hover:bg-[#a16207]">+</button>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {(config.permissions.ask || []).map((rule, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-50 text-yellow-700 text-xs rounded border border-yellow-200">
+                        {rule}
+                        <button onClick={() => dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, ask: (config.permissions.ask || []).filter((_, j) => j !== i) } })} className="hover:text-yellow-900">×</button>
                       </span>
                     ))}
                   </div>

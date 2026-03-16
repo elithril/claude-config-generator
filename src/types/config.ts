@@ -5,7 +5,7 @@ export type LanguageType = "fr" | "en" | "es";
 export type ToneType = "cool" | "pro" | "pedagogue";
 export type ResponseStyleType = "concise" | "detailed" | "technical";
 export type ModelType = "claude-sonnet-4-6" | "claude-opus-4-6" | "claude-haiku-4-5";
-export type PermissionModeType = "default" | "plan" | "acceptEdits" | "dontAsk";
+export type PermissionModeType = "default" | "plan" | "acceptEdits" | "dontAsk" | "delegate" | "bypassPermissions";
 export type EffortLevelType = "low" | "medium" | "high";
 export type TeammateModeType = "auto" | "in-process" | "tmux";
 export type UpdateChannelType = "stable" | "latest";
@@ -16,11 +16,23 @@ export type HookEventType =
   | "PreToolUse"
   | "PostToolUse"
   | "PostToolUseFailure"
+  | "PermissionRequest"
   | "UserPromptSubmit"
   | "Stop"
   | "SessionStart"
+  | "SessionEnd"
+  | "Notification"
+  | "SubagentStart"
+  | "SubagentStop"
+  | "TeammateIdle"
+  | "TaskCompleted"
+  | "ConfigChange"
+  | "WorktreeCreate"
+  | "WorktreeRemove"
   | "PreCompact"
-  | "PostCompact";
+  | "PostCompact"
+  | "InstructionsLoaded"
+  | "Setup";
 
 export type HookActionType = "command" | "prompt" | "http" | "agent";
 
@@ -72,7 +84,13 @@ export interface RuleEntry {
 
 export interface Permissions {
   allow: string[];
+  ask?: string[];
   deny: string[];
+}
+
+export interface Attribution {
+  commit: string;
+  pr: string;
 }
 
 // === GENERATED FILES ===
@@ -95,7 +113,7 @@ export interface ClaudeConfig {
   model: ModelType;
   effortLevel: EffortLevelType;
   extendedThinking: boolean;
-  includeCoAuthoredBy: boolean;
+  attribution: Attribution;
 
   // Step 2 - Additional preferences
   outputStyle: string;
