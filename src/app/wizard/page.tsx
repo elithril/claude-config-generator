@@ -37,6 +37,7 @@ export default function WizardPage() {
   // Quick vs Advanced wizard mode
   const [wizardMode, setWizardMode] = useState<"quick" | "advanced">("quick");
   const [stepTransition, setStepTransition] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Reset config on first mount only (not on re-renders)
   const hasReset = useRef(false);
@@ -96,6 +97,7 @@ export default function WizardPage() {
     setStepTransition(true);
     setTimeout(() => {
       action();
+      scrollRef.current?.scrollTo({ top: 0 });
       setStepTransition(false);
     }, 150);
   };
@@ -505,7 +507,7 @@ export default function WizardPage() {
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-auto px-4 md:px-8 py-4">
+        <div ref={scrollRef} className="flex-1 overflow-auto px-4 md:px-8 py-4">
           <div className={`flex flex-col gap-4 transition-all duration-150 ease-in-out ${stepTransition ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
             {renderStepContent()}
           </div>
@@ -554,7 +556,7 @@ export default function WizardPage() {
           <div className="px-3 py-2 border-b border-[#E0E0E0] bg-[#FAFAFA]">
             <span className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666]">{selectedPreviewFile}</span>
           </div>
-          <pre className="p-4 text-xs font-[family-name:var(--font-jetbrains)] leading-5 text-[#333333] overflow-auto">
+          <pre className="p-4 text-xs font-[family-name:var(--font-jetbrains)] leading-5 text-[#333333] whitespace-pre-wrap break-words">
             {currentFile?.content || "// Aucun contenu"}
           </pre>
         </div>
