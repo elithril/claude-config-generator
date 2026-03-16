@@ -53,7 +53,7 @@ export default function LibraryPage() {
         />
 
         {/* Search Bar */}
-        <div className="flex items-center gap-4 px-10 py-4">
+        <div className="flex items-center gap-4 px-6 md:px-10 py-4">
           <div className="flex-1 flex items-center gap-2.5 bg-white border border-[#E5E5E5] rounded px-4 py-3">
             <span className="text-[#888888]">⌕</span>
             <input
@@ -79,13 +79,13 @@ export default function LibraryPage() {
         </div>
 
         {/* Templates Grid */}
-        <div className="flex-1 px-10 py-6 overflow-auto">
+        <div className="flex-1 px-6 md:px-10 py-6 pb-20 md:pb-6 overflow-auto">
           {filteredTemplates.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-[#888888] text-sm">Aucun template ne correspond a votre recherche.</p>
+              <p className="text-[#888888] text-sm">Aucun template ne correspond à votre recherche.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTemplates.map((template) => (
                 <div
                   key={template.id}

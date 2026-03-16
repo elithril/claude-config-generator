@@ -723,7 +723,7 @@ export default function WizardPage() {
 
         {/* Save dialog */}
         {showSaveDialog && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-label="Sauvegarder la configuration">
             <div className="bg-white rounded-lg p-6 w-[400px]">
               <h3 className="text-lg font-medium text-[#1A1A1A] mb-4">Nom de la configuration</h3>
               <input
@@ -851,9 +851,9 @@ export default function WizardPage() {
 
   return (
     <Layout>
-      <div className="flex h-screen">
+      <div className="flex flex-col lg:flex-row h-full min-h-screen">
         {/* Left Panel */}
-        <div className="flex-1 flex flex-col bg-[#FAFAFA] p-8 overflow-auto">
+        <div className="flex-1 flex flex-col bg-[#FAFAFA] p-4 md:p-8 pb-20 md:pb-8 overflow-auto">
           {/* Breadcrumb */}
           <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px] mb-2">
             {getBreadcrumb()}
@@ -894,7 +894,7 @@ export default function WizardPage() {
         </div>
 
         {/* Right Panel - Preview */}
-        <div className="w-[520px] h-full bg-[#F0F0F0] border-l border-[#E0E0E0] p-8 flex flex-col gap-4 overflow-auto">
+        <div className="hidden lg:flex w-[520px] bg-[#F0F0F0] border-l border-[#E0E0E0] p-8 flex-col gap-4 overflow-auto">
           {/* Header */}
           <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">
             LIVE PREVIEW

@@ -10,13 +10,13 @@ export default function PageHeader({
   breadcrumb,
 }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-2 bg-[#FAFAFA] py-6 px-14 flex-shrink-0">
+    <div className="flex flex-col gap-2 bg-[#FAFAFA] py-6 px-6 md:px-14 flex-shrink-0">
       {breadcrumb && (
         <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">
           {breadcrumb}
         </span>
       )}
-      <h1 className="font-[family-name:var(--font-newsreader)] text-[38px] font-medium text-[#0D6E6E] tracking-[-2px]">
+      <h1 className="font-[family-name:var(--font-newsreader)] text-[28px] md:text-[38px] font-medium text-[#0D6E6E] tracking-[-2px]">
         {title}
       </h1>
       <p className="text-[15px] text-[#666666] leading-[1.5]">{subtitle}</p>

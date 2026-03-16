@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Layout, PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
@@ -32,6 +32,19 @@ export default function VaultPage() {
     }
     return sorted;
   }, [vault, sortBy]);
+
+  // Pre-compute file info for all vault entries to avoid regenerating on every render
+  const vaultFileInfo = useMemo(() => {
+    const info: Record<string, { fileCount: number; totalSize: number }> = {};
+    for (const entry of vault) {
+      const files = generateAllFiles(entry.config);
+      info[entry.id] = {
+        fileCount: files.length,
+        totalSize: files.reduce((a, f) => a + f.size, 0),
+      };
+    }
+    return info;
+  }, [vault]);
 
   const stats = useMemo(() => [
     { value: String(vault.length), label: "Configs sauvees" },
@@ -78,7 +91,7 @@ export default function VaultPage() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "A l'instant";
+    if (diffMins < 1) return "À l'instant";
     if (diffMins < 60) return `Il y a ${diffMins}min`;
     if (diffHours < 24) return `Il y a ${diffHours}h`;
     if (diffDays < 7) return `Il y a ${diffDays}j`;
@@ -91,11 +104,11 @@ export default function VaultPage() {
         <PageHeader
           breadcrumb="VAULT / MY CONFIGS"
           title="Configuration Vault"
-          subtitle="Vos configurations sauvegardees."
+          subtitle="Vos configurations sauvegardées."
         />
 
         {/* Stats */}
-        <div className="flex gap-3 px-10 py-6">
+        <div className="flex gap-3 px-6 md:px-10 py-6">
           {stats.map((stat, index) => (
             <div
               key={index}
@@ -124,7 +137,7 @@ export default function VaultPage() {
         </div>
 
         {/* Config List */}
-        <div className="flex-1 px-10 overflow-auto pb-10">
+        <div className="flex-1 px-6 md:px-10 overflow-auto pb-20 md:pb-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A]">
               Configurations
@@ -139,7 +152,7 @@ export default function VaultPage() {
 
           {sortedVault.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-md border border-[#E5E5E5]">
-              <p className="text-[#888888] text-sm mb-2">Aucune configuration sauvegardee.</p>
+              <p className="text-[#888888] text-sm mb-2">Aucune configuration sauvegardée.</p>
               <p className="text-[#AAAAAA] text-xs mb-4">Lancez le Wizard ou utilisez un template pour commencer.</p>
               <button
                 onClick={() => router.push("/wizard")}
@@ -151,8 +164,7 @@ export default function VaultPage() {
           ) : (
             <div className="flex flex-col gap-3">
               {sortedVault.map((entry) => {
-                const files = generateAllFiles(entry.config);
-                const totalSize = files.reduce((a, f) => a + f.size, 0);
+                const info = vaultFileInfo[entry.id] || { fileCount: 0, totalSize: 0 };
 
                 return (
                   <div
@@ -177,9 +189,9 @@ export default function VaultPage() {
                         <div className="flex items-center gap-2 text-xs text-[#888888]">
                           <span>{formatDate(entry.updatedAt)}</span>
                           <span>.</span>
-                          <span>{files.length} fichiers</span>
+                          <span>{info.fileCount} fichiers</span>
                           <span>.</span>
-                          <span>{formatFileSize(totalSize)}</span>
+                          <span>{formatFileSize(info.totalSize)}</span>
                         </div>
                       </div>
                     </div>

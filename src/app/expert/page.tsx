@@ -182,7 +182,7 @@ export default function ExpertPage() {
         />
 
         {/* Editor Area */}
-        <div className="flex-1 flex gap-6 px-10 pb-10 overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row gap-6 px-4 md:px-10 pb-20 md:pb-10 overflow-hidden">
           {/* Left Panel - Editor */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Tabs */}
@@ -237,7 +237,7 @@ export default function ExpertPage() {
           </div>
 
           {/* Right Panel - Documentation */}
-          <div className="w-80 flex flex-col gap-4 bg-[#F8F8F8] border border-[#E5E5E5] rounded-lg p-5">
+          <div className="hidden lg:flex w-80 flex-col gap-4 bg-[#F8F8F8] border border-[#E5E5E5] rounded-lg p-5 flex-shrink-0">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[#1A1A1A]">
                 Documentation
@@ -284,7 +284,7 @@ export default function ExpertPage() {
 
       {/* Save dialog */}
       {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-label="Sauvegarder la configuration">
           <div className="bg-white rounded-lg p-6 w-[400px]">
             <h3 className="text-lg font-medium text-[#1A1A1A] mb-4">Nom de la configuration</h3>
             <input

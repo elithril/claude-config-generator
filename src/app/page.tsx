@@ -24,7 +24,7 @@ export default function Home() {
         />
 
         {/* Hero Section */}
-        <div className="flex-1 bg-[#FAFAFA] px-14 pb-8 min-h-0">
+        <div className="flex-1 bg-[#FAFAFA] px-6 md:px-14 pb-20 md:pb-8 min-h-0">
           {/* Mode Selector */}
           <div className="bg-[#F0F0F0] rounded-2xl p-10 flex flex-col items-center gap-4 mb-8">
             <h2 className="font-[family-name:var(--font-newsreader)] text-[28px] font-medium text-[#0D6E6E] text-center">
@@ -86,7 +86,7 @@ export default function Home() {
           </div>
 
           {/* Feature Cards */}
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <FeatureCard
               icon="✦"
               iconBg="#0D6E6E"
@@ -136,7 +136,7 @@ export default function Home() {
             <div className="mt-6 p-4 bg-white rounded-lg border border-[#E5E5E5] flex items-center justify-between">
               <div>
                 <span className="text-sm font-medium text-[#1A1A1A]">
-                  {vaultCount} configuration{vaultCount > 1 ? "s" : ""} sauvegardee{vaultCount > 1 ? "s" : ""}
+                  {vaultCount} configuration{vaultCount > 1 ? "s" : ""} sauvegardée{vaultCount > 1 ? "s" : ""}
                 </span>
                 <p className="text-xs text-[#888888]">Restaurez ou exportez vos configs depuis le Vault.</p>
               </div>

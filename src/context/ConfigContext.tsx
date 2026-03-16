@@ -36,7 +36,7 @@ function configReducer(state: ClaudeConfig, action: ConfigAction): ClaudeConfig 
 }
 
 export function ConfigProvider({ children }: { children: ReactNode }) {
-  const [config, dispatch] = useReducer(configReducer, getDefaultConfig());
+  const [config, dispatch] = useReducer(configReducer, undefined, getDefaultConfig);
   return (
     <ConfigContext.Provider value={{ config, dispatch }}>
       {children}
