@@ -73,10 +73,14 @@ export default function WizardPage() {
     }
     if (newChanged.size > 0) {
       setChangedFiles(newChanged);
-      // Auto-switch to the changed file if it's not the one currently displayed
-      const changedNotSelected = [...newChanged].find(f => f !== selectedPreviewFile);
-      if (changedNotSelected) {
-        setSelectedPreviewFile(changedNotSelected);
+      // Auto-switch to the most relevant changed file
+      // Priority: settings.json > .mcp.json > rules > CLAUDE.md > .claudeignore
+      const priority = [".claude/settings.json", ".mcp.json", "CLAUDE.md", ".claudeignore"];
+      const bestMatch = priority.find(p => newChanged.has(p))
+        || [...newChanged].find(f => f.startsWith(".claude/rules/"))
+        || [...newChanged][0];
+      if (bestMatch && !newChanged.has(selectedPreviewFile)) {
+        setSelectedPreviewFile(bestMatch);
       }
       const timer = setTimeout(() => setChangedFiles(new Set()), 1500);
       return () => clearTimeout(timer);
