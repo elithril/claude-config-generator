@@ -138,32 +138,23 @@ export default function Test2HomePage() {
           </div>
 
           {/* Middle: CTAs */}
-          <div className="relative z-10 flex flex-col gap-3 my-8 lg:my-0">
+          <div className="relative z-10 flex flex-col gap-4 my-8 lg:my-0">
             <button
               onClick={() => router.push("/wizard")}
-              className="group flex items-center justify-between px-5 py-4 bg-[#0D6E6E] rounded-lg hover:bg-[#0A5555] transition-colors"
+              className="group w-full py-4 px-6 bg-[#0D6E6E] rounded-xl hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99]"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-white text-lg">✦</span>
-                <div>
-                  <span className="text-white text-sm font-medium block">Pas à pas</span>
-                  <span className="text-white/50 text-[11px]">Guidé · 4 étapes · ~2 min</span>
-                </div>
-              </div>
-              <span className="text-white/40 group-hover:text-white/80 text-lg">→</span>
+              <span className="text-white text-[15px] font-medium">
+                Commencer le wizard →
+              </span>
+              <span className="block text-white/50 text-[12px] mt-1">
+                Guidé, 4 étapes, ~2 min
+              </span>
             </button>
             <button
               onClick={() => router.push("/expert")}
-              className="group flex items-center justify-between px-5 py-4 border border-[#333333] rounded-lg hover:border-[#0D6E6E] transition-colors"
+              className="group text-[13px] text-[#666666] hover:text-[#0D6E6E] transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-lg">⚡</span>
-                <div>
-                  <span className="text-[#CCCCCC] text-sm font-medium block">Configuration directe</span>
-                  <span className="text-[#555555] text-[11px]">Éditeur complet · Tu sais ce que tu veux</span>
-                </div>
-              </div>
-              <span className="text-[#555555] group-hover:text-[#0D6E6E] text-lg">→</span>
+              Ou passer directement à l&apos;éditeur →
             </button>
           </div>
 
