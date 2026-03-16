@@ -134,8 +134,8 @@ export default function Test2HomePage() {
             </p>
           </div>
 
-          {/* Value points — centered between description and CTAs */}
-          <div className="relative z-10 flex flex-col gap-3 my-auto">
+          {/* Value points — top of middle zone */}
+          <div className="relative z-10 flex flex-col gap-3 mt-auto">
             {[
               { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
               { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
@@ -148,9 +148,8 @@ export default function Test2HomePage() {
             ))}
           </div>
 
-          {/* CTAs */}
-          <div className="relative z-10 flex flex-col gap-3">
-            {/* Primary CTA */}
+          {/* CTAs — centered between value points and vault */}
+          <div className="relative z-10 flex flex-col gap-3 my-auto">
             <button
               onClick={() => router.push("/wizard")}
               className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
@@ -163,8 +162,6 @@ export default function Test2HomePage() {
                 <path d="m12 5 7 7-7 7" />
               </svg>
             </button>
-
-            {/* Secondary CTA — looks like a real button */}
             <button
               onClick={() => router.push("/expert")}
               className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl cursor-pointer border border-[#333333] hover:border-[#0D6E6E] text-[#777777] hover:text-[#0D6E6E] transition-colors"
