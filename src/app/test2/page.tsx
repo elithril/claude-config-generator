@@ -126,51 +126,51 @@ export default function Test2HomePage() {
 
           {/* Top: title */}
           <div className="relative z-10">
-            <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px] mb-6 block">
-              CLAUDE CODE CONFIG
-            </span>
             <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] mb-8">
-              Tes fichiers Claude Code, <span className="text-[#0D6E6E]">générés pour toi.</span>
+              Claude Code, optimisé pour <span className="text-[#0D6E6E]">ton workflow.</span>
             </h1>
             <p className="text-[16px] text-[#888888] leading-[1.8]">
-              Permissions, hooks, MCP servers, rules — réponds à quelques questions ou édite directement. Télécharge le ZIP, dépose-le dans ton projet.
+              La plupart des devs utilisent Claude Code avec les réglages par défaut. Permissions, hooks, MCP&nbsp;servers, rules — en 2&nbsp;minutes, configure tout pour que Claude comprenne ton projet, respecte tes conventions, et travaille comme tu veux.
             </p>
           </div>
 
-          {/* Middle: CTAs */}
-          <div className="relative z-10 flex flex-col gap-5 my-8 lg:my-0">
+          {/* Middle: CTA + value points */}
+          <div className="relative z-10 flex flex-col gap-6 my-8 lg:my-0">
             <button
               onClick={() => router.push("/wizard")}
-              className="group w-full flex items-center gap-4 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
+              className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
             >
-              <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14.5 4h-5L7 7H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-3l-2.5-3z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              </div>
-              <div className="flex-1 text-left">
-                <span className="text-white text-[15px] font-medium block">
-                  Commencer le wizard
-                </span>
-                <span className="text-white/50 text-[12px]">
-                  Guidé, 4 étapes, ~2 min
-                </span>
-              </div>
-              <svg className="text-white/40 group-hover:text-white/80 transition-colors flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <span className="text-white text-[15px] font-medium">
+                Optimiser mon setup
+              </span>
+              <svg className="text-white/60 group-hover:text-white transition-colors" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
               </svg>
             </button>
+
+            <div className="flex flex-col gap-3">
+              {[
+                { icon: "✦", text: "Découvre les options que tu ne connaissais pas" },
+                { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
+                { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
+              ].map(({ icon, text }) => (
+                <div key={text} className="flex items-center gap-3">
+                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
+                  <span className="text-[13px] text-[#666666]">{text}</span>
+                </div>
+              ))}
+            </div>
+
             <button
               onClick={() => router.push("/expert")}
-              className="group flex items-center justify-center gap-2 cursor-pointer text-[13px] text-[#666666] hover:text-[#0D6E6E] transition-colors py-1"
+              className="group flex items-center justify-center gap-2 cursor-pointer text-[13px] text-[#555555] hover:text-[#0D6E6E] transition-colors"
             >
-              <svg className="opacity-60 group-hover:opacity-100 transition-opacity" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="opacity-50 group-hover:opacity-100 transition-opacity" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="16 18 22 12 16 6" />
                 <polyline points="8 6 2 12 8 18" />
               </svg>
-              <span>Ou passer directement à l&apos;éditeur</span>
+              <span>Ou éditer directement les fichiers</span>
             </button>
           </div>
 
