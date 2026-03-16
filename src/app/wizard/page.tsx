@@ -36,7 +36,6 @@ export default function WizardPage() {
 
   // Quick vs Advanced wizard mode
   const [wizardMode, setWizardMode] = useState<"quick" | "advanced">("quick");
-  const [stepTransition, setStepTransition] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Reset config on first mount only (not on re-renders)
@@ -113,37 +112,33 @@ export default function WizardPage() {
     }
   }, [stepKey, showAdvancedSteps, currentStep, advancedStep, advancedSteps, generatedFiles]);
 
-  // === Navigation with transition ===
-  const transitionTo = (action: () => void) => {
-    setStepTransition(true);
-    setTimeout(() => {
-      action();
-      scrollRef.current?.scrollTo({ top: 0 });
-      setStepTransition(false);
-    }, 150);
+  // === Navigation ===
+  const navigateTo = (action: () => void) => {
+    action();
+    scrollRef.current?.scrollTo({ top: 0 });
   };
 
   const handleNext = () => {
     if (showAdvancedSteps) {
-      if (advancedStep < advancedSteps.length - 1) transitionTo(() => setAdvancedStep(advancedStep + 1));
+      if (advancedStep < advancedSteps.length - 1) navigateTo(() => setAdvancedStep(advancedStep + 1));
     } else {
-      if (currentStep < BASIC_STEPS.length - 1) transitionTo(() => setCurrentStep(currentStep + 1));
+      if (currentStep < BASIC_STEPS.length - 1) navigateTo(() => setCurrentStep(currentStep + 1));
     }
   };
 
   const handleBack = () => {
     if (showAdvancedSteps) {
-      if (advancedStep > 0) transitionTo(() => setAdvancedStep(advancedStep - 1));
-      else transitionTo(() => { setShowAdvancedSteps(false); setCurrentStep(3); });
+      if (advancedStep > 0) navigateTo(() => setAdvancedStep(advancedStep - 1));
+      else navigateTo(() => { setShowAdvancedSteps(false); setCurrentStep(3); });
     } else {
-      if (currentStep > 0) transitionTo(() => setCurrentStep(currentStep - 1));
+      if (currentStep > 0) navigateTo(() => setCurrentStep(currentStep - 1));
       else router.push("/");
     }
   };
 
   const handleMainAction = () => {
     if (!showAdvancedSteps && currentStep === 3) {
-      transitionTo(() => {
+      navigateTo(() => {
         setShowAdvancedSteps(true);
         setAdvancedStep(config.enableHooks || config.enableMCP || config.enableRules ? 0 : advancedSteps.length - 1);
       });
@@ -529,7 +524,7 @@ export default function WizardPage() {
 
         {/* Scrollable content */}
         <div ref={scrollRef} className="flex-1 overflow-auto px-4 md:px-8 py-4">
-          <div className={`flex flex-col gap-4 transition-all duration-150 ease-in-out ${stepTransition ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
+          <div className="flex flex-col gap-4">
             {renderStepContent()}
           </div>
         </div>
