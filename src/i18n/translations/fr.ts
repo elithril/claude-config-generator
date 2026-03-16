@@ -32,8 +32,8 @@ const fr = {
   "wizard.finalize": "Finaliser",
 
   // Wizard Step 1
-  "wizard.step1.breadcrumb": "WIZARD / CHOIX INITIAL",
-  "wizard.step1.title": "Configuration Wizard",
+  "wizard.step1.breadcrumb": "ASSISTANT / CHOIX INITIAL",
+  "wizard.step1.title": "Assistant de configuration",
   "wizard.step1.subtitle": "Choisis un preset pour démarrer rapidement.",
   "wizard.step1.question": "Quel setup te correspond ?",
   "wizard.step1.safe": "Mode Prudent",
@@ -110,7 +110,7 @@ const fr = {
   "wizard.step3.deny": "Refuser — toujours",
 
   // Wizard Step 4
-  "wizard.step4.breadcrumb": "WIZARD / PRESQUE FINI",
+  "wizard.step4.breadcrumb": "ASSISTANT / PRESQUE FINI",
   "wizard.step4.title": "Ta config de base est prête !",
   "wizard.step4.subtitle": "Tu peux l'utiliser maintenant ou aller plus loin.",
   "wizard.step4.advancedQuestion": "Tu veux affiner avec des options avancées ?",
@@ -147,7 +147,7 @@ const fr = {
   "wizard.rules.breadcrumb": "SECTION 5 / RÈGLES AVANCÉES",
   "wizard.rules.title": "Configure les Rules modulaires",
   "wizard.rules.subtitle": "Règles spécifiques par dossier ou type de fichier.",
-  "wizard.recap.breadcrumb": "WIZARD / TERMINÉ",
+  "wizard.recap.breadcrumb": "ASSISTANT / TERMINÉ",
   "wizard.recap.title": "Ta configuration est prête !",
   "wizard.recap.subtitle": "Sélectionne les fichiers à télécharger.",
 
