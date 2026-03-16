@@ -1,153 +1,255 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { PageHeader, FeatureCard } from "@/components";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { loadVault } from "@/lib/storage";
 
-type ModeType = "guided" | "manual";
+const FILE_LINES = [
+  { file: "CLAUDE.md", lines: [
+    "# Configuration Claude Code",
+    "",
+    "## Langue",
+    "Toujours répondre en français.",
+    "",
+    "## Ton",
+    "Professionnel et direct. Pas de politesses",
+    "superflues.",
+    "",
+    "## Style de réponse",
+    "Réponses concises. Pour le code, montre",
+    "uniquement les blocs modifiés (diffs) avec",
+    "le chemin du fichier au-dessus.",
+    "",
+    "## Sécurité",
+    "- Ne jamais exécuter de commandes destructrices",
+    "- Toujours vérifier les fichiers avant modification",
+    "- Préférer les opérations réversibles",
+  ]},
+  { file: "settings.json", lines: [
+    '{',
+    '  "$schema": "https://json.schemastore.org/claude-code-settings.json",',
+    '  "model": "claude-sonnet-4-6",',
+    '  "language": "french",',
+    '  "effortLevel": "high",',
+    '  "alwaysThinkingEnabled": true,',
+    '  "permissions": {',
+    '    "allow": [',
+    '      "Bash(npm run *)",',
+    '      "Bash(npx *)",',
+    '      "Bash(git *)"',
+    '    ],',
+    '    "deny": [',
+    '      "Read(./.env)",',
+    '      "Read(./.env.*)",',
+    '      "Bash(rm -rf *)"',
+    '    ],',
+    '    "defaultMode": "acceptEdits"',
+    '  },',
+    '  "hooks": {',
+    '    "PostToolUse": [{',
+    '      "matcher": "Write|Edit",',
+    '      "hooks": [{ "type": "command",',
+    '        "command": "npx eslint --fix $FILE" }]',
+    '    }]',
+    '  }',
+    '}',
+  ]},
+  { file: ".mcp.json", lines: [
+    '{',
+    '  "mcpServers": {',
+    '    "github": {',
+    '      "type": "http",',
+    '      "url": "https://api.githubcopilot.com/mcp/"',
+    '    },',
+    '    "chrome-devtools": {',
+    '      "command": "npx",',
+    '      "args": ["-y", "chrome-devtools-mcp@latest"]',
+    '    },',
+    '    "sentry": {',
+    '      "type": "http",',
+    '      "url": "https://mcp.sentry.dev/mcp"',
+    '    }',
+    '  }',
+    '}',
+  ]},
+  { file: ".claudeignore", lines: [
+    "# Dependencies",
+    "node_modules/",
+    "",
+    "# Build output",
+    "dist/",
+    ".next/",
+    "build/",
+    "",
+    "# Environment",
+    ".env",
+    ".env.*",
+    "",
+    "# Secrets",
+    "secrets/",
+    "*.pem",
+    "*.key",
+  ]},
+];
 
 export default function Home() {
-  const [selectedMode, setSelectedMode] = useState<ModeType>("manual");
+  const router = useRouter();
   const [vaultCount, setVaultCount] = useState(0);
+  const [activeFile, setActiveFile] = useState(0);
 
+  useEffect(() => { setVaultCount(loadVault().length); }, []);
+  // Auto-cycle with reset on manual click
+  const [cycleKey, setCycleKey] = useState(0);
   useEffect(() => {
-    setVaultCount(loadVault().length);
-  }, []);
+    const timer = setInterval(() => setActiveFile(f => (f + 1) % FILE_LINES.length), 5000);
+    return () => clearInterval(timer);
+  }, [cycleKey]);
+
+  const selectFile = (i: number) => {
+    setActiveFile(i);
+    setCycleKey(k => k + 1); // reset timer
+  };
+
+  const currentFile = FILE_LINES[activeFile];
 
   return (
-      <div className="flex flex-col h-full overflow-auto">
-        <PageHeader
-          title="Configuration Generator"
-          subtitle="Create, manage and share your Claude Code configuration files with elegance."
-        />
+    <div className="flex flex-col h-full">
+      {/* Split hero — fills viewport, no scroll */}
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0">
+        {/* Left: dark — 40% */}
+        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-8 md:p-12 lg:p-14">
+          {/* Grid pattern */}
+          <div className="absolute inset-0 opacity-[0.04]" style={{
+            backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }} />
 
-        {/* Hero Section */}
-        <div className="flex-1 bg-[#FAFAFA] px-6 md:px-14 pb-20 md:pb-8 min-h-0">
-          {/* Mode Selector */}
-          <div className="bg-[#F0F0F0] rounded-2xl p-10 flex flex-col items-center gap-4 mb-8">
-            <h2 className="font-[family-name:var(--font-newsreader)] text-[28px] font-medium text-[#0D6E6E] text-center">
-              Comment veux-tu configurer ?
-            </h2>
-            <p className="text-[15px] text-[#1A1A1A] text-center">
-              Choisis ton approche préférée.
+          {/* Top: title */}
+          <div className="relative z-10">
+            <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] mb-10">
+              Claude Code, optimisé pour <span className="text-[#0D6E6E] italic">ton</span> workflow.
+            </h1>
+            <p className="text-[16px] text-[#888888] leading-[1.8]">
+              La plupart des devs utilisent Claude Code avec les réglages par défaut. Permissions, hooks, MCP&nbsp;servers, rules — en 2&nbsp;minutes, configure tout pour que Claude comprenne ton projet, respecte tes conventions, et travaille comme tu veux.
             </p>
-
-            <div className="flex gap-4 mt-2">
-              {/* Bouton Guidé */}
-              <button
-                onClick={() => setSelectedMode("guided")}
-                className={`flex flex-col items-center gap-2 px-8 py-5 rounded-lg transition-all w-40 border ${
-                  selectedMode === "guided"
-                    ? "bg-[#0D6E6E] border-[#0D6E6E]"
-                    : "bg-white border-[#E07B54]"
-                }`}
-              >
-                <span className={`text-3xl ${selectedMode === "guided" ? "text-white" : "text-[#E07B54]"}`}>✦</span>
-                <span
-                  className={`text-sm font-medium ${
-                    selectedMode === "guided" ? "text-white" : "text-[#1A1A1A]"
-                  }`}
-                >
-                  Guidé
-                </span>
-                <span className={`text-[11px] text-center ${selectedMode === "guided" ? "text-white/70" : "text-[#888888]"}`}>
-                  Wizard pas à pas
-                </span>
-              </button>
-
-              {/* Bouton Manuel */}
-              <button
-                onClick={() => setSelectedMode("manual")}
-                className={`flex flex-col items-center gap-2 px-8 py-5 rounded-lg transition-all w-40 border ${
-                  selectedMode === "manual"
-                    ? "bg-[#0D6E6E] border-[#0D6E6E]"
-                    : "bg-white border-[#E07B54]"
-                }`}
-              >
-                <span className={`text-3xl ${selectedMode === "manual" ? "text-white" : "text-[#E07B54]"}`}>⌨</span>
-                <span
-                  className={`text-sm font-medium ${
-                    selectedMode === "manual" ? "text-white" : "text-[#1A1A1A]"
-                  }`}
-                >
-                  Manuel
-                </span>
-                <span
-                  className={`text-[11px] text-center ${
-                    selectedMode === "manual" ? "text-white/70" : "text-[#888888]"
-                  }`}
-                >
-                  Édition directe
-                </span>
-              </button>
-            </div>
           </div>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <FeatureCard
-              icon="✦"
-              iconBg="#0D6E6E"
-              title="Wizard Mode"
-              description="Answer guided questions to generate your perfect configuration step by step."
-              buttonText="Start Wizard →"
-              buttonHref="/wizard"
-              buttonVariant="primary"
-              stats={[
-                { value: "5 steps", label: "Quick setup", highlight: true },
-                { value: "~2 min", label: "Average time" },
-              ]}
-            />
-
-            <FeatureCard
-              icon="⚡"
-              iconBg="#E07B54"
-              title="Expert Mode"
-              description="Skip the wizard and directly edit your configuration files with full control."
-              buttonText="Open Editor"
-              buttonHref="/expert"
-              buttonVariant="secondary"
-              stats={[
-                { value: "Full control", label: "Advanced users", highlight: true },
-                { value: "YAML/JSON", label: "Formats" },
-              ]}
-              disabled={selectedMode === "guided"}
-            />
-
-            <FeatureCard
-              icon="◈"
-              iconBg="#1A1A1A"
-              title="Template Library"
-              description="Browse and use pre-made templates for common development setups."
-              buttonText="Browse Templates"
-              buttonHref="/library"
-              buttonVariant="secondary"
-              stats={[
-                { value: "20+", label: "Templates" },
-                { value: "Community", label: "Contributed" },
-              ]}
-            />
-          </div>
-
-          {/* Vault quick access */}
-          {vaultCount > 0 && (
-            <div className="mt-6 p-4 bg-white rounded-lg border border-[#E5E5E5] flex items-center justify-between">
-              <div>
-                <span className="text-sm font-medium text-[#1A1A1A]">
-                  {vaultCount} configuration{vaultCount > 1 ? "s" : ""} sauvegardée{vaultCount > 1 ? "s" : ""}
-                </span>
-                <p className="text-xs text-[#888888]">Restaurez ou exportez vos configs depuis le Vault.</p>
+          {/* Value points — centered between description and CTAs */}
+          <div className="relative z-10 flex flex-col gap-3 my-auto">
+            {[
+              { icon: "✦", text: "Découvre des options que tu ne connaissais pas" },
+              { icon: "↓", text: "Télécharge un ZIP prêt à déposer dans ton projet" },
+              { icon: "◆", text: "Sauvegarde tes configs par projet dans le Vault" },
+            ].map(({ icon, text }) => (
+              <div key={text} className="flex items-center gap-3">
+                <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
+                <span className="text-[13px] text-[#777777]">{text}</span>
               </div>
-              <Link
-                href="/vault"
-                className="text-sm font-medium text-[#0D6E6E] hover:underline"
+            ))}
+          </div>
+
+          {/* CTAs — centered between value points and vault/bottom */}
+          <div className={`relative z-10 flex flex-col gap-3 ${vaultCount > 0 ? "my-auto" : "mb-auto"}`}>
+            <button
+              onClick={() => router.push("/wizard")}
+              className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
+            >
+              <span className="text-white text-[15px] font-medium">Optimiser mon setup</span>
+              <svg className="text-white/60 group-hover:text-white transition-colors" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => router.push("/expert")}
+              className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl cursor-pointer border border-[#333333] hover:border-[#0D6E6E] text-[#777777] hover:text-[#0D6E6E] transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+              <span className="text-[13px] font-medium">Éditer directement</span>
+            </button>
+          </div>
+
+          {/* Bottom: vault (only if configs exist) */}
+          {vaultCount > 0 && (
+            <div className="relative z-10">
+              <button
+                onClick={() => router.push("/vault")}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer border border-[#2A2A2A] hover:border-[#0D6E6E] transition-colors w-full"
               >
-                Ouvrir le Vault
-              </Link>
+                <span className="text-sm">🔐</span>
+                <span className="text-[12px] text-[#888888]">{vaultCount} config{vaultCount > 1 ? "s" : ""} sauvegardée{vaultCount > 1 ? "s" : ""}</span>
+                <span className="text-[#555555] text-xs ml-auto">→</span>
+              </button>
             </div>
           )}
         </div>
+
+        {/* Right: code preview — 60% */}
+        <div className="lg:w-[60%] bg-[#111111] flex flex-col relative overflow-hidden">
+          {/* Gradient blend from left panel */}
+          <div className="hidden lg:block absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#1A1A1A] to-transparent z-10" />
+
+          {/* Top bar with tabs */}
+          <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">
+            <div className="flex gap-1">
+              {FILE_LINES.map((f, i) => (
+                <button
+                  key={f.file}
+                  onClick={() => selectFile(i)}
+                  className={`px-3 py-1.5 rounded-md text-[11px] font-mono transition-all ${
+                    i === activeFile
+                      ? "bg-[#0D6E6E]/20 text-[#0D6E6E] border border-[#0D6E6E]/30"
+                      : "text-[#444444] hover:text-[#666666]"
+                  }`}
+                >
+                  {f.file}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
+            </div>
+          </div>
+
+          {/* Code area */}
+          <div className="flex-1 px-6 lg:pl-28 pr-8 pb-6 overflow-auto relative z-20">
+            {currentFile.lines.map((line, i) => (
+              <div
+                key={`${activeFile}-${i}`}
+                className="flex gap-4 animate-fade-in"
+                style={{ animationDelay: `${i * 50}ms`, animationFillMode: "both" }}
+              >
+                <span className="text-[12px] font-mono text-[#333333] select-none w-5 text-right flex-shrink-0">{i + 1}</span>
+                <span className={`text-[13px] font-mono leading-[2] whitespace-pre ${
+                  line === "" ? "h-[2em]" :
+                  line.startsWith("#") ? "text-[#0D6E6E] font-medium" :
+                  line.startsWith("//") ? "text-[#444444]" :
+                  line.includes('":') ? "text-[#E07B54]" :
+                  line.startsWith("  ") && /^[\s{}[\]]/.test(line.trim()) ? "text-[#555555]" :
+                  "text-[#999999]"
+                }`}>
+                  {line || "\u00A0"}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom: progress */}
+          <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pb-5 relative z-20">
+            <span className="text-[10px] font-mono text-[#333333]">{currentFile.lines.length} lignes · UTF-8</span>
+            <div className="flex gap-2">
+              {FILE_LINES.map((_, i) => (
+                <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === activeFile ? "bg-[#0D6E6E] w-6" : "bg-[#252525] w-1.5"}`} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
   );
 }

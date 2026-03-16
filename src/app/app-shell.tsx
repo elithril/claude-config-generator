@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components";
 import PageTransition from "@/components/PageTransition";
 
-const NO_SIDEBAR_ROUTES = ["/", "/test", "/test2"];
+const NO_SIDEBAR_ROUTES = ["/"];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
