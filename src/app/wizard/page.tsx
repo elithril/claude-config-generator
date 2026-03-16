@@ -43,15 +43,21 @@ export default function WizardPage() {
   const [stepTransition, setStepTransition] = useState(false);
   const isTransitioning = useRef(false);
 
-  // Reset config on first mount, sync language with UI locale
+  // Reset config on first mount
   const hasReset = useRef(false);
   useEffect(() => {
     if (!hasReset.current) {
       hasReset.current = true;
       dispatch({ type: "RESET" });
-      dispatch({ type: "SET_FIELD", field: "language", value: locale });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync config.language with UI locale
+  useEffect(() => {
+    if (config.language !== locale) {
+      dispatch({ type: "SET_FIELD", field: "language", value: locale });
+    }
+  }, [locale]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const advancedSteps = useMemo(() => {
     const steps: { key: string; label: string }[] = [];
