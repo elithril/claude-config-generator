@@ -519,7 +519,7 @@ export default function WizardPage() {
       {/* Left Panel — single scroll, sticky header + sticky buttons */}
       <div ref={scrollRef} className="flex-1 bg-[#FAFAFA] overflow-auto">
         {/* Sticky header */}
-        <div className="sticky top-0 z-10 bg-[#FAFAFA] p-4 md:p-8 pb-3 border-b border-[#E5E5E5]">
+        <div className="sticky top-0 z-10 bg-[#FAFAFA] px-4 md:px-8 pt-4 md:pt-5 pb-3 border-b border-[#E5E5E5]">
           {/* Breadcrumb + Mode toggle */}
           <div className="flex items-center justify-between mb-2">
             <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">
