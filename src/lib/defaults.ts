@@ -116,6 +116,26 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     popular: true,
     icon: "🔍",
   },
+  {
+    id: "mcp-supabase",
+    name: "Supabase",
+    description: "BDD, Auth, Storage — gestion complète de projet Supabase",
+    transport: "http",
+    url: "https://mcp.supabase.com/mcp",
+    enabled: false,
+    popular: true,
+    icon: "⚡",
+  },
+  {
+    id: "mcp-figma",
+    name: "Figma",
+    description: "Accès aux designs Figma, design-to-code, inspection",
+    transport: "http",
+    url: "https://mcp.figma.com/mcp",
+    enabled: false,
+    popular: true,
+    icon: "🎨",
+  },
   // === Others ===
   {
     id: "mcp-notion",
