@@ -12,7 +12,7 @@ import {
 } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
-import { useT } from "@/i18n";
+import { useI18n } from "@/i18n";
 import { generateAllFiles } from "@/lib/generator";
 import { formatFileSize } from "@/lib/download";
 import type { RuleEntry } from "@/types";
@@ -25,7 +25,7 @@ export default function WizardPage() {
   const router = useRouter();
   const { config, dispatch } = useConfig();
   const { addToast } = useToast();
-  const t = useT();
+  const { locale, t } = useI18n();
 
   const BASIC_STEPS = [t("wizard.steps.bundle"), t("wizard.steps.personality"), t("wizard.steps.permissions"), t("wizard.steps.finalize")];
 
@@ -43,12 +43,13 @@ export default function WizardPage() {
   const [stepTransition, setStepTransition] = useState(false);
   const isTransitioning = useRef(false);
 
-  // Reset config on first mount
+  // Reset config on first mount, sync language with UI locale
   const hasReset = useRef(false);
   useEffect(() => {
     if (!hasReset.current) {
       hasReset.current = true;
       dispatch({ type: "RESET" });
+      dispatch({ type: "SET_FIELD", field: "language", value: locale });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
