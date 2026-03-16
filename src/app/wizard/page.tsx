@@ -73,6 +73,11 @@ export default function WizardPage() {
     }
     if (newChanged.size > 0) {
       setChangedFiles(newChanged);
+      // Auto-switch to the changed file if it's not the one currently displayed
+      const changedNotSelected = [...newChanged].find(f => f !== selectedPreviewFile);
+      if (changedNotSelected) {
+        setSelectedPreviewFile(changedNotSelected);
+      }
       const timer = setTimeout(() => setChangedFiles(new Set()), 1500);
       return () => clearTimeout(timer);
     }
