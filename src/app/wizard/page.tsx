@@ -469,48 +469,58 @@ export default function WizardPage() {
   return (
     <div className="flex flex-col lg:flex-row h-full min-h-screen">
       {/* Left Panel */}
-      <div className="flex-1 flex flex-col bg-[#FAFAFA] p-4 md:p-8 pb-20 md:pb-8 overflow-auto">
-        {/* Breadcrumb + Mode toggle */}
-        <div className="flex items-center justify-between mb-2">
-          <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">
-            {stepMeta.breadcrumb}
-          </span>
-          <div className="flex items-center bg-[#F0F0F0] rounded-full p-0.5">
-            <button
-              onClick={() => setWizardMode("quick")}
-              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "quick" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
-            >
-              Quick
-            </button>
-            <button
-              onClick={() => setWizardMode("advanced")}
-              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "advanced" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
-            >
-              Advanced
-            </button>
+      <div className="flex-1 flex flex-col bg-[#FAFAFA] min-h-0">
+        {/* Fixed header */}
+        <div className="flex-shrink-0 p-4 md:p-8 pb-0">
+          {/* Breadcrumb + Mode toggle */}
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">
+              {stepMeta.breadcrumb}
+            </span>
+            <div className="flex items-center bg-[#F0F0F0] rounded-full p-0.5">
+              <button
+                onClick={() => setWizardMode("quick")}
+                className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "quick" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
+              >
+                Quick
+              </button>
+              <button
+                onClick={() => setWizardMode("advanced")}
+                className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "advanced" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
+              >
+                Advanced
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <h1 className="font-[family-name:var(--font-newsreader)] text-[28px] font-medium text-[#0D6E6E] tracking-[-1px]">{stepMeta.title}</h1>
+            <p className="text-[14px] text-[#666666] mt-1">{stepMeta.subtitle}</p>
+          </div>
+
+          <WizardProgress steps={allSteps} currentStep={activeStepIndex} />
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-auto px-4 md:px-8 py-4">
+          <div className={`flex flex-col gap-4 transition-all duration-150 ease-in-out ${stepTransition ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
+            {renderStepContent()}
           </div>
         </div>
 
-        <div className="mb-6">
-          <h1 className="font-[family-name:var(--font-newsreader)] text-[28px] font-medium text-[#0D6E6E] tracking-[-1px]">{stepMeta.title}</h1>
-          <p className="text-[14px] text-[#666666] mt-1">{stepMeta.subtitle}</p>
+        {/* Fixed bottom buttons */}
+        <div className="flex-shrink-0 px-4 md:px-8 py-4 pb-20 md:pb-4 border-t border-[#E5E5E5] bg-[#FAFAFA]">
+          {buttonText ? (
+            <div className="flex gap-4">
+              <Button variant="outline" onClick={handleBack}>Back</Button>
+              <Button variant="primary" onClick={handleMainAction}>{buttonText}</Button>
+            </div>
+          ) : isRecap ? (
+            <div className="flex gap-4">
+              <Button variant="outline" onClick={handleBack}>Back</Button>
+            </div>
+          ) : null}
         </div>
-
-        <WizardProgress steps={allSteps} currentStep={activeStepIndex} />
-
-        <div className={`flex flex-col gap-4 mt-6 flex-1 transition-all duration-150 ease-in-out ${stepTransition ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>{renderStepContent()}</div>
-
-        {buttonText && (
-          <div className="flex gap-4 mt-6">
-            <Button variant="outline" onClick={handleBack}>Back</Button>
-            <Button variant="primary" onClick={handleMainAction}>{buttonText}</Button>
-          </div>
-        )}
-        {!buttonText && isRecap && (
-          <div className="flex gap-4 mt-6">
-            <Button variant="outline" onClick={handleBack}>Back</Button>
-          </div>
-        )}
       </div>
 
       {/* Right Panel - Preview */}
