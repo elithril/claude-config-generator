@@ -87,6 +87,36 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   // Attribution
   settings.includeCoAuthoredBy = config.includeCoAuthoredBy;
 
+  // Output style
+  if (config.outputStyle) {
+    settings.outputStyle = config.outputStyle;
+  }
+
+  // Auto memory
+  if (!config.autoMemoryEnabled) {
+    settings.autoMemoryEnabled = false;
+  }
+
+  // Git instructions
+  if (!config.includeGitInstructions) {
+    settings.includeGitInstructions = false;
+  }
+
+  // Disallowed tools
+  if (config.disallowedTools && config.disallowedTools.length > 0) {
+    settings.disallowedTools = config.disallowedTools;
+  }
+
+  // Teammate mode (agent teams)
+  if (config.teammateMode !== "auto") {
+    settings.teammateMode = config.teammateMode;
+  }
+
+  // Auto updates channel
+  if (config.autoUpdatesChannel !== "latest") {
+    settings.autoUpdatesChannel = config.autoUpdatesChannel;
+  }
+
   // Environment variables
   if (config.envVars && Object.keys(config.envVars).length > 0) {
     settings.env = config.envVars;

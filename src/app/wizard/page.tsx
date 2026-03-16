@@ -230,6 +230,13 @@ export default function WizardPage() {
                 </div>
               </QuestionCard>
               {/* Preferences */}
+              {/* Output style */}
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">Style de sortie</h4>
+                <p className="text-xs text-[#888888] mb-3">Instruction ajoutée au system prompt pour ajuster les réponses. Laisse vide pour le défaut.</p>
+                <input type="text" value={config.outputStyle} onChange={(e) => dispatch({ type: "SET_FIELD", field: "outputStyle", value: e.target.value })} placeholder="Ex: Explanatory, Verbose, Minimal..." className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
+              </div>
+              {/* Preferences toggles */}
               <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
                 <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Préférences</h4>
                 <div className="flex flex-col gap-3">
@@ -246,6 +253,20 @@ export default function WizardPage() {
                       <p className="text-xs text-[#888888]">Ajoute une ligne d&apos;attribution dans les commits git.</p>
                     </div>
                     <input type="checkbox" checked={config.includeCoAuthoredBy} onChange={(e) => dispatch({ type: "SET_FIELD", field: "includeCoAuthoredBy", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
+                  </label>
+                  <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
+                    <div>
+                      <span className="text-sm font-medium text-[#1A1A1A]">Auto-mémoire</span>
+                      <p className="text-xs text-[#888888]">Claude accumule des notes entre les sessions automatiquement.</p>
+                    </div>
+                    <input type="checkbox" checked={config.autoMemoryEnabled} onChange={(e) => dispatch({ type: "SET_FIELD", field: "autoMemoryEnabled", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
+                  </label>
+                  <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
+                    <div>
+                      <span className="text-sm font-medium text-[#1A1A1A]">Instructions Git intégrées</span>
+                      <p className="text-xs text-[#888888]">Inclut les instructions de workflow git/PR dans le system prompt.</p>
+                    </div>
+                    <input type="checkbox" checked={config.includeGitInstructions} onChange={(e) => dispatch({ type: "SET_FIELD", field: "includeGitInstructions", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                   </label>
                 </div>
               </div>
@@ -287,6 +308,24 @@ export default function WizardPage() {
                   </div>
                   <input type="checkbox" checked={config.sandboxEnabled} onChange={(e) => dispatch({ type: "SET_FIELD", field: "sandboxEnabled", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                 </label>
+              </div>
+              {/* Disallowed tools */}
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">Outils désactivés</h4>
+                <p className="text-xs text-[#888888] mb-3">Outils complètement retirés du contexte de Claude. Il ne pourra pas les utiliser du tout.</p>
+                <div className="flex flex-wrap gap-2">
+                  {["WebFetch", "WebSearch", "Agent", "Bash", "Edit", "Write", "Read", "Glob", "Grep", "NotebookEdit"].map((tool) => (
+                    <label key={tool} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded border cursor-pointer text-xs ${
+                      config.disallowedTools.includes(tool) ? "border-[#dc2626] bg-red-50 text-[#dc2626]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"
+                    }`}>
+                      <input type="checkbox" checked={config.disallowedTools.includes(tool)} onChange={(e) => {
+                        const updated = e.target.checked ? [...config.disallowedTools, tool] : config.disallowedTools.filter(t => t !== tool);
+                        dispatch({ type: "SET_FIELD", field: "disallowedTools", value: updated });
+                      }} className="hidden" />
+                      {config.disallowedTools.includes(tool) ? "✕" : ""} {tool}
+                    </label>
+                  ))}
+                </div>
               </div>
               <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
                 <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Règles personnalisées</h4>
@@ -375,6 +414,45 @@ export default function WizardPage() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Agent teams + updates */}
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Agent Teams &amp; Mises à jour</h4>
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <label className="text-xs font-medium text-[#666666] mb-2 block">Mode teammates</label>
+                    <p className="text-xs text-[#888888] mb-2">Comment les agents de l&apos;équipe s&apos;affichent quand tu utilises les agent teams.</p>
+                    <div className="flex gap-2">
+                      {([
+                        { value: "auto", label: "Auto", desc: "Détecte tmux/iTerm2" },
+                        { value: "in-process", label: "In-process", desc: "Dans le même terminal" },
+                        { value: "tmux", label: "Tmux", desc: "Panneaux tmux séparés" },
+                      ] as const).map(({ value, label, desc }) => (
+                        <button key={value} onClick={() => dispatch({ type: "SET_FIELD", field: "teammateMode", value })}
+                          className={`flex-1 p-2 rounded border text-center ${config.teammateMode === value ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"}`}>
+                          <span className="text-xs font-medium block">{label}</span>
+                          <span className="text-[10px] text-[#888888]">{desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-[#666666] mb-2 block">Canal de mises à jour</label>
+                    <div className="flex gap-2">
+                      <button onClick={() => dispatch({ type: "SET_FIELD", field: "autoUpdatesChannel", value: "latest" })}
+                        className={`flex-1 p-2 rounded border text-center ${config.autoUpdatesChannel === "latest" ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"}`}>
+                        <span className="text-xs font-medium block">Latest</span>
+                        <span className="text-[10px] text-[#888888]">Dernière version disponible</span>
+                      </button>
+                      <button onClick={() => dispatch({ type: "SET_FIELD", field: "autoUpdatesChannel", value: "stable" })}
+                        className={`flex-1 p-2 rounded border text-center ${config.autoUpdatesChannel === "stable" ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"}`}>
+                        <span className="text-xs font-medium block">Stable</span>
+                        <span className="text-[10px] text-[#888888]">~1 semaine de retard, moins de bugs</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </>
           );

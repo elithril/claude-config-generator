@@ -7,6 +7,8 @@ export type ResponseStyleType = "concise" | "detailed" | "technical";
 export type ModelType = "claude-sonnet-4-6" | "claude-opus-4-6" | "claude-haiku-4-5";
 export type PermissionModeType = "default" | "plan" | "acceptEdits" | "dontAsk";
 export type EffortLevelType = "low" | "medium" | "high";
+export type TeammateModeType = "auto" | "in-process" | "tmux";
+export type UpdateChannelType = "stable" | "latest";
 
 // === HOOKS ===
 
@@ -95,16 +97,24 @@ export interface ClaudeConfig {
   extendedThinking: boolean;
   includeCoAuthoredBy: boolean;
 
+  // Step 2 - Additional preferences
+  outputStyle: string;
+  autoMemoryEnabled: boolean;
+  includeGitInstructions: boolean;
+
   // Step 3 - Permissions
   responseStyle: ResponseStyleType;
   permissionMode: PermissionModeType;
   sandboxEnabled: boolean;
+  disallowedTools: string[];
   permissions: Permissions;
 
   // Step 4 - Advanced toggle
   enableHooks: boolean;
   enableMCP: boolean;
   enableRules: boolean;
+  teammateMode: TeammateModeType;
+  autoUpdatesChannel: UpdateChannelType;
 
   // Step 5 - Hooks
   hooks: HookEntry[];
