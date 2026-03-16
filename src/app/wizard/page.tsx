@@ -9,6 +9,7 @@ import {
   QuestionCard,
   ChoiceButton,
   Button,
+  FileDropZone,
 } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
@@ -275,6 +276,22 @@ export default function WizardPage() {
                   />
                 </div>
               </QuestionCard>
+
+              {/* CLAUDE.md import */}
+              <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-2">CLAUDE.md</h4>
+                <p className="text-xs text-[#888888] mb-3">
+                  Un squelette sera genere automatiquement. Tu peux aussi importer ton propre fichier pour l&apos;ecraser.
+                </p>
+                <FileDropZone
+                  onFileLoaded={(content) => {
+                    dispatch({ type: "IMPORT_CLAUDE_MD", content });
+                    addToast("CLAUDE.md importe");
+                  }}
+                  currentContent={config.claudeMdImported ? config.claudeMdContent : ""}
+                  accept=".md"
+                />
+              </div>
             </>
           );
 

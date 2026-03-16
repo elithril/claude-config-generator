@@ -9,3 +9,4 @@ export { default as PreviewPanel } from "./PreviewPanel";
 export { default as ChoiceButton } from "./ChoiceButton";
 export { default as PageHeader } from "./PageHeader";
 export { default as FilePreview } from "./FilePreview";
+export { default as FileDropZone } from "./FileDropZone";
