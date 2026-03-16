@@ -6,16 +6,77 @@ const LANGUAGE_MAP: Record<string, string> = {
   es: "Español",
 };
 
-const TONE_MAP: Record<string, string> = {
-  cool: "Décontracté et amical, avec de l'humour quand approprié.",
-  pro: "Professionnel et direct. Pas de politesses superflues.",
-  pedagogue: "Pédagogue et patient. Explique les concepts en détail avec des exemples.",
+// Tone descriptions per language
+const TONE_MAP: Record<string, Record<string, string>> = {
+  fr: {
+    cool: "Décontracté et amical, avec de l'humour quand approprié.",
+    pro: "Professionnel et direct. Pas de politesses superflues.",
+    pedagogue: "Pédagogue et patient. Explique les concepts en détail avec des exemples.",
+  },
+  en: {
+    cool: "Casual and friendly, with humor when appropriate.",
+    pro: "Professional and direct. No unnecessary pleasantries.",
+    pedagogue: "Patient and educational. Explains concepts in detail with examples.",
+  },
+  es: {
+    cool: "Relajado y amigable, con humor cuando sea apropiado.",
+    pro: "Profesional y directo. Sin cortesías innecesarias.",
+    pedagogue: "Pedagógico y paciente. Explica los conceptos en detalle con ejemplos.",
+  },
 };
 
-const STYLE_MAP: Record<string, string> = {
-  concise: "Réponses concises. Pour le code, montre uniquement les blocs modifiés (diffs) avec le chemin du fichier.",
-  detailed: "Réponses détaillées avec explications complètes, exemples et alternatives considérées.",
-  technical: "Réponses techniques avec références à la documentation, complexité algorithmique et trade-offs.",
+const STYLE_MAP: Record<string, Record<string, string>> = {
+  fr: {
+    concise: "Réponses concises. Pour le code, montre uniquement les blocs modifiés (diffs) avec le chemin du fichier.",
+    detailed: "Réponses détaillées avec explications complètes, exemples et alternatives considérées.",
+    technical: "Réponses techniques avec références à la documentation, complexité algorithmique et trade-offs.",
+  },
+  en: {
+    concise: "Concise responses. For code, show only modified blocks (diffs) with the file path.",
+    detailed: "Detailed responses with complete explanations, examples and alternatives considered.",
+    technical: "Technical responses with documentation references, algorithmic complexity and trade-offs.",
+  },
+  es: {
+    concise: "Respuestas concisas. Para código, muestra solo los bloques modificados (diffs) con la ruta del archivo.",
+    detailed: "Respuestas detalladas con explicaciones completas, ejemplos y alternativas consideradas.",
+    technical: "Respuestas técnicas con referencias a documentación, complejidad algorítmica y trade-offs.",
+  },
+};
+
+const SECTION_TITLES: Record<string, Record<string, string>> = {
+  fr: {
+    title: "# Configuration Claude Code",
+    language: "## Langue",
+    languageInstruction: "Toujours répondre en",
+    tone: "## Ton",
+    style: "## Style de réponse",
+    safe: "## Sécurité",
+    safeRules: "- Ne jamais exécuter de commandes destructrices sans confirmation\n- Toujours vérifier les fichiers avant modification\n- Préférer les opérations réversibles",
+    dev: "## Développement",
+    devRules: "- Mode développement avec plus de libertés\n- Exécution directe des commandes de build et test\n- Accès étendu au filesystem",
+  },
+  en: {
+    title: "# Claude Code Configuration",
+    language: "## Language",
+    languageInstruction: "Always respond in",
+    tone: "## Tone",
+    style: "## Response Style",
+    safe: "## Security",
+    safeRules: "- Never execute destructive commands without confirmation\n- Always verify files before modification\n- Prefer reversible operations",
+    dev: "## Development",
+    devRules: "- Development mode with more freedom\n- Direct execution of build and test commands\n- Extended filesystem access",
+  },
+  es: {
+    title: "# Configuración de Claude Code",
+    language: "## Idioma",
+    languageInstruction: "Siempre responder en",
+    tone: "## Tono",
+    style: "## Estilo de respuesta",
+    safe: "## Seguridad",
+    safeRules: "- Nunca ejecutar comandos destructivos sin confirmación\n- Siempre verificar archivos antes de modificar\n- Preferir operaciones reversibles",
+    dev: "## Desarrollo",
+    devRules: "- Modo desarrollo con más libertades\n- Ejecución directa de comandos de build y test\n- Acceso extendido al filesystem",
+  },
 };
 
 export function generateClaudeMd(config: ClaudeConfig): string {
@@ -23,23 +84,21 @@ export function generateClaudeMd(config: ClaudeConfig): string {
     return config.claudeMdContent;
   }
 
+  const lang = config.language || "fr";
+  const s = SECTION_TITLES[lang] || SECTION_TITLES.fr;
+  const toneMap = TONE_MAP[lang] || TONE_MAP.fr;
+  const styleMap = STYLE_MAP[lang] || STYLE_MAP.fr;
+
   const sections: string[] = [];
-  sections.push("# Configuration Claude Code\n");
+  sections.push(`${s.title}\n`);
+  sections.push(`${s.language}\n${s.languageInstruction} ${LANGUAGE_MAP[lang] || lang}.\n`);
+  sections.push(`${s.tone}\n${toneMap[config.tone] || config.tone}\n`);
+  sections.push(`${s.style}\n${styleMap[config.responseStyle] || config.responseStyle}\n`);
 
-  // Language
-  sections.push(`## Langue\nToujours répondre en ${LANGUAGE_MAP[config.language] || config.language}.\n`);
-
-  // Tone
-  sections.push(`## Ton\n${TONE_MAP[config.tone] || config.tone}\n`);
-
-  // Response style
-  sections.push(`## Style de réponse\n${STYLE_MAP[config.responseStyle] || config.responseStyle}\n`);
-
-  // Bundle-specific instructions
   if (config.bundle === "safe") {
-    sections.push(`## Sécurité\n- Ne jamais exécuter de commandes destructrices sans confirmation\n- Toujours vérifier les fichiers avant modification\n- Préférer les opérations réversibles\n`);
+    sections.push(`${s.safe}\n${s.safeRules}\n`);
   } else if (config.bundle === "dev") {
-    sections.push(`## Développement\n- Mode développement avec plus de libertés\n- Exécution directe des commandes de build et test\n- Accès étendu au filesystem\n`);
+    sections.push(`${s.dev}\n${s.devRules}\n`);
   }
 
   return sections.join("\n");
@@ -76,7 +135,7 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   // Language
   settings.language = config.language === "fr" ? "french" : config.language === "es" ? "spanish" : "english";
 
-  // Model — always write so user sees it in preview
+  // Model
   settings.model = config.model;
 
   // Effort level
@@ -147,13 +206,12 @@ export function generateSettingsJson(config: ClaudeConfig): string {
         type: hook.action,
       };
 
-      // Different fields depending on hook type
       if (hook.action === "command") {
         hookDef.command = hook.command;
       } else if (hook.action === "prompt" || hook.action === "agent") {
-        hookDef.prompt = hook.command; // "command" field stores the prompt text
+        hookDef.prompt = hook.command;
       } else if (hook.action === "http") {
-        hookDef.url = hook.command; // "command" field stores the URL
+        hookDef.url = hook.command;
       }
 
       if (hook.timeout) {
@@ -268,25 +326,20 @@ export function generateRuleFiles(config: ClaudeConfig): GeneratedFile[] {
 export function generateAllFiles(config: ClaudeConfig): GeneratedFile[] {
   const files: GeneratedFile[] = [];
 
-  // CLAUDE.md
   const claudeMd = generateClaudeMd(config);
   files.push({ path: "CLAUDE.md", content: claudeMd, size: new TextEncoder().encode(claudeMd).length });
 
-  // settings.json
   const settingsJson = generateSettingsJson(config);
   files.push({ path: ".claude/settings.json", content: settingsJson, size: new TextEncoder().encode(settingsJson).length });
 
-  // .claudeignore
   const claudeIgnore = generateClaudeIgnore(config);
   files.push({ path: ".claudeignore", content: claudeIgnore, size: new TextEncoder().encode(claudeIgnore).length });
 
-  // .mcp.json
   const mcpJson = generateMcpJson(config);
   if (mcpJson) {
     files.push({ path: ".mcp.json", content: mcpJson, size: new TextEncoder().encode(mcpJson).length });
   }
 
-  // Rules
   const ruleFiles = generateRuleFiles(config);
   files.push(...ruleFiles);
 
