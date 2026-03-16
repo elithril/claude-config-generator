@@ -1,10 +1,12 @@
 "use client";
 
 import { useConfig } from "@/context/ConfigContext";
+import { useT } from "@/i18n";
 import type { HookEntry } from "@/types";
 
 export default function HooksStep() {
   const { config, dispatch } = useConfig();
+  const t = useT();
 
   const toggleHook = (hookId: string) => {
     const updated = config.hooks.map((h: HookEntry) =>
@@ -58,7 +60,7 @@ export default function HooksStep() {
                     </p>
                   )}
                   {hook.matcher && (
-                    <span className="text-xs text-[#888888] mt-1 block">Matcher: {hook.matcher}</span>
+                    <span className="text-xs text-[#888888] mt-1 block">{t("hooks.matcher")}: {hook.matcher}</span>
                   )}
                 </div>
               </label>

@@ -8,11 +8,13 @@ import { generateAllFiles } from "@/lib/generator";
 import { downloadAsZip, formatFileSize } from "@/lib/download";
 import { saveToVault } from "@/lib/storage";
 import type { GeneratedFile } from "@/types";
+import { useT } from "@/i18n";
 
 export default function RecapStep() {
   const router = useRouter();
   const { config } = useConfig();
   const { addToast } = useToast();
+  const t = useT();
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [saveName, setSaveName] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
@@ -28,9 +30,9 @@ export default function RecapStep() {
     setIsDownloading(true);
     try {
       await downloadAsZip(generatedFiles);
-      addToast("Configuration téléchargée !");
+      addToast(t("toast.downloaded"));
     } catch {
-      addToast("Erreur lors du téléchargement", "error");
+      addToast(t("toast.downloadError"), "error");
     } finally {
       setIsDownloading(false);
     }
@@ -39,7 +41,7 @@ export default function RecapStep() {
   const handleSaveToVault = () => {
     if (!saveName.trim()) return;
     saveToVault(saveName.trim(), config);
-    addToast("Sauvegardé dans le Vault");
+    addToast(t("toast.saved"));
     setShowSaveInput(false);
     setSaveName("");
   };
@@ -49,31 +51,31 @@ export default function RecapStep() {
       {/* Summary */}
       <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
         <h3 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A] mb-4">
-          Résumé de ta configuration
+          {t("wizard.recap.summary")}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
           <div className="p-3 bg-[#FAFAFA] rounded">
-            <span className="text-[#888888] text-xs">Bundle</span>
+            <span className="text-[#888888] text-xs">{t("wizard.recap.bundle")}</span>
             <p className="font-medium text-[#1A1A1A]">{config.bundle === "safe" ? "Safe Mode" : "Dev Rapide"}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
-            <span className="text-[#888888] text-xs">Langue</span>
+            <span className="text-[#888888] text-xs">{t("wizard.recap.language")}</span>
             <p className="font-medium text-[#1A1A1A]">{config.language === "fr" ? "Français" : config.language === "en" ? "English" : "Español"}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
-            <span className="text-[#888888] text-xs">Ton</span>
+            <span className="text-[#888888] text-xs">{t("wizard.recap.tone")}</span>
             <p className="font-medium text-[#1A1A1A]">{config.tone === "cool" ? "Cool" : config.tone === "pro" ? "Pro" : "Pédagogue"}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
-            <span className="text-[#888888] text-xs">Modèle</span>
+            <span className="text-[#888888] text-xs">{t("wizard.recap.model")}</span>
             <p className="font-medium text-[#1A1A1A]">{config.model === "claude-sonnet-4-6" ? "Sonnet 4.6" : config.model === "claude-opus-4-6" ? "Opus 4.6" : "Haiku 4.5"}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
-            <span className="text-[#888888] text-xs">Style</span>
+            <span className="text-[#888888] text-xs">{t("wizard.recap.style")}</span>
             <p className="font-medium text-[#1A1A1A]">{config.responseStyle === "concise" ? "Concis" : config.responseStyle === "detailed" ? "Détaillé" : "Technique"}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
-            <span className="text-[#888888] text-xs">Permissions</span>
+            <span className="text-[#888888] text-xs">{t("wizard.recap.permissions")}</span>
             <p className="font-medium text-[#1A1A1A]">{
               config.permissionMode === "default" ? "Demander" :
               config.permissionMode === "plan" ? "Mode Plan" :
@@ -86,7 +88,7 @@ export default function RecapStep() {
       {/* Generated files */}
       <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
         <h3 className="font-[family-name:var(--font-newsreader)] text-lg font-medium text-[#1A1A1A] mb-4">
-          Fichiers générés
+          {t("wizard.recap.files")}
         </h3>
         <div className="flex flex-col gap-1.5">
           {generatedFiles.map((file) => (
@@ -104,9 +106,9 @@ export default function RecapStep() {
             </div>
           ))}
           <div className="flex items-center gap-2 pt-2 mt-1 border-t border-[#E5E5E5]">
-            <span className="text-xs text-[#888888]">{generatedFiles.length} fichiers</span>
+            <span className="text-xs text-[#888888]">{generatedFiles.length} {t("wizard.recap.filesCount")}</span>
             <span className="text-xs text-[#CCCCCC]">·</span>
-            <span className="text-xs text-[#888888]">{formatFileSize(generatedFiles.reduce((a, f) => a + f.size, 0))} total</span>
+            <span className="text-xs text-[#888888]">{formatFileSize(generatedFiles.reduce((a, f) => a + f.size, 0))} {t("wizard.recap.total")}</span>
           </div>
         </div>
       </div>
@@ -118,7 +120,7 @@ export default function RecapStep() {
           disabled={isDownloading}
           className="w-full py-3 bg-[#0D6E6E] text-white rounded-lg font-medium hover:bg-[#0A5555] transition-colors disabled:opacity-60"
         >
-          {isDownloading ? "Téléchargement..." : "Télécharger le ZIP"}
+          {isDownloading ? t("wizard.recap.downloading") : t("wizard.recap.download")}
         </button>
 
         {/* Inline vault save */}
@@ -127,7 +129,7 @@ export default function RecapStep() {
             onClick={() => setShowSaveInput(true)}
             className="w-full py-3 bg-white text-[#0D6E6E] border-2 border-[#0D6E6E] rounded-lg font-medium hover:bg-[#F0FAFA] transition-colors"
           >
-            Sauver dans le Vault
+            {t("wizard.recap.saveVault")}
           </button>
         ) : (
           <div className="flex gap-2 items-center p-2 bg-white border-2 border-[#0D6E6E] rounded-lg">
@@ -140,7 +142,7 @@ export default function RecapStep() {
                 if (e.key === "Enter") handleSaveToVault();
                 if (e.key === "Escape") { setShowSaveInput(false); setSaveName(""); }
               }}
-              placeholder="Nom de la config..."
+              placeholder={t("wizard.recap.savePlaceholder")}
               className="flex-1 px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]"
             />
             <button
@@ -148,7 +150,7 @@ export default function RecapStep() {
               disabled={!saveName.trim()}
               className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded font-medium hover:bg-[#0A5555] disabled:opacity-40"
             >
-              Sauver
+              {t("wizard.recap.save")}
             </button>
             <button
               onClick={() => { setShowSaveInput(false); setSaveName(""); }}
@@ -164,7 +166,7 @@ export default function RecapStep() {
         onClick={() => router.push("/expert")}
         className="w-full py-3 text-[#0D6E6E] text-sm font-medium hover:underline"
       >
-        Affiner dans l&apos;Expert Mode →
+        {t("wizard.recap.expertLink")}
       </button>
     </div>
   );

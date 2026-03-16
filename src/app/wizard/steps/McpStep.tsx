@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useConfig } from "@/context/ConfigContext";
+import { useT } from "@/i18n";
 import type { McpServer, McpTransportType } from "@/types";
 
 export default function McpStep() {
   const { config, dispatch } = useConfig();
+  const t = useT();
   const [showAddForm, setShowAddForm] = useState(false);
   const [customName, setCustomName] = useState("");
   const [customTransport, setCustomTransport] = useState<McpTransportType>("http");
@@ -86,7 +88,7 @@ export default function McpStep() {
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-        <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">Serveurs populaires</h4>
+        <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">{t("mcp.popular")}</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {popular.map((server) => (
             <label
@@ -110,7 +112,7 @@ export default function McpStep() {
       </div>
 
       <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-        <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">Autres serveurs</h4>
+        <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">{t("mcp.others")}</h4>
         <div className="flex flex-col gap-2">
           {others.map((server) => (
             <label
@@ -134,7 +136,7 @@ export default function McpStep() {
       {/* Custom servers list */}
       {custom.length > 0 && (
         <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">Serveurs personnalisés</h4>
+          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">{t("mcp.custom")}</h4>
           <div className="flex flex-col gap-2">
             {custom.map((server) => (
               <div key={server.id} className="flex items-center gap-3 p-3 border border-[#0D6E6E] bg-[#F0FAFA] rounded">
@@ -146,7 +148,7 @@ export default function McpStep() {
                   </span>
                 </div>
                 <span className="px-1.5 py-0.5 text-[10px] bg-[#F0F0F0] text-[#666666] rounded">{server.transport}</span>
-                <button onClick={() => removeCustomServer(server.id)} className="text-xs text-[#dc2626] hover:underline">Suppr</button>
+                <button onClick={() => removeCustomServer(server.id)} className="text-xs text-[#dc2626] hover:underline">{t("vault.delete")}</button>
               </div>
             ))}
           </div>
@@ -159,15 +161,15 @@ export default function McpStep() {
           onClick={() => setShowAddForm(true)}
           className="w-full py-3 border-2 border-dashed border-[#E5E5E5] rounded-lg text-sm text-[#888888] hover:border-[#0D6E6E] hover:text-[#0D6E6E] transition-colors"
         >
-          + Ajouter un serveur personnalisé
+          {t("mcp.addCustom")}
         </button>
       ) : (
         <div className="bg-white rounded-md border border-[#0D6E6E] p-5">
-          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-4">Nouveau serveur MCP</h4>
+          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-4">{t("mcp.newServer")}</h4>
           <div className="flex flex-col gap-3">
             {/* Name */}
             <div>
-              <label className="text-xs font-medium text-[#666666] mb-1 block">Nom</label>
+              <label className="text-xs font-medium text-[#666666] mb-1 block">{t("mcp.name")}</label>
               <input
                 type="text"
                 value={customName}
@@ -179,19 +181,19 @@ export default function McpStep() {
 
             {/* Transport */}
             <div>
-              <label className="text-xs font-medium text-[#666666] mb-1 block">Transport</label>
+              <label className="text-xs font-medium text-[#666666] mb-1 block">{t("mcp.transport")}</label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setCustomTransport("http")}
                   className={`flex-1 py-2 text-sm rounded border ${customTransport === "http" ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E] font-medium" : "border-[#E5E5E5] text-[#666666]"}`}
                 >
-                  HTTP (remote)
+                  {t("mcp.httpRemote")}
                 </button>
                 <button
                   onClick={() => setCustomTransport("stdio")}
                   className={`flex-1 py-2 text-sm rounded border ${customTransport === "stdio" ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E] font-medium" : "border-[#E5E5E5] text-[#666666]"}`}
                 >
-                  stdio (local)
+                  {t("mcp.stdioLocal")}
                 </button>
               </div>
             </div>
@@ -199,7 +201,7 @@ export default function McpStep() {
             {/* URL or Command */}
             {customTransport === "http" ? (
               <div>
-                <label className="text-xs font-medium text-[#666666] mb-1 block">URL</label>
+                <label className="text-xs font-medium text-[#666666] mb-1 block">{t("mcp.url")}</label>
                 <input
                   type="text"
                   value={customUrl}
@@ -210,7 +212,7 @@ export default function McpStep() {
               </div>
             ) : (
               <div>
-                <label className="text-xs font-medium text-[#666666] mb-1 block">Commande</label>
+                <label className="text-xs font-medium text-[#666666] mb-1 block">{t("mcp.command")}</label>
                 <input
                   type="text"
                   value={customCommand}
@@ -218,13 +220,13 @@ export default function McpStep() {
                   placeholder="npx -y @package/server"
                   className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono text-xs"
                 />
-                <p className="text-[10px] text-[#AAAAAA] mt-1">La commande complète avec ses arguments, séparés par des espaces.</p>
+                <p className="text-[10px] text-[#AAAAAA] mt-1">{t("mcp.commandHint")}</p>
               </div>
             )}
 
             {/* Env vars */}
             <div>
-              <label className="text-xs font-medium text-[#666666] mb-1 block">Variables d&apos;environnement (optionnel)</label>
+              <label className="text-xs font-medium text-[#666666] mb-1 block">{t("mcp.envVars")}</label>
               <div className="flex gap-2 mb-2">
                 <input type="text" value={customEnvKey} onChange={(e) => setCustomEnvKey(e.target.value)} placeholder="CLÉ" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
                 <input type="text" value={customEnvValue} onChange={(e) => setCustomEnvValue(e.target.value)} placeholder="valeur" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
@@ -245,7 +247,7 @@ export default function McpStep() {
             {/* Headers (HTTP only) */}
             {customTransport === "http" && (
               <div>
-                <label className="text-xs font-medium text-[#666666] mb-1 block">Headers HTTP (optionnel)</label>
+                <label className="text-xs font-medium text-[#666666] mb-1 block">{t("mcp.headers")}</label>
                 <div className="flex gap-2 mb-2">
                   <input type="text" value={customHeaderKey} onChange={(e) => setCustomHeaderKey(e.target.value)} placeholder="Authorization" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
                   <input type="text" value={customHeaderValue} onChange={(e) => setCustomHeaderValue(e.target.value)} placeholder="Bearer $MY_TOKEN" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
@@ -270,8 +272,8 @@ export default function McpStep() {
 
             {/* Actions */}
             <div className="flex gap-2 justify-end pt-2">
-              <button onClick={() => setShowAddForm(false)} className="px-3 py-1.5 text-sm text-[#666666] hover:text-[#1A1A1A]">Annuler</button>
-              <button onClick={handleAddCustom} className="px-4 py-1.5 text-sm bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]">Ajouter</button>
+              <button onClick={() => setShowAddForm(false)} className="px-3 py-1.5 text-sm text-[#666666] hover:text-[#1A1A1A]">{t("common.cancel")}</button>
+              <button onClick={handleAddCustom} className="px-4 py-1.5 text-sm bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]">{t("mcp.add")}</button>
             </div>
           </div>
         </div>
