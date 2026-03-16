@@ -13,9 +13,8 @@ import {
   generateRuleFiles,
   generateAllFiles,
 } from "@/lib/generator";
-import { downloadAsZip } from "@/lib/download";
+import { downloadAsZip, downloadSingleFile, formatFileSize } from "@/lib/download";
 import { saveToVault } from "@/lib/storage";
-import { formatFileSize } from "@/lib/download";
 import type { GeneratedFile } from "@/types";
 
 const CodeEditor = dynamic(() => import("@/components/CodeEditor"), { ssr: false });
@@ -58,11 +57,12 @@ export default function ExpertPage() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [saveName, setSaveName] = useState("");
 
-  // Track local edits for files that can be edited directly
+  // Track local edits — synced to context on save
   const [localClaudeMd, setLocalClaudeMd] = useState<string | null>(null);
   const [localSettings, setLocalSettings] = useState<string | null>(null);
   const [localClaudeIgnore, setLocalClaudeIgnore] = useState<string | null>(null);
   const [localMcpJson, setLocalMcpJson] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const generatedClaudeMd = useMemo(() => generateClaudeMd(config), [config]);
   const generatedSettings = useMemo(() => generateSettingsJson(config), [config]);
@@ -148,26 +148,40 @@ export default function ExpertPage() {
   const allFiles = getFilesForDownload();
   const totalSize = allFiles.reduce((a, f) => a + f.size, 0);
 
+  // Sync all local edits to ConfigContext
+  const syncEditsToContext = () => {
+    if (localClaudeMd !== null) {
+      dispatch({ type: "IMPORT_CLAUDE_MD", content: localClaudeMd });
+    }
+    if (localClaudeIgnore !== null) {
+      dispatch({ type: "SET_FIELD", field: "claudeIgnoreContent", value: localClaudeIgnore });
+    }
+  };
+
   const handleDownload = async () => {
+    setIsDownloading(true);
     try {
       await downloadAsZip(allFiles);
-      addToast("Configuration telechargee !");
+      addToast("Configuration téléchargée !");
     } catch {
-      addToast("Erreur lors du telechargement", "error");
+      addToast("Erreur lors du téléchargement", "error");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
   const handleSaveToVault = () => {
     if (!saveName.trim()) return;
-    // Sync local edits to config before saving
-    if (localClaudeMd) {
-      dispatch({ type: "IMPORT_CLAUDE_MD", content: localClaudeMd });
-    }
-    if (localClaudeIgnore) {
-      dispatch({ type: "SET_FIELD", field: "claudeIgnoreContent", value: localClaudeIgnore });
-    }
-    saveToVault(saveName.trim(), config);
-    addToast("Sauvegarde dans le Vault");
+    // Sync edits then save with the actual file contents
+    syncEditsToContext();
+    // Build a config snapshot with synced edits
+    const configSnapshot = {
+      ...config,
+      ...(localClaudeMd !== null ? { claudeMdContent: localClaudeMd, claudeMdImported: true } : {}),
+      ...(localClaudeIgnore !== null ? { claudeIgnoreContent: localClaudeIgnore } : {}),
+    };
+    saveToVault(saveName.trim(), configSnapshot);
+    addToast("Sauvegardé dans le Vault");
     setShowSaveDialog(false);
     setSaveName("");
   };
@@ -177,8 +191,8 @@ export default function ExpertPage() {
       <div className="flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
         <PageHeader
           breadcrumb="EXPERT MODE"
-          title="Editeur de Configuration"
-          subtitle="Edite directement tes fichiers de configuration Claude Code."
+          title="Éditeur de Configuration"
+          subtitle="Édite directement tes fichiers de configuration Claude Code."
         />
 
         {/* Editor Area */}
@@ -221,6 +235,15 @@ export default function ExpertPage() {
               </div>
               <div className="flex gap-3">
                 <button
+                  onClick={() => {
+                    const file = allFiles.find(f => f.path === activeTab) || allFiles.find(f => f.path.endsWith(activeTab));
+                    if (file) { downloadSingleFile(file); addToast(`${file.path} téléchargé`); }
+                  }}
+                  className="px-4 py-2 text-sm text-[#888888] border border-[#E5E5E5] rounded-lg hover:bg-[#FAFAFA] transition-colors"
+                >
+                  Fichier seul
+                </button>
+                <button
                   onClick={() => setShowSaveDialog(true)}
                   className="px-4 py-2 text-sm text-[#0D6E6E] border border-[#0D6E6E] rounded-lg hover:bg-[#F0FAFA] transition-colors"
                 >
@@ -228,9 +251,10 @@ export default function ExpertPage() {
                 </button>
                 <button
                   onClick={handleDownload}
-                  className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded-lg hover:bg-[#0A5555] transition-colors"
+                  disabled={isDownloading}
+                  className="px-4 py-2 text-sm bg-[#0D6E6E] text-white rounded-lg hover:bg-[#0A5555] transition-colors disabled:opacity-60"
                 >
-                  Telecharger le ZIP
+                  {isDownloading ? "Téléchargement..." : "Télécharger le ZIP"}
                 </button>
               </div>
             </div>
