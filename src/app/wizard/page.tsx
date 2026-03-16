@@ -21,13 +21,14 @@ import McpStep from "./steps/McpStep";
 import RulesStep from "./steps/RulesStep";
 import RecapStep from "./steps/RecapStep";
 
-const BASIC_STEPS = ["Bundle", "Personnalité", "Permissions", "Affiner"];
-
 export default function WizardPage() {
   const router = useRouter();
   const { config, dispatch } = useConfig();
   const { addToast } = useToast();
   const t = useT();
+
+  const BASIC_STEPS = [t("wizard.steps.bundle"), t("wizard.steps.personality"), t("wizard.steps.permissions"), t("wizard.steps.finalize")];
+
   const [currentStep, setCurrentStep] = useState(0);
   const [showAdvancedSteps, setShowAdvancedSteps] = useState(false);
   const [advancedStep, setAdvancedStep] = useState(0);
@@ -42,19 +43,21 @@ export default function WizardPage() {
   const [stepTransition, setStepTransition] = useState(false);
   const isTransitioning = useRef(false);
 
-  // Reset config on first mount only (not on re-renders)
+  // Reset config on first mount
   const hasReset = useRef(false);
-  if (!hasReset.current) {
-    hasReset.current = true;
-    dispatch({ type: "RESET" });
-  }
+  useEffect(() => {
+    if (!hasReset.current) {
+      hasReset.current = true;
+      dispatch({ type: "RESET" });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const advancedSteps = useMemo(() => {
     const steps: { key: string; label: string }[] = [];
     if (config.enableHooks) steps.push({ key: "hooks", label: "Hooks" });
     if (config.enableMCP) steps.push({ key: "mcp", label: "MCP" });
     if (config.enableRules) steps.push({ key: "rules", label: "Rules" });
-    steps.push({ key: "recap", label: "Finaliser" });
+    steps.push({ key: "recap", label: t("wizard.steps.finalize") });
     return steps;
   }, [config.enableHooks, config.enableMCP, config.enableRules]);
 
@@ -240,7 +243,7 @@ export default function WizardPage() {
               {/* === ADVANCED ONLY === */}
               {adv && (
                 <>
-                  <QuestionCard title="Minutie — combien d'effort dans chaque réponse">
+                  <QuestionCard title={t("wizard.step2.effort")}>
                     <div className="flex gap-3">
                       <ChoiceButton emoji="⚡" label="Low" selected={config.effortLevel === "low"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "low" })} />
                       <ChoiceButton emoji="⚖️" label="Medium" selected={config.effortLevel === "medium"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "medium" })} />
@@ -248,23 +251,23 @@ export default function WizardPage() {
                     </div>
                   </QuestionCard>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">Style de sortie</h4>
-                    <p className="text-xs text-[#888888] mb-3">Ajuste le style des réponses de Claude. Laisse vide pour le défaut.</p>
+                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">{t("wizard.step2.outputStyle")}</h4>
+                    <p className="text-xs text-[#888888] mb-3">{t("wizard.step2.outputStyleDesc")}</p>
                     <input type="text" value={config.outputStyle} onChange={(e) => dispatch({ type: "SET_FIELD", field: "outputStyle", value: e.target.value })} placeholder="Ex: Explanatory, Verbose, Minimal..." className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
                   </div>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Préférences avancées</h4>
+                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">{t("wizard.step2.preferences")}</h4>
                     <div className="flex flex-col gap-3">
                       <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
                         <div>
-                          <span className="text-sm font-medium text-[#1A1A1A]">Réflexion approfondie</span>
-                          <p className="text-xs text-[#888888]">Claude prend plus de temps pour mieux raisonner sur les problèmes complexes.</p>
+                          <span className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step2.thinking")}</span>
+                          <p className="text-xs text-[#888888]">{t("wizard.step2.thinkingDesc")}</p>
                         </div>
                         <input type="checkbox" checked={config.extendedThinking} onChange={(e) => dispatch({ type: "SET_FIELD", field: "extendedThinking", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                       </label>
                       <div className="p-3 border border-[#E5E5E5] rounded">
-                        <span className="text-sm font-medium text-[#1A1A1A]">Attribution git</span>
-                        <p className="text-xs text-[#888888] mb-2">Texte ajouté aux commits et PRs créés par Claude.</p>
+                        <span className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step2.attribution")}</span>
+                        <p className="text-xs text-[#888888] mb-2">{t("wizard.step2.attributionDesc")}</p>
                         <div className="flex flex-col gap-2">
                           <input type="text" value={config.attribution.commit} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, commit: e.target.value } })} placeholder="Commit (vide = pas d'attribution)" className="px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
                           <input type="text" value={config.attribution.pr} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, pr: e.target.value } })} placeholder="PR (vide = pas d'attribution)" className="px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
@@ -272,25 +275,25 @@ export default function WizardPage() {
                       </div>
                       <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
                         <div>
-                          <span className="text-sm font-medium text-[#1A1A1A]">Auto-mémoire</span>
-                          <p className="text-xs text-[#888888]">Claude accumule des notes entre les sessions automatiquement.</p>
+                          <span className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step2.autoMemory")}</span>
+                          <p className="text-xs text-[#888888]">{t("wizard.step2.autoMemoryDesc")}</p>
                         </div>
                         <input type="checkbox" checked={config.autoMemoryEnabled} onChange={(e) => dispatch({ type: "SET_FIELD", field: "autoMemoryEnabled", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                       </label>
                       <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
                         <div>
-                          <span className="text-sm font-medium text-[#1A1A1A]">Workflow Git intégré</span>
-                          <p className="text-xs text-[#888888]">Claude sait créer des commits, branches et PRs. Désactive si tu gères ça toi-même.</p>
+                          <span className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step2.gitInstructions")}</span>
+                          <p className="text-xs text-[#888888]">{t("wizard.step2.gitInstructionsDesc")}</p>
                         </div>
                         <input type="checkbox" checked={config.includeGitInstructions} onChange={(e) => dispatch({ type: "SET_FIELD", field: "includeGitInstructions", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                       </label>
                     </div>
                   </div>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-2">CLAUDE.md</h4>
-                    <p className="text-xs text-[#888888] mb-3">Importe ton propre fichier pour écraser le squelette auto-généré.</p>
+                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-2">{t("wizard.step2.claudeMd")}</h4>
+                    <p className="text-xs text-[#888888] mb-3">{t("wizard.step2.claudeMdDesc")}</p>
                     <FileDropZone
-                      onFileLoaded={(content) => { dispatch({ type: "IMPORT_CLAUDE_MD", content }); addToast("CLAUDE.md importé"); }}
+                      onFileLoaded={(content) => { dispatch({ type: "IMPORT_CLAUDE_MD", content }); addToast(t("wizard.step2.claudeMdImported")); }}
                       currentContent={config.claudeMdImported ? config.claudeMdContent : ""}
                       accept=".md"
                     />
@@ -321,15 +324,15 @@ export default function WizardPage() {
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
                     <label className="flex items-center justify-between cursor-pointer">
                       <div>
-                        <span className="text-sm font-medium text-[#1A1A1A]">Sandbox Bash</span>
-                        <p className="text-xs text-[#888888]">Isole les commandes Bash du filesystem et du réseau (macOS/Linux).</p>
+                        <span className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step3.sandbox")}</span>
+                        <p className="text-xs text-[#888888]">{t("wizard.step3.sandboxDesc")}</p>
                       </div>
                       <input type="checkbox" checked={config.sandboxEnabled} onChange={(e) => dispatch({ type: "SET_FIELD", field: "sandboxEnabled", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                     </label>
                   </div>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">Outils désactivés</h4>
-                    <p className="text-xs text-[#888888] mb-3">Retire complètement ces outils — Claude ne pourra pas les utiliser.</p>
+                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">{t("wizard.step3.disallowedTools")}</h4>
+                    <p className="text-xs text-[#888888] mb-3">{t("wizard.step3.disallowedToolsDesc")}</p>
                     <div className="flex flex-wrap gap-2">
                       {["WebFetch", "WebSearch", "Agent", "Bash", "Edit", "Write", "Read", "Glob", "Grep", "NotebookEdit"].map((tool) => (
                         <label key={tool} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded border cursor-pointer text-xs ${config.disallowedTools.includes(tool) ? "border-[#dc2626] bg-red-50 text-[#dc2626]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"}`}>
@@ -343,9 +346,9 @@ export default function WizardPage() {
                     </div>
                   </div>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Règles de permissions</h4>
+                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">{t("wizard.step3.rules")}</h4>
                     <div className="mb-4">
-                      <label className="text-xs font-medium text-[#666666] mb-2 block">Allow — toujours autoriser</label>
+                      <label className="text-xs font-medium text-[#666666] mb-2 block">{t("wizard.step3.allow")}</label>
                       <div className="flex gap-2 mb-2">
                         <input type="text" value={allowInput} onChange={(e) => setAllowInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAddAllow()} placeholder="Bash(npm run *)" className="flex-1 px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
                         <button onClick={handleAddAllow} className="px-3 py-2 text-sm bg-[#0D6E6E] text-white rounded hover:bg-[#0A5555]">+</button>
@@ -360,7 +363,7 @@ export default function WizardPage() {
                       </div>
                     </div>
                     <div className="mb-4">
-                      <label className="text-xs font-medium text-[#666666] mb-2 block">Ask — demander confirmation</label>
+                      <label className="text-xs font-medium text-[#666666] mb-2 block">{t("wizard.step3.ask")}</label>
                       <div className="flex gap-2 mb-2">
                         <input type="text" defaultValue="" onKeyDown={(e) => {
                           if (e.key === "Enter") {
@@ -388,7 +391,7 @@ export default function WizardPage() {
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-[#666666] mb-2 block">Deny — toujours refuser</label>
+                      <label className="text-xs font-medium text-[#666666] mb-2 block">{t("wizard.step3.deny")}</label>
                       <div className="flex gap-2 mb-2">
                         <input type="text" value={denyInput} onChange={(e) => setDenyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAddDeny()} placeholder="Read(./.env)" className="flex-1 px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
                         <button onClick={handleAddDeny} className="px-3 py-2 text-sm bg-[#dc2626] text-white rounded hover:bg-red-700">+</button>
@@ -412,14 +415,14 @@ export default function WizardPage() {
           return (
             <>
               <div className="bg-white rounded-md border border-[#E5E5E5] p-6">
-                <h3 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A] mb-2">Ta config de base est prête !</h3>
-                <p className="text-[15px] text-[#666666] mb-6">Tu peux l&apos;utiliser maintenant ou aller plus loin.</p>
-                <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Tu veux affiner avec des options avancées ?</h4>
+                <h3 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A] mb-2">{t("wizard.step4.title")}</h3>
+                <p className="text-[15px] text-[#666666] mb-6">{t("wizard.step4.subtitle")}</p>
+                <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">{t("wizard.step4.advancedQuestion")}</h4>
                 <div className="flex flex-col gap-3">
                   {[
-                    { field: "enableHooks" as const, label: "Hooks (automatisation)", desc: "Scripts qui s'exécutent automatiquement après certaines actions de Claude." },
-                    { field: "enableMCP" as const, label: "MCP Servers (outils externes)", desc: "Connecte Claude à des APIs, bases de données, services..." },
-                    { field: "enableRules" as const, label: "Rules modulaires", desc: "Règles spécifiques pour différents types de fichiers." },
+                    { field: "enableHooks" as const, label: t("wizard.step4.hooks"), desc: t("wizard.step4.hooksDesc") },
+                    { field: "enableMCP" as const, label: t("wizard.step4.mcp"), desc: t("wizard.step4.mcpDesc") },
+                    { field: "enableRules" as const, label: t("wizard.step4.rules"), desc: t("wizard.step4.rulesDesc") },
                   ].map(({ field, label, desc }) => (
                     <label key={field} className="flex items-start gap-3 p-4 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
                       <input type="checkbox" checked={config[field]} onChange={(e) => dispatch({ type: "SET_FIELD", field, value: e.target.checked })} className="mt-1 w-4 h-4 accent-[#0D6E6E]" />
@@ -436,8 +439,8 @@ export default function WizardPage() {
               {adv && (
                 <>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">Variables d&apos;environnement</h4>
-                    <p className="text-xs text-[#888888] mb-3">Variables globales injectées dans chaque session Claude Code.</p>
+                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">{t("wizard.step4.envVars")}</h4>
+                    <p className="text-xs text-[#888888] mb-3">{t("wizard.step4.envVarsDesc")}</p>
                     <div className="flex gap-2 mb-2">
                       <input type="text" value={envKey} onChange={(e) => setEnvKey(e.target.value)} placeholder="NOM_VARIABLE" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
                       <input type="text" value={envValue} onChange={(e) => setEnvValue(e.target.value)} placeholder="valeur" className="flex-1 px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
@@ -455,13 +458,13 @@ export default function WizardPage() {
                     )}
                   </div>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">Agent Teams &amp; Mises à jour</h4>
+                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-4">{t("wizard.step4.agentTeams")}</h4>
                     <div className="flex flex-col gap-4">
                       <div>
-                        <label className="text-xs font-medium text-[#666666] mb-2 block">Mode teammates</label>
-                        <p className="text-xs text-[#888888] mb-2">Comment les agents de l&apos;équipe s&apos;affichent.</p>
+                        <label className="text-xs font-medium text-[#666666] mb-2 block">{t("wizard.step4.teammateMode")}</label>
+                        <p className="text-xs text-[#888888] mb-2">{t("wizard.step4.teammateModeDesc")}</p>
                         <div className="flex gap-2">
-                          {([{ value: "auto", label: "Auto", desc: "Détecte tmux/iTerm2" }, { value: "in-process", label: "In-process", desc: "Même terminal" }, { value: "tmux", label: "Tmux", desc: "Panneaux séparés" }] as const).map(({ value, label, desc }) => (
+                          {([{ value: "auto", label: t("wizard.step4.auto"), desc: t("wizard.step4.autoDesc") }, { value: "in-process", label: t("wizard.step4.inProcess"), desc: t("wizard.step4.inProcessDesc") }, { value: "tmux", label: t("wizard.step4.tmux"), desc: t("wizard.step4.tmuxDesc") }] as const).map(({ value, label, desc }) => (
                             <button key={value} onClick={() => dispatch({ type: "SET_FIELD", field: "teammateMode", value })}
                               className={`flex-1 p-2 rounded border text-center ${config.teammateMode === value ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"}`}>
                               <span className="text-xs font-medium block">{label}</span>
@@ -471,15 +474,15 @@ export default function WizardPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-xs font-medium text-[#666666] mb-2 block">Canal de mises à jour</label>
+                        <label className="text-xs font-medium text-[#666666] mb-2 block">{t("wizard.step4.updateChannel")}</label>
                         <div className="flex gap-2">
                           <button onClick={() => dispatch({ type: "SET_FIELD", field: "autoUpdatesChannel", value: "latest" })} className={`flex-1 p-2 rounded border text-center ${config.autoUpdatesChannel === "latest" ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"}`}>
-                            <span className="text-xs font-medium block">Latest</span>
-                            <span className="text-[10px] text-[#888888]">Dernière version</span>
+                            <span className="text-xs font-medium block">{t("wizard.step4.latest")}</span>
+                            <span className="text-[10px] text-[#888888]">{t("wizard.step4.latestDesc")}</span>
                           </button>
                           <button onClick={() => dispatch({ type: "SET_FIELD", field: "autoUpdatesChannel", value: "stable" })} className={`flex-1 p-2 rounded border text-center ${config.autoUpdatesChannel === "stable" ? "border-[#0D6E6E] bg-[#F0FAFA] text-[#0D6E6E]" : "border-[#E5E5E5] text-[#666666] hover:bg-[#FAFAFA]"}`}>
-                            <span className="text-xs font-medium block">Stable</span>
-                            <span className="text-[10px] text-[#888888]">~1 sem. de retard</span>
+                            <span className="text-xs font-medium block">{t("wizard.step4.stable")}</span>
+                            <span className="text-[10px] text-[#888888]">{t("wizard.step4.stableDesc")}</span>
                           </button>
                         </div>
                       </div>

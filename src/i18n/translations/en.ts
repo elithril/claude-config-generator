@@ -22,6 +22,10 @@ const en = {
   // === WIZARD ===
   "wizard.quick": "Quick",
   "wizard.advanced": "Advanced",
+  "wizard.steps.bundle": "Bundle",
+  "wizard.steps.personality": "Personality",
+  "wizard.steps.permissions": "Permissions",
+  "wizard.steps.finalize": "Finalize",
   "wizard.back": "Back",
   "wizard.continue": "Continue →",
   "wizard.refine": "Refine →",
@@ -182,6 +186,10 @@ const en = {
   "expert.downloading": "Downloading...",
   "expert.loading": "Loading editor...",
   "expert.tip": "Tip",
+  "expert.docClaudeMd": "Instructions, language, tone, code conventions.",
+  "expert.docSettings": "Permissions, hooks, model, environment.",
+  "expert.docHooks": "Scripts that run automatically.",
+  "expert.docMcp": "Connect Claude to external tools.",
   "expert.tipText": "Edits are live. Download the ZIP when you're satisfied.",
   "expert.docs": "Documentation",
 

@@ -22,6 +22,10 @@ const fr = {
   // === WIZARD ===
   "wizard.quick": "Quick",
   "wizard.advanced": "Advanced",
+  "wizard.steps.bundle": "Bundle",
+  "wizard.steps.personality": "Personnalité",
+  "wizard.steps.permissions": "Permissions",
+  "wizard.steps.finalize": "Finaliser",
   "wizard.back": "Back",
   "wizard.continue": "Continue →",
   "wizard.refine": "Affiner →",
@@ -182,6 +186,10 @@ const fr = {
   "expert.downloading": "Téléchargement...",
   "expert.loading": "Chargement de l'éditeur...",
   "expert.tip": "Astuce",
+  "expert.docClaudeMd": "Instructions, langue, ton, conventions de code.",
+  "expert.docSettings": "Permissions, hooks, modèle, environnement.",
+  "expert.docHooks": "Scripts qui s'exécutent automatiquement.",
+  "expert.docMcp": "Connecter Claude à des outils externes.",
   "expert.tipText": "Les modifications dans l'éditeur sont en temps réel. Télécharge le ZIP quand tu es satisfait.",
   "expert.docs": "Documentation",
 

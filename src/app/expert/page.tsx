@@ -39,27 +39,11 @@ interface EditorTab {
   onUpdate?: (value: string) => void;
 }
 
-const DOC_LINKS = [
-  {
-    title: "CLAUDE.md",
-    description: "Instructions, langue, ton, conventions de code.",
-    url: "https://code.claude.com/docs/en/memory",
-  },
-  {
-    title: "Settings",
-    description: "Permissions, hooks, modele, environnement.",
-    url: "https://code.claude.com/docs/en/settings",
-  },
-  {
-    title: "Hooks",
-    description: "Scripts qui s'executent automatiquement.",
-    url: "https://code.claude.com/docs/en/hooks",
-  },
-  {
-    title: "MCP Servers",
-    description: "Connecter Claude a des outils externes.",
-    url: "https://code.claude.com/docs/en/mcp",
-  },
+const DOC_LINK_KEYS = [
+  { title: "CLAUDE.md", descKey: "expert.docClaudeMd", url: "https://code.claude.com/docs/en/memory" },
+  { title: "Settings", descKey: "expert.docSettings", url: "https://code.claude.com/docs/en/settings" },
+  { title: "Hooks", descKey: "expert.docHooks", url: "https://code.claude.com/docs/en/hooks" },
+  { title: "MCP Servers", descKey: "expert.docMcp", url: "https://code.claude.com/docs/en/mcp" },
 ];
 
 export default function ExpertPage() {
@@ -290,7 +274,7 @@ export default function ExpertPage() {
             </div>
 
             <div className="flex flex-col gap-3">
-              {DOC_LINKS.map((item) => (
+              {DOC_LINK_KEYS.map((item) => (
                 <a
                   key={item.title}
                   href={item.url}
@@ -302,7 +286,7 @@ export default function ExpertPage() {
                     {item.title}
                   </span>
                   <span className="text-xs text-[#666666]">
-                    {item.description}
+                    {t(item.descKey)}
                   </span>
                 </a>
               ))}
