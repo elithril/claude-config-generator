@@ -79,7 +79,7 @@ export default function WizardPage() {
       const bestMatch = priority.find(p => newChanged.has(p))
         || [...newChanged].find(f => f.startsWith(".claude/rules/"))
         || [...newChanged][0];
-      if (bestMatch && !newChanged.has(selectedPreviewFile)) {
+      if (bestMatch && !newChanged.has(selectedPreviewRef.current)) {
         setSelectedPreviewFile(bestMatch);
       }
       const timer = setTimeout(() => setChangedFiles(new Set()), 1500);
@@ -99,6 +99,8 @@ export default function WizardPage() {
   }, [showAdvancedSteps, currentStep, advancedStep, advancedSteps, generatedFiles]);
 
   const [selectedPreviewFile, setSelectedPreviewFile] = useState("CLAUDE.md");
+  const selectedPreviewRef = useRef(selectedPreviewFile);
+  selectedPreviewRef.current = selectedPreviewFile;
   useEffect(() => { setSelectedPreviewFile(getContextualFile()); }, [getContextualFile]);
 
   // === Navigation with transition ===
