@@ -20,8 +20,8 @@ const fr = {
   "sidebar.docs": "Documentation →",
 
   // === WIZARD ===
-  "wizard.quick": "Quick",
-  "wizard.advanced": "Advanced",
+  "wizard.quick": "Rapide",
+  "wizard.advanced": "Avancé",
   "wizard.steps.bundle": "Bundle",
   "wizard.steps.personality": "Personnalité",
   "wizard.steps.permissions": "Permissions",
