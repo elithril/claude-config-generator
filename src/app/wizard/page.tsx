@@ -516,10 +516,10 @@ export default function WizardPage() {
 
   return (
     <div className="flex flex-col lg:flex-row h-full">
-      {/* Left Panel */}
-      <div className="flex-1 flex flex-col bg-[#FAFAFA] min-h-0 h-full">
-        {/* Fixed header */}
-        <div className="flex-shrink-0 p-4 md:p-8 pb-0">
+      {/* Left Panel — single scroll, sticky header + sticky buttons */}
+      <div ref={scrollRef} className="flex-1 bg-[#FAFAFA] overflow-auto">
+        {/* Sticky header */}
+        <div className="sticky top-0 z-10 bg-[#FAFAFA] p-4 md:p-8 pb-4 border-b border-[#E5E5E5]">
           {/* Breadcrumb + Mode toggle */}
           <div className="flex items-center justify-between mb-2">
             <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">
@@ -549,15 +549,15 @@ export default function WizardPage() {
           {allSteps.length > 1 && <WizardProgress steps={allSteps} currentStep={activeStepIndex} />}
         </div>
 
-        {/* Scrollable content */}
-        <div ref={scrollRef} className="flex-1 overflow-auto px-4 md:px-8 py-4">
+        {/* Content */}
+        <div className="px-4 md:px-8 py-6">
           <div className={`flex flex-col gap-4 transition-opacity duration-150 ease-in-out ${stepTransition ? "opacity-0" : "opacity-100"}`}>
             {renderStepContent()}
           </div>
         </div>
 
-        {/* Fixed bottom buttons */}
-        <div className="flex-shrink-0 px-4 md:px-8 py-4 pb-20 md:pb-4 border-t border-[#E5E5E5] bg-[#FAFAFA]">
+        {/* Sticky bottom buttons */}
+        <div className="sticky bottom-0 z-10 px-4 md:px-8 py-4 pb-20 md:pb-4 border-t border-[#E5E5E5] bg-[#FAFAFA]">
           {buttonText ? (
             <div className="flex gap-4">
               <Button variant="outline" onClick={handleBack}>{t("wizard.back")}</Button>
