@@ -36,6 +36,7 @@ export default function WizardPage() {
 
   // Quick vs Advanced wizard mode
   const [wizardMode, setWizardMode] = useState<"quick" | "advanced">("quick");
+  const [stepTransition, setStepTransition] = useState(false);
 
   useEffect(() => {
     dispatch({ type: "RESET" });
@@ -87,29 +88,39 @@ export default function WizardPage() {
   const [selectedPreviewFile, setSelectedPreviewFile] = useState("CLAUDE.md");
   useEffect(() => { setSelectedPreviewFile(getContextualFile()); }, [getContextualFile]);
 
-  // === Navigation ===
+  // === Navigation with transition ===
+  const transitionTo = (action: () => void) => {
+    setStepTransition(true);
+    setTimeout(() => {
+      action();
+      setStepTransition(false);
+    }, 150);
+  };
+
   const handleNext = () => {
     if (showAdvancedSteps) {
-      if (advancedStep < advancedSteps.length - 1) setAdvancedStep(advancedStep + 1);
+      if (advancedStep < advancedSteps.length - 1) transitionTo(() => setAdvancedStep(advancedStep + 1));
     } else {
-      if (currentStep < BASIC_STEPS.length - 1) setCurrentStep(currentStep + 1);
+      if (currentStep < BASIC_STEPS.length - 1) transitionTo(() => setCurrentStep(currentStep + 1));
     }
   };
 
   const handleBack = () => {
     if (showAdvancedSteps) {
-      if (advancedStep > 0) setAdvancedStep(advancedStep - 1);
-      else { setShowAdvancedSteps(false); setCurrentStep(3); }
+      if (advancedStep > 0) transitionTo(() => setAdvancedStep(advancedStep - 1));
+      else transitionTo(() => { setShowAdvancedSteps(false); setCurrentStep(3); });
     } else {
-      if (currentStep > 0) setCurrentStep(currentStep - 1);
+      if (currentStep > 0) transitionTo(() => setCurrentStep(currentStep - 1));
       else router.push("/");
     }
   };
 
   const handleMainAction = () => {
     if (!showAdvancedSteps && currentStep === 3) {
-      setShowAdvancedSteps(true);
-      setAdvancedStep(config.enableHooks || config.enableMCP || config.enableRules ? 0 : advancedSteps.length - 1);
+      transitionTo(() => {
+        setShowAdvancedSteps(true);
+        setAdvancedStep(config.enableHooks || config.enableMCP || config.enableRules ? 0 : advancedSteps.length - 1);
+      });
     } else {
       handleNext();
     }
@@ -487,7 +498,7 @@ export default function WizardPage() {
 
         <WizardProgress steps={allSteps} currentStep={activeStepIndex} />
 
-        <div key={`step-${showAdvancedSteps ? "adv-" + advancedStep : currentStep}`} className="flex flex-col gap-4 mt-6 flex-1 animate-fade-in">{renderStepContent()}</div>
+        <div className={`flex flex-col gap-4 mt-6 flex-1 transition-all duration-150 ease-in-out ${stepTransition ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>{renderStepContent()}</div>
 
         {buttonText && (
           <div className="flex gap-4 mt-6">
