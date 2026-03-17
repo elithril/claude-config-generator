@@ -63,7 +63,7 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex justify-around py-2 px-1">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-2 px-1">
         {navItems.map((item) => (
           <Link
             key={item.href}
@@ -77,6 +77,7 @@ export default function Sidebar() {
             {item.name}
           </Link>
         ))}
+        <LanguageSwitcher variant="dark" />
       </nav>
     </>
   );

@@ -225,12 +225,12 @@ export default function ExpertPage() {
             </div>
 
             {/* Action bar */}
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mt-4 gap-3">
               <div className="flex items-center gap-4 text-xs text-[#888888]">
                 <span>{allFiles.length} {t("common.files")}</span>
                 <span>{formatFileSize(totalSize)}</span>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 <button
                   onClick={() => {
                     const file = allFiles.find(f => f.path === activeTab) || allFiles.find(f => f.path.endsWith(activeTab));

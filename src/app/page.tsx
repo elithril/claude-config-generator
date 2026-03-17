@@ -182,10 +182,10 @@ export default function Home() {
     : t("home.vaultCount_one", { count: vaultCount });
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-auto lg:overflow-hidden">
       <div className="flex flex-col lg:flex-row flex-1 min-h-0">
-        {/* Left: dark — 40% */}
-        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-8 md:p-12 lg:p-14">
+        {/* Left: dark — 40% on desktop, full on mobile */}
+        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-6 md:p-10 lg:p-14">
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
             backgroundSize: "40px 40px",
@@ -193,15 +193,15 @@ export default function Home() {
 
           {/* Top: title + language switcher */}
           <div className="relative z-10">
-            <div className="flex items-start justify-between mb-10">
-              <h1 className="font-[family-name:var(--font-newsreader)] text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] flex-1">
-                {t("home.title")} <span className="text-[#0D6E6E] italic">{t("home.titleHighlight")}</span> {t("home.titleEnd")}
+            <div className="flex items-start justify-between mb-6 md:mb-10">
+              <h1 className="font-[family-name:var(--font-newsreader)] text-[26px] md:text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] flex-1">
+                {t("home.title")}{" "}<span className="text-[#0D6E6E] italic">{t("home.titleHighlight")}</span>{" "}{t("home.titleEnd")}
               </h1>
               <div className="flex-shrink-0 ml-4 mt-2">
                 <LanguageSwitcher variant="dark" />
               </div>
             </div>
-            <p className="text-[16px] text-[#888888] leading-[1.8]">
+            <p className="text-[14px] md:text-[16px] text-[#888888] leading-[1.8]">
               {t("home.description")}
             </p>
           </div>
@@ -260,7 +260,7 @@ export default function Home() {
         </div>
 
         {/* Right: code preview — 60% */}
-        <div className="lg:w-[60%] bg-[#111111] flex flex-col relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden">
           <div className="hidden lg:block absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#1A1A1A] to-transparent z-10" />
 
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">

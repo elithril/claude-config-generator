@@ -170,7 +170,7 @@ export default function VaultPage() {
                 return (
                   <div
                     key={entry.id}
-                    className="flex items-center justify-between p-4 bg-white rounded-md border border-[#E5E5E5] hover:border-[#0D6E6E] transition-colors"
+                    className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 bg-white rounded-md border border-[#E5E5E5] hover:border-[#0D6E6E] transition-colors"
                   >
                     <div className="flex items-center gap-4">
                       <button
