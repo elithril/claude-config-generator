@@ -239,7 +239,7 @@ export default function Home() {
 
           {/* Value points + CTAs — centered between top content and vault */}
           <div className={`relative z-10 flex flex-col gap-5 ${vaultCount > 0 ? "my-auto" : "mt-auto"}`}>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 mb-2">
               {[
                 { icon: "✦", key: "home.value1" },
                 { icon: "↓", key: "home.value2" },
