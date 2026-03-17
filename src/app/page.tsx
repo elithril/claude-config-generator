@@ -222,8 +222,8 @@ export default function Home() {
                 <span className="w-2 h-2 rounded-full bg-[#28C840]" />
               </div>
             </div>
-            <div className="px-4 pb-3 max-h-[120px] overflow-hidden">
-              {currentFile.lines.slice(0, 6).map((line, i) => (
+            <div className="px-4 pb-3 max-h-[160px] overflow-hidden">
+              {currentFile.lines.slice(0, 8).map((line, i) => (
                 <div key={`m-${activeFile}-${i}`} className="flex gap-3">
                   <span className="text-[10px] font-mono text-[#333333] select-none w-4 text-right flex-shrink-0">{i + 1}</span>
                   <span className={`text-[11px] font-mono leading-[1.8] whitespace-pre ${
