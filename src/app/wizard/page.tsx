@@ -549,15 +549,14 @@ export default function WizardPage() {
           {allSteps.length > 1 && <WizardProgress steps={allSteps} currentStep={activeStepIndex} />}
         </div>
 
-        {/* Content — min-height pushes buttons down when content is short */}
-        <div className="px-4 md:px-8 pt-2 pb-2 min-h-[50vh]">
+        {/* Content + Buttons */}
+        <div className="px-4 md:px-8 pt-2 pb-14 md:pb-6">
           <div className={`flex flex-col gap-4 transition-opacity duration-150 ease-in-out ${stepTransition ? "opacity-0" : "opacity-100"}`}>
             {renderStepContent()}
           </div>
-        </div>
 
-        {/* Buttons */}
-        <div className="px-4 md:px-8 py-6 pb-14 md:pb-6">
+          {/* Buttons */}
+          <div className="mt-6">
           {buttonText ? (
             <div className="flex gap-4">
               <Button variant="outline" onClick={handleBack}>{t("wizard.back")}</Button>
@@ -568,6 +567,7 @@ export default function WizardPage() {
               <Button variant="outline" onClick={handleBack}>{t("wizard.back")}</Button>
             </div>
           ) : null}
+          </div>
         </div>
       </div>
 
