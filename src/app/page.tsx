@@ -182,10 +182,10 @@ export default function Home() {
     : t("home.vaultCount_one", { count: vaultCount });
 
   return (
-    <div className="flex flex-col h-full overflow-auto lg:overflow-hidden">
+    <div className="flex flex-col h-full overflow-auto lg:overflow-hidden bg-[#1A1A1A]">
       <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Left: dark — 40% on desktop, full on mobile */}
-        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-6 md:p-10 lg:p-14">
+        <div className="flex-1 lg:flex-none lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-6 md:p-10 lg:p-14 min-h-screen lg:min-h-0">
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
             backgroundSize: "40px 40px",
@@ -195,7 +195,7 @@ export default function Home() {
           <div className="relative z-10">
             <div className="flex items-start justify-between mb-6 md:mb-10">
               <h1 className="font-[family-name:var(--font-newsreader)] text-[26px] md:text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] flex-1">
-                {t("home.title")}&nbsp;<span className="text-[#0D6E6E] italic mr-[0.15em]">{t("home.titleHighlight")}</span>{t("home.titleEnd")}
+                {t("home.title")}&nbsp;<span className="text-[#0D6E6E] italic" style={{ paddingRight: "0.3em" }}>{t("home.titleHighlight")}</span>{t("home.titleEnd")}
               </h1>
               <div className="flex-shrink-0 ml-4 mt-2">
                 <LanguageSwitcher variant="dark" />
