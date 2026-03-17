@@ -206,6 +206,38 @@ export default function Home() {
             </p>
           </div>
 
+          {/* Mini terminal card — mobile only */}
+          <div className="lg:hidden relative z-10 my-4 bg-[#111111] rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between px-4 pt-3 pb-2">
+              <div className="flex gap-1">
+                {fileLines.map((f, i) => (
+                  <button key={f.file} onClick={() => selectFile(i)}
+                    className={`px-2 py-1 rounded text-[10px] font-mono cursor-pointer ${i === activeFile ? "bg-[#0D6E6E]/20 text-[#0D6E6E]" : "text-[#444444]"}`}>
+                    {f.file}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-1">
+                <span className="w-2 h-2 rounded-full bg-[#FF5F57]" />
+                <span className="w-2 h-2 rounded-full bg-[#FEBC2E]" />
+                <span className="w-2 h-2 rounded-full bg-[#28C840]" />
+              </div>
+            </div>
+            <div className="px-4 pb-3 max-h-[120px] overflow-hidden">
+              {currentFile.lines.slice(0, 6).map((line, i) => (
+                <div key={`m-${activeFile}-${i}`} className="flex gap-3">
+                  <span className="text-[10px] font-mono text-[#333333] select-none w-4 text-right flex-shrink-0">{i + 1}</span>
+                  <span className={`text-[11px] font-mono leading-[1.8] whitespace-pre ${
+                    line === "" ? "h-[1.8em]" :
+                    line.startsWith("#") ? "text-[#0D6E6E]" :
+                    line.includes('":') ? "text-[#E07B54]" :
+                    "text-[#888888]"
+                  }`}>{line || "\u00A0"}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Value points */}
           <div className="relative z-10 flex flex-col gap-3 my-auto">
             {[
@@ -260,7 +292,7 @@ export default function Home() {
         </div>
 
         {/* Right: code preview — 60% */}
-        <div className="h-[300px] lg:h-auto lg:w-[60%] bg-[#111111] flex flex-col relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden">
           <div className="hidden lg:block absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#1A1A1A] to-transparent z-10" />
 
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">
