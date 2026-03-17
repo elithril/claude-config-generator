@@ -185,7 +185,7 @@ export default function Home() {
     <div className="flex flex-col h-full overflow-auto lg:overflow-hidden bg-[#1A1A1A]">
       <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Left: dark — 40% on desktop, full on mobile */}
-        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col gap-6 lg:justify-between p-6 pb-10 md:p-10 lg:p-14">
+        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col gap-6 lg:justify-between p-6 pb-6 md:p-10 lg:p-14">
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
             backgroundSize: "40px 40px",
