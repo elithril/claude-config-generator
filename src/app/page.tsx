@@ -195,7 +195,7 @@ export default function Home() {
           <div className="relative z-10">
             <div className="flex items-start justify-between mb-6 md:mb-10">
               <h1 className="font-[family-name:var(--font-newsreader)] text-[26px] md:text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] flex-1">
-                {t("home.title")}{" "}<span className="text-[#0D6E6E] italic">{t("home.titleHighlight")}</span>{" "}{t("home.titleEnd")}
+                {t("home.title")}&nbsp;<span className="text-[#0D6E6E] italic">{t("home.titleHighlight")}</span>&nbsp;{t("home.titleEnd")}
               </h1>
               <div className="flex-shrink-0 ml-4 mt-2">
                 <LanguageSwitcher variant="dark" />
