@@ -192,7 +192,7 @@ export default function Home() {
 
           {/* Top: title + language switcher */}
           <div className="relative z-10">
-            <div className="flex items-start justify-between mb-4 md:mb-10">
+            <div className="flex items-start justify-between mb-6 md:mb-10">
               <h1 className="font-[family-name:var(--font-newsreader)] text-[26px] md:text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] flex-1">
                 {t("home.title")}&nbsp;<span className="text-[#0D6E6E] italic" style={{ paddingRight: "0.3em" }}>{t("home.titleHighlight")}</span>{t("home.titleEnd")}
               </h1>
@@ -206,7 +206,7 @@ export default function Home() {
           </div>
 
           {/* Mini terminal card — mobile only */}
-          <div className="lg:hidden relative z-10 mt-5 bg-[#111111] rounded-xl overflow-hidden">
+          <div className="lg:hidden relative z-10 mt-6 bg-[#111111] rounded-xl overflow-hidden">
             <div className="flex items-center justify-between px-4 pt-3 pb-2">
               <div className="flex gap-1">
                 {fileLines.map((f, i) => (
@@ -238,7 +238,7 @@ export default function Home() {
           </div>
 
           {/* Value points + CTAs — centered between top content and vault */}
-          <div className="relative z-10 flex flex-col gap-5 my-auto">
+          <div className={`relative z-10 flex flex-col gap-5 ${vaultCount > 0 ? "my-auto" : "mt-auto"}`}>
             <div className="flex flex-col gap-3">
               {[
                 { icon: "✦", key: "home.value1" },
