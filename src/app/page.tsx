@@ -185,7 +185,7 @@ export default function Home() {
     <div className="flex flex-col h-full overflow-auto lg:overflow-hidden bg-[#1A1A1A]">
       <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Left: dark — 40% on desktop, full on mobile */}
-        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col gap-6 lg:justify-between p-6 pb-6 md:p-10 lg:p-14">
+        <div className="lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-6 pb-6 md:p-10 lg:p-14">
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
             backgroundSize: "40px 40px",
@@ -207,7 +207,7 @@ export default function Home() {
           </div>
 
           {/* Mini terminal card — mobile only */}
-          <div className="lg:hidden relative z-10 bg-[#111111] rounded-xl overflow-hidden">
+          <div className="lg:hidden relative z-10 mt-5 bg-[#111111] rounded-xl overflow-hidden">
             <div className="flex items-center justify-between px-4 pt-3 pb-2">
               <div className="flex gap-1">
                 {fileLines.map((f, i) => (
@@ -238,22 +238,21 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Value points */}
-          <div className="relative z-10 flex flex-col gap-3 lg:my-auto">
-            {[
-              { icon: "✦", key: "home.value1" },
-              { icon: "↓", key: "home.value2" },
-              { icon: "◆", key: "home.value3" },
-            ].map(({ icon, key }) => (
-              <div key={key} className="flex items-center gap-3">
-                <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
-                <span className="text-[13px] text-[#777777]">{t(key)}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* CTAs */}
-          <div className={`relative z-10 flex flex-col gap-3 ${vaultCount > 0 ? "lg:my-auto" : ""}`}>
+          {/* Value points + CTAs — centered between top content and vault */}
+          <div className="relative z-10 flex flex-col gap-5 my-auto">
+            <div className="flex flex-col gap-3">
+              {[
+                { icon: "✦", key: "home.value1" },
+                { icon: "↓", key: "home.value2" },
+                { icon: "◆", key: "home.value3" },
+              ].map(({ icon, key }) => (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
+                  <span className="text-[13px] text-[#777777]">{t(key)}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col gap-3">
             <button
               onClick={() => router.push("/wizard")}
               className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
@@ -274,6 +273,7 @@ export default function Home() {
               </svg>
               <span className="text-[13px] font-medium">{t("home.ctaSecondary")}</span>
             </button>
+            </div>
           </div>
 
           {/* Vault */}
