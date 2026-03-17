@@ -549,8 +549,8 @@ export default function WizardPage() {
           {allSteps.length > 1 && <WizardProgress steps={allSteps} currentStep={activeStepIndex} />}
         </div>
 
-        {/* Content */}
-        <div className="px-4 md:px-8 pt-2 pb-2">
+        {/* Content — min-height pushes buttons down when content is short */}
+        <div className="px-4 md:px-8 pt-2 pb-2 min-h-[50vh]">
           <div className={`flex flex-col gap-4 transition-opacity duration-150 ease-in-out ${stepTransition ? "opacity-0" : "opacity-100"}`}>
             {renderStepContent()}
           </div>
