@@ -258,6 +258,11 @@ const en = {
   // === RULES Step ===
   "rules.category": "category",
 
+  // === ERROR ===
+  "error.title": "Something went wrong",
+  "error.description": "An unexpected error occurred.",
+  "error.reload": "Reload page",
+
   // === COMMON ===
   "common.cancel": "Cancel",
   "common.files": "files",

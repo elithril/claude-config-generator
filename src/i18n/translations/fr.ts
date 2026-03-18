@@ -258,6 +258,11 @@ const fr = {
   // === RULES Step ===
   "rules.category": "catégorie",
 
+  // === ERROR ===
+  "error.title": "Quelque chose s'est mal passé",
+  "error.description": "Une erreur inattendue est survenue.",
+  "error.reload": "Recharger la page",
+
   // === COMMON ===
   "common.cancel": "Annuler",
   "common.files": "fichiers",

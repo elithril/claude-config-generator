@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Claude Code Config Generator
 
-## Getting Started
+Visual configuration generator for [Claude Code](https://code.claude.com) — generate `CLAUDE.md`, `settings.json`, `.claudeignore`, `.mcp.json`, and `.claude/rules/` files ready to drop into your project.
 
-First, run the development server:
+## Features
+
+- **Step-by-step wizard** with Quick/Advanced modes — answer questions, get config files
+- **Direct editor** with CodeMirror — edit config files with syntax highlighting
+- **Live preview** — see generated files update in real-time as you configure
+- **Full settings.json coverage** — model, permissions, hooks, MCP servers, sandbox, agent teams, and more
+- **Vault** — save, restore, and export configurations per project (localStorage)
+- **i18n** — French and English with instant language switching
+- **ZIP download** — all config files packaged and ready to go
+- **Responsive** — works on desktop, tablet, and mobile
+
+## Generated files
+
+| File | Description |
+|---|---|
+| `CLAUDE.md` | Language, tone, response style, security rules |
+| `.claude/settings.json` | Model, permissions (allow/ask/deny), hooks, effort level, sandbox, attribution |
+| `.claudeignore` | Files and directories excluded from Claude's context |
+| `.mcp.json` | MCP server connections (GitHub, Chrome DevTools, Supabase, Figma, etc.) |
+| `.claude/rules/*.md` | Modular rules scoped to specific file paths |
+
+## Tech stack
+
+- **Next.js 16** + React 19 + TypeScript 5
+- **Tailwind CSS 4**
+- **CodeMirror 6** (via @uiw/react-codemirror)
+- **JSZip** + file-saver for ZIP export
+- **Vitest** for unit tests
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── page.tsx          # Home (split dark layout + animated terminal)
+│   ├── wizard/           # Step-by-step configuration wizard
+│   │   ├── page.tsx      # Wizard main page
+│   │   └── steps/        # Sub-components (HooksStep, McpStep, etc.)
+│   ├── expert/           # CodeMirror editor for direct editing
+│   └── vault/            # Saved configurations (localStorage)
+├── components/           # Shared UI components
+├── context/              # React contexts (Config, Toast)
+├── i18n/                 # Internationalization (FR/EN)
+├── lib/                  # Business logic
+│   ├── generator.ts      # File generation engine
+│   ├── storage.ts        # localStorage vault service
+│   ├── download.ts       # ZIP/file download utilities
+│   └── defaults.ts       # Default config + preset hooks/MCP/rules
+└── types/                # TypeScript type definitions
+```
 
-## Learn More
+## Tests
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm test        # Run once
+pnpm test:watch  # Watch mode
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
