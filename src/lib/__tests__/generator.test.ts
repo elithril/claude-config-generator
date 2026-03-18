@@ -47,6 +47,17 @@ describe("generateClaudeMd", () => {
     );
     expect(result).toBe(imported);
   });
+
+  it("should generate in English when language is en", () => {
+    const result = generateClaudeMd(makeConfig({ language: "en" }));
+    expect(result).toContain("Always respond in English");
+    expect(result).toContain("# Claude Code Configuration");
+  });
+
+  it("should generate in Spanish when language is es", () => {
+    const result = generateClaudeMd(makeConfig({ language: "es" }));
+    expect(result).toContain("Siempre responder en Español");
+  });
 });
 
 describe("generateSettingsJson", () => {
@@ -92,6 +103,67 @@ describe("generateSettingsJson", () => {
   it("should not include hooks when none enabled", () => {
     const result = JSON.parse(generateSettingsJson(makeConfig({ enableHooks: true })));
     expect(result.hooks).toBeUndefined();
+  });
+
+  it("should include model", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ model: "claude-opus-4-6" })));
+    expect(result.model).toBe("claude-opus-4-6");
+  });
+
+  it("should include effortLevel", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ effortLevel: "low" })));
+    expect(result.effortLevel).toBe("low");
+  });
+
+  it("should include attribution", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ attribution: { commit: "test commit", pr: "test pr" } })));
+    expect(result.attribution.commit).toBe("test commit");
+    expect(result.attribution.pr).toBe("test pr");
+  });
+
+  it("should include alwaysThinkingEnabled", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ extendedThinking: true })));
+    expect(result.alwaysThinkingEnabled).toBe(true);
+  });
+
+  it("should include outputStyle when set", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ outputStyle: "Explanatory" })));
+    expect(result.outputStyle).toBe("Explanatory");
+  });
+
+  it("should not include outputStyle when empty", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ outputStyle: "" })));
+    expect(result.outputStyle).toBeUndefined();
+  });
+
+  it("should include sandbox when enabled", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ sandboxEnabled: true })));
+    expect(result.sandbox.enabled).toBe(true);
+  });
+
+  it("should include disallowedTools when set", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ disallowedTools: ["WebFetch", "Bash"] })));
+    expect(result.disallowedTools).toEqual(["WebFetch", "Bash"]);
+  });
+
+  it("should include env when set", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ envVars: { FOO: "bar" } })));
+    expect(result.env.FOO).toBe("bar");
+  });
+
+  it("should include teammateMode when not auto", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ teammateMode: "tmux" })));
+    expect(result.teammateMode).toBe("tmux");
+  });
+
+  it("should include permission ask rules", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ permissions: { allow: [], ask: ["Bash(git push *)"], deny: [] } })));
+    expect(result.permissions.ask).toContain("Bash(git push *)");
+  });
+
+  it("should include defaultMode when not default", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ permissionMode: "plan" })));
+    expect(result.permissions.defaultMode).toBe("plan");
   });
 });
 

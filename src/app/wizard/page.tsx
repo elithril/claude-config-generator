@@ -33,6 +33,7 @@ export default function WizardPage() {
   const [showAdvancedSteps, setShowAdvancedSteps] = useState(false);
   const [advancedStep, setAdvancedStep] = useState(0);
   const [allowInput, setAllowInput] = useState("");
+  const [askInput, setAskInput] = useState("");
   const [denyInput, setDenyInput] = useState("");
   const [envKey, setEnvKey] = useState("");
   const [envValue, setEnvValue] = useState("");
@@ -372,20 +373,16 @@ export default function WizardPage() {
                     <div className="mb-4">
                       <label className="text-xs font-medium text-[#666666] mb-2 block">{t("wizard.step3.ask")}</label>
                       <div className="flex gap-2 mb-2">
-                        <input type="text" defaultValue="" onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            const val = (e.target as HTMLInputElement).value.trim();
-                            if (!val) return;
-                            dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, ask: [...(config.permissions.ask || []), val] } });
-                            (e.target as HTMLInputElement).value = "";
+                        <input type="text" value={askInput} onChange={(e) => setAskInput(e.target.value)} onKeyDown={(e) => {
+                          if (e.key === "Enter" && askInput.trim()) {
+                            dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, ask: [...(config.permissions.ask || []), askInput.trim()] } });
+                            setAskInput("");
                           }
                         }} placeholder="Bash(git push *)" className="flex-1 px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
-                        <button onClick={(e) => {
-                          const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
-                          const val = input.value.trim();
-                          if (!val) return;
-                          dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, ask: [...(config.permissions.ask || []), val] } });
-                          input.value = "";
+                        <button onClick={() => {
+                          if (!askInput.trim()) return;
+                          dispatch({ type: "SET_FIELD", field: "permissions", value: { ...config.permissions, ask: [...(config.permissions.ask || []), askInput.trim()] } });
+                          setAskInput("");
                         }} className="px-3 py-2 text-sm bg-[#ca8a04] text-white rounded hover:bg-[#a16207]">+</button>
                       </div>
                       <div className="flex flex-wrap gap-1">

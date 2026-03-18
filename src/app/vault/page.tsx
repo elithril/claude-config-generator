@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
-import { useT } from "@/i18n";
+import { useI18n } from "@/i18n";
 import { loadVault, deleteVaultEntry, toggleStar } from "@/lib/storage";
 import { generateAllFiles } from "@/lib/generator";
 import { downloadAsZip, formatFileSize } from "@/lib/download";
@@ -15,7 +15,7 @@ export default function VaultPage() {
   const router = useRouter();
   const { dispatch } = useConfig();
   const { addToast } = useToast();
-  const t = useT();
+  const { locale, t } = useI18n();
   const [vault, setVault] = useState<SavedConfig[]>([]);
   const [sortBy, setSortBy] = useState<"date" | "name">("date");
 
@@ -97,7 +97,7 @@ export default function VaultPage() {
     if (diffMins < 60) return t("vault.minutesAgo", { count: diffMins });
     if (diffHours < 24) return t("vault.hoursAgo", { count: diffHours });
     if (diffDays < 7) return t("vault.daysAgo", { count: diffDays });
-    return date.toLocaleDateString("fr-FR");
+    return date.toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US");
   };
 
   return (

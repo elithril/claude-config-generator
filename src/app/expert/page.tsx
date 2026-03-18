@@ -233,10 +233,20 @@ export default function ExpertPage() {
               <div className="flex flex-wrap gap-2 md:gap-3">
                 <button
                   onClick={() => {
+                    const content = activeTabDef.getValue();
+                    navigator.clipboard.writeText(content);
+                    addToast(t("toast.copied"));
+                  }}
+                  className="px-4 py-2 text-sm text-[#888888] border border-[#E5E5E5] rounded-lg hover:bg-[#FAFAFA] transition-colors cursor-pointer"
+                >
+                  {t("expert.copy")}
+                </button>
+                <button
+                  onClick={() => {
                     const file = allFiles.find(f => f.path === activeTab) || allFiles.find(f => f.path.endsWith(activeTab));
                     if (file) { downloadSingleFile(file); addToast(t("toast.fileSaved", { path: file.path })); }
                   }}
-                  className="px-4 py-2 text-sm text-[#888888] border border-[#E5E5E5] rounded-lg hover:bg-[#FAFAFA] transition-colors"
+                  className="px-4 py-2 text-sm text-[#888888] border border-[#E5E5E5] rounded-lg hover:bg-[#FAFAFA] transition-colors cursor-pointer"
                 >
                   {t("expert.singleFile")}
                 </button>

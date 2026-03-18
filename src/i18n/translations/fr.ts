@@ -181,6 +181,7 @@ const fr = {
   "expert.title": "Éditeur de Configuration",
   "expert.subtitle": "Édite directement tes fichiers de configuration Claude Code.",
   "expert.singleFile": "Fichier seul",
+  "expert.copy": "Copier",
   "expert.saveVault": "Sauver dans le Vault",
   "expert.download": "Télécharger le ZIP",
   "expert.downloading": "Téléchargement...",
@@ -232,6 +233,7 @@ const fr = {
   "toast.claudeMdImported": "CLAUDE.md importé",
   "toast.templateLoaded": "Preset \"{name}\" chargé",
   "toast.fileSaved": "{path} téléchargé",
+  "toast.copied": "Copié dans le presse-papiers",
 
   // === MCP Step ===
   "mcp.popular": "Serveurs populaires",
