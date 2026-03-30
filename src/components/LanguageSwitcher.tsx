@@ -14,7 +14,7 @@ export default function LanguageSwitcher({ variant = "dark" }: LanguageSwitcherP
   const inactiveClass = variant === "dark" ? "text-[#666666] hover:text-[#888888]" : "text-[#888888] hover:text-[#666666]";
 
   return (
-    <div className={`flex items-center ${bgClass} rounded-full p-0.5`}>
+    <div className={`inline-flex items-center ${bgClass} rounded-full p-0.5 w-fit`}>
       <button
         onClick={() => setLocale("fr")}
         className={`px-2.5 py-1 rounded-full text-[11px] font-medium cursor-pointer transition-colors ${locale === "fr" ? activeClass : inactiveClass}`}
