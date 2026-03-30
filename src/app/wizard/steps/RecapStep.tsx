@@ -12,7 +12,7 @@ import { useT } from "@/i18n";
 
 export default function RecapStep() {
   const router = useRouter();
-  const { config } = useConfig();
+  const { config, setHasUnsavedChanges } = useConfig();
   const { addToast } = useToast();
   const t = useT();
   const [showSaveInput, setShowSaveInput] = useState(false);
@@ -41,6 +41,7 @@ export default function RecapStep() {
   const handleSaveToVault = () => {
     if (!saveName.trim()) return;
     saveToVault(saveName.trim(), config);
+    setHasUnsavedChanges(false);
     addToast(t("toast.saved"));
     setShowSaveInput(false);
     setSaveName("");

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useReducer, ReactNode } from "react";
+import { createContext, useContext, useReducer, useState, useCallback, ReactNode } from "react";
 import type { ClaudeConfig } from "@/types";
 import { getDefaultConfig } from "@/lib/defaults";
 
@@ -14,6 +14,8 @@ type ConfigAction =
 interface ConfigContextType {
   config: ClaudeConfig;
   dispatch: React.Dispatch<ConfigAction>;
+  hasUnsavedChanges: boolean;
+  setHasUnsavedChanges: (v: boolean) => void;
 }
 
 const ConfigContext = createContext<ConfigContextType | null>(null);
@@ -37,8 +39,10 @@ function configReducer(state: ClaudeConfig, action: ConfigAction): ClaudeConfig 
 
 export function ConfigProvider({ children }: { children: ReactNode }) {
   const [config, dispatch] = useReducer(configReducer, undefined, getDefaultConfig);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const setUnsaved = useCallback((v: boolean) => setHasUnsavedChanges(v), []);
   return (
-    <ConfigContext.Provider value={{ config, dispatch }}>
+    <ConfigContext.Provider value={{ config, dispatch, hasUnsavedChanges, setHasUnsavedChanges: setUnsaved }}>
       {children}
     </ConfigContext.Provider>
   );

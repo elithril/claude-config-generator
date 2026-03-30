@@ -5,7 +5,7 @@ export type LanguageType = "fr" | "en" | "es";
 export type ToneType = "cool" | "pro" | "pedagogue";
 export type ResponseStyleType = "concise" | "detailed" | "technical";
 export type ModelType = "claude-sonnet-4-6" | "claude-opus-4-6" | "claude-haiku-4-5";
-export type PermissionModeType = "default" | "plan" | "acceptEdits" | "dontAsk" | "delegate" | "bypassPermissions";
+export type PermissionModeType = "default" | "plan" | "acceptEdits" | "auto" | "dontAsk" | "bypassPermissions";
 export type EffortLevelType = "low" | "medium" | "high";
 export type TeammateModeType = "auto" | "in-process" | "tmux";
 export type UpdateChannelType = "stable" | "latest";
@@ -146,6 +146,13 @@ export interface ClaudeConfig {
   // CLAUDE.md
   claudeMdContent: string;
   claudeMdImported: boolean;
+
+  // CLAUDE.md enrichi
+  projectStack: string;
+  buildCommand: string;
+  testCommand: string;
+  lintCommand: string;
+  projectStructure: string;
 
   // Environment variables
   envVars: Record<string, string>;

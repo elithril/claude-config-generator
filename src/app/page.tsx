@@ -115,8 +115,9 @@ const SHARED_FILES = [
     '{',
     '  "mcpServers": {',
     '    "github": {',
-    '      "type": "http",',
-    '      "url": "https://api.githubcopilot.com/mcp/"',
+    '      "command": "npx",',
+    '      "args": ["-y",',
+    '        "@modelcontextprotocol/server-github"]',
     '    },',
     '    "chrome-devtools": {',
     '      "command": "npx",',
@@ -239,7 +240,7 @@ export default function Home() {
 
           {/* Value points + CTAs — centered between top content and vault */}
           <div className={`relative z-10 flex flex-col gap-5 ${vaultCount > 0 ? "my-auto" : "mt-auto"}`}>
-            <div className="flex flex-col gap-3 mb-4">
+            <div className="flex flex-col gap-3 mb-8">
               {[
                 { icon: "✦", key: "home.value1" },
                 { icon: "↓", key: "home.value2" },

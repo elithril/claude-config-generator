@@ -42,7 +42,7 @@ const DOC_LINK_KEYS = [
 ];
 
 export default function ExpertPage() {
-  const { config, dispatch } = useConfig();
+  const { config, dispatch, setHasUnsavedChanges } = useConfig();
   const { addToast } = useToast();
   const t = useT();
   const [activeTab, setActiveTab] = useState("CLAUDE.md");
@@ -70,21 +70,21 @@ export default function ExpertPage() {
         label: "CLAUDE.md",
         language: "markdown",
         getValue: () => localClaudeMd ?? generatedClaudeMd,
-        onUpdate: (v: string) => setLocalClaudeMd(v),
+        onUpdate: (v: string) => { setLocalClaudeMd(v); setHasUnsavedChanges(true); },
       },
       {
         id: "settings.json",
         label: "settings.json",
         language: "json",
         getValue: () => localSettings ?? generatedSettings,
-        onUpdate: (v: string) => setLocalSettings(v),
+        onUpdate: (v: string) => { setLocalSettings(v); setHasUnsavedChanges(true); },
       },
       {
         id: ".claudeignore",
         label: ".claudeignore",
         language: "text",
         getValue: () => localClaudeIgnore ?? generatedClaudeIgnore,
-        onUpdate: (v: string) => setLocalClaudeIgnore(v),
+        onUpdate: (v: string) => { setLocalClaudeIgnore(v); setHasUnsavedChanges(true); },
       },
     ];
 
@@ -94,7 +94,7 @@ export default function ExpertPage() {
         label: ".mcp.json",
         language: "json",
         getValue: () => localMcpJson ?? generatedMcpJson,
-        onUpdate: (v: string) => setLocalMcpJson(v),
+        onUpdate: (v: string) => { setLocalMcpJson(v); setHasUnsavedChanges(true); },
       });
     }
 
@@ -173,6 +173,7 @@ export default function ExpertPage() {
       ...(localClaudeIgnore !== null ? { claudeIgnoreContent: localClaudeIgnore } : {}),
     };
     saveToVault(saveName.trim(), configSnapshot);
+    setHasUnsavedChanges(false);
     addToast(t("toast.saved"));
     setShowSaveDialog(false);
     setSaveName("");
@@ -192,15 +193,15 @@ export default function ExpertPage() {
           {/* Left Panel - Editor */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Tabs */}
-            <div className="flex overflow-x-auto">
+            <div className="flex gap-1 overflow-x-auto">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-5 py-3 font-[family-name:var(--font-jetbrains)] text-[13px] rounded-t-md transition-colors whitespace-nowrap ${
+                  className={`px-5 py-3 font-[family-name:var(--font-jetbrains)] text-[13px] rounded-t-md transition-all duration-200 whitespace-nowrap cursor-pointer ${
                     activeTab === tab.id
                       ? "bg-white text-[#0D6E6E] font-semibold border-t border-l border-r border-[#E5E5E5]"
-                      : "bg-[#F5F5F5] text-[#888888] hover:text-[#666666]"
+                      : "bg-[#F5F5F5] text-[#888888] hover:text-[#666666] hover:bg-[#EBEBEB] hover:-translate-y-[1px]"
                   }`}
                 >
                   {tab.label}
@@ -263,7 +264,7 @@ export default function ExpertPage() {
           </div>
 
           {/* Right Panel - Documentation */}
-          <div className="hidden lg:flex w-80 flex-col gap-4 bg-[#F8F8F8] border border-[#E5E5E5] rounded-lg p-5 flex-shrink-0">
+          <div className="hidden lg:flex w-80 flex-col gap-4 bg-[#F8F8F8] border border-[#E5E5E5] rounded-lg p-5 flex-shrink-0 mt-[46px]">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[#1A1A1A]">
                 {t("expert.docs")}

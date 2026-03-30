@@ -101,6 +101,26 @@ export function generateClaudeMd(config: ClaudeConfig): string {
     sections.push(`${s.dev}\n${s.devRules}\n`);
   }
 
+  // Project context sections
+  if (config.projectStack) {
+    const label = lang === "fr" ? "## Stack technique" : lang === "es" ? "## Stack técnico" : "## Tech Stack";
+    sections.push(`${label}\n${config.projectStack}\n`);
+  }
+
+  const commands: string[] = [];
+  if (config.buildCommand) commands.push(`- Build: \`${config.buildCommand}\``);
+  if (config.testCommand) commands.push(`- Test: \`${config.testCommand}\``);
+  if (config.lintCommand) commands.push(`- Lint: \`${config.lintCommand}\``);
+  if (commands.length > 0) {
+    const label = lang === "fr" ? "## Commandes" : lang === "es" ? "## Comandos" : "## Commands";
+    sections.push(`${label}\n${commands.join("\n")}\n`);
+  }
+
+  if (config.projectStructure) {
+    const label = lang === "fr" ? "## Structure du projet" : lang === "es" ? "## Estructura del proyecto" : "## Project Structure";
+    sections.push(`${label}\n${config.projectStructure}\n`);
+  }
+
   return sections.join("\n");
 }
 
@@ -111,18 +131,20 @@ export function generateSettingsJson(config: ClaudeConfig): string {
 
   // Permissions
   let allowRules = [...config.permissions.allow];
+  let askRules = [...(config.permissions.ask || [])];
   let denyRules = [...config.permissions.deny];
 
   // Bundle presets
   if (config.bundle === "safe") {
-    denyRules = [...denyRules, "Bash(rm -rf *)", "Bash(git push --force *)"];
+    denyRules = [...denyRules, "Bash(rm -rf *)", "Bash(git push --force *)", "Bash(git reset --hard *)"];
+    askRules = [...askRules, "Bash(git push *)", "Bash(docker *)", "Bash(kubectl *)"];
   } else if (config.bundle === "dev") {
     allowRules = [...allowRules, "Bash(npm run *)", "Bash(npx *)", "Bash(git *)"];
   }
 
   const permissions: Record<string, unknown> = {};
   if (allowRules.length > 0) permissions.allow = allowRules;
-  if (config.permissions.ask && config.permissions.ask.length > 0) permissions.ask = config.permissions.ask;
+  if (askRules.length > 0) permissions.ask = askRules;
   if (denyRules.length > 0) permissions.deny = denyRules;
   if (config.permissionMode && config.permissionMode !== "default") {
     permissions.defaultMode = config.permissionMode;
@@ -221,15 +243,20 @@ export function generateSettingsJson(config: ClaudeConfig): string {
         hookDef.async = true;
       }
 
-      const entry: { matcher?: string; hooks: Array<Record<string, unknown>> } = {
-        hooks: [hookDef],
-      };
-
-      if (hook.matcher) {
-        entry.matcher = hook.matcher;
+      // Merge hooks with same event + matcher into one entry
+      const matcherKey = hook.matcher || "";
+      const existing = hooksConfig[hook.event].find(
+        (e) => (e.matcher || "") === matcherKey
+      );
+      if (existing) {
+        existing.hooks.push(hookDef);
+      } else {
+        const entry: { matcher?: string; hooks: Array<Record<string, unknown>> } = {
+          hooks: [hookDef],
+        };
+        if (hook.matcher) entry.matcher = hook.matcher;
+        hooksConfig[hook.event].push(entry);
       }
-
-      hooksConfig[hook.event].push(entry);
     }
 
     settings.hooks = hooksConfig;
