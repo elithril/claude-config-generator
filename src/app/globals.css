@@ -79,6 +79,40 @@ body {
 }
 
 
+/* ============================
+   Hero ↔ App morph transition
+   ============================ */
+
+/* Dark panel morph: 40% → 260px */
+@keyframes morph-shrink {
+  from { width: 40%; }
+  to   { width: 260px; }
+}
+
+/* Dark panel morph: 260px → 40% */
+@keyframes morph-expand {
+  from { width: 260px; }
+  to   { width: 40%; }
+}
+
+/* Sidebar nav text fades in */
+@keyframes sidebar-text-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Main content slides up */
+@keyframes content-slide-in {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Hero content fades in */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* Fade-in for wizard step transitions */
 @keyframes fade-in {
   from {

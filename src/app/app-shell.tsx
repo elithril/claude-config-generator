@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -8,111 +8,96 @@ import { useTransition } from "@/context/TransitionContext";
 
 const NO_SIDEBAR_ROUTES = ["/"];
 
-const ENTER_DURATION = 600;
-
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { phase, onEnterDone } = useTransition();
-  const showSidebar = !NO_SIDEBAR_ROUTES.includes(pathname);
-  const [enterReady, setEnterReady] = useState(false);
-  const prevPhase = useRef(phase);
+  const { phase } = useTransition();
+  const isHero = NO_SIDEBAR_ROUTES.includes(pathname);
 
-  // When phase switches to "entering" (new page just mounted), wait for paint then animate in
-  useEffect(() => {
-    if (phase === "entering" && prevPhase.current !== "entering") {
-      setEnterReady(false);
-      // Double rAF: ensure browser has painted at opacity:0
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setEnterReady(true);
-          setTimeout(onEnterDone, ENTER_DURATION);
-        });
-      });
-    }
-    prevPhase.current = phase;
-  }, [phase, onEnterDone]);
+  // During morph phases, show the morphing panel overlay
+  const isMorphing = phase === "morph" || phase === "morph-back";
+  const isHeroExiting = phase === "hero-out";
+  const isAppEntering = phase === "app-in";
+  const isAppExiting = phase === "app-out";
+  const isHeroEntering = phase === "hero-in";
 
-  // Reset enterReady when going idle
-  useEffect(() => {
-    if (phase === "idle") setEnterReady(false);
-  }, [phase]);
+  return (
+    <ErrorBoundary>
+      {/* Morphing dark panel — visible only during morph phases */}
+      {isMorphing && (
+        <div
+          className="fixed inset-0 z-50 pointer-events-none"
+          aria-hidden="true"
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              bottom: 0,
+              backgroundColor: "#1A1A1A",
+              width: phase === "morph" ? "260px" : "40%",
+              transition: `width 500ms cubic-bezier(0.65, 0, 0.35, 1)`,
+              // Start from the opposite width
+              ...(phase === "morph" ? { animation: "morph-shrink 500ms cubic-bezier(0.65, 0, 0.35, 1) forwards" } : {}),
+              ...(phase === "morph-back" ? { animation: "morph-expand 500ms cubic-bezier(0.65, 0, 0.35, 1) forwards" } : {}),
+            }}
+          />
+        </div>
+      )}
 
-  // Determine styles
-  const isExiting = phase === "exiting";
-  const isEnteringHidden = phase === "entering" && !enterReady;
-  const isEnteringVisible = phase === "entering" && enterReady;
-
-  if (!showSidebar) {
-    // Hero layout
-    return (
-      <ErrorBoundary>
+      {isHero ? (
+        // Hero layout
         <div className="h-screen overflow-hidden flex flex-col">
           <div
             className="flex-1 flex flex-col min-h-0"
             style={{
-              ...(isExiting ? {
+              ...(isHeroExiting ? {
                 opacity: 0,
-                transform: "scale(0.96)",
-                transition: `opacity 500ms ease-in, transform 500ms ease-in`,
-              } : isEnteringHidden ? {
+                transition: "opacity 350ms ease-out",
+              } : isHeroEntering ? {
+                animation: "fade-in-up 400ms cubic-bezier(0.16, 1, 0.3, 1) both",
+              } : isMorphing ? {
                 opacity: 0,
-                transform: "scale(1.02)",
-              } : isEnteringVisible ? {
-                opacity: 1,
-                transform: "scale(1)",
-                transition: `opacity ${ENTER_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1), transform ${ENTER_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1)`,
               } : {}),
             }}
           >
             {children}
           </div>
         </div>
-      </ErrorBoundary>
-    );
-  }
-
-  // App layout with sidebar
-  return (
-    <ErrorBoundary>
-      <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#FAFAFA]">
-        <div
-          style={{
-            ...(isExiting ? {
-              opacity: 0,
-              transform: "translateX(-30px)",
-              transition: `opacity 400ms ease-in, transform 400ms ease-in`,
-            } : isEnteringHidden ? {
-              opacity: 0,
-              transform: "translateX(-30px)",
-            } : isEnteringVisible ? {
-              opacity: 1,
-              transform: "translateX(0)",
-              transition: `opacity ${ENTER_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1), transform ${ENTER_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1)`,
-            } : {}),
-          }}
-        >
-          <Sidebar />
+      ) : (
+        // App layout
+        <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#FAFAFA]">
+          <div
+            style={{
+              ...(isAppEntering ? {
+                animation: "sidebar-text-in 400ms cubic-bezier(0.16, 1, 0.3, 1) both 50ms",
+              } : isAppExiting ? {
+                opacity: 0,
+                transition: "opacity 250ms ease-out",
+              } : isMorphing ? {
+                opacity: 0,
+              } : {}),
+            }}
+          >
+            <Sidebar />
+          </div>
+          <main
+            className="flex-1 min-h-0 min-w-0 flex flex-col"
+            style={{
+              ...(isAppEntering ? {
+                animation: "content-slide-in 450ms cubic-bezier(0.16, 1, 0.3, 1) both 150ms",
+              } : isAppExiting ? {
+                opacity: 0,
+                transition: "opacity 300ms ease-out",
+              } : isMorphing ? {
+                opacity: 0,
+              } : {}),
+            }}
+          >
+            {children}
+          </main>
         </div>
-        <main
-          className="flex-1 min-h-0 min-w-0 flex flex-col"
-          style={{
-            ...(isExiting ? {
-              opacity: 0,
-              transform: "translateY(16px)",
-              transition: `opacity 400ms ease-in, transform 400ms ease-in`,
-            } : isEnteringHidden ? {
-              opacity: 0,
-              transform: "translateY(20px)",
-            } : isEnteringVisible ? {
-              opacity: 1,
-              transform: "translateY(0)",
-              transition: `opacity ${ENTER_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1) 100ms, transform ${ENTER_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1) 100ms`,
-            } : {}),
-          }}
-        >
-          {children}
-        </main>
-      </div>
+      )}
     </ErrorBoundary>
   );
 }
