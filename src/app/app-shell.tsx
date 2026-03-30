@@ -21,77 +21,73 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [frozen, setFrozen] = useState<ReactNode>(children);
   const [sidebar, setSidebar] = useState(!NO_SIDEBAR_ROUTES.includes(pathname));
-  const prevPath = useRef(pathname);
-  const pending = useRef<ReactNode>(null);
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const transitioning = useRef(false);
+  const prevPathRef = useRef(pathname);
+  const pendingRef = useRef<ReactNode>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const isTransitioning = useRef(false);
 
-  // ---- SYNCHRONOUS detection (runs during render, before paint) ----
-  if (pathname !== prevPath.current && !transitioning.current) {
-    const wasHero = NO_SIDEBAR_ROUTES.includes(prevPath.current);
-    const goingToHero = NO_SIDEBAR_ROUTES.includes(pathname);
-    prevPath.current = pathname;
-
-    if (wasHero !== goingToHero) {
-      // Hero ↔ App transition: freeze current content, store new for later
-      transitioning.current = true;
-      pending.current = children;
-      // Start exit phase — frozen still shows OLD content, no flash
-      if (wasHero) {
-        setPhase("hero-exit");
-      } else {
-        setPhase("app-exit");
-      }
-    } else {
-      // App → App: just swap
-      setFrozen(children);
-    }
-  }
-
-  // ---- Timer-driven phase progression ----
+  // Detect hero↔app navigation and manage phases
   useEffect(() => {
-    if (phase === "hero-exit") {
-      timer.current = setTimeout(() => {
-        setFrozen(pending.current);
-        setSidebar(true);
-        setPhase("app-enter");
-      }, TIMING["hero-exit"]);
-    } else if (phase === "app-enter") {
-      timer.current = setTimeout(() => {
-        setPhase("idle");
-        transitioning.current = false;
-      }, TIMING["app-enter"]);
-    } else if (phase === "app-exit") {
-      timer.current = setTimeout(() => {
-        setFrozen(pending.current);
-        setSidebar(false);
-        setPhase("hero-enter");
-      }, TIMING["app-exit"]);
-    } else if (phase === "hero-enter") {
-      timer.current = setTimeout(() => {
-        setPhase("idle");
-        transitioning.current = false;
-      }, TIMING["hero-enter"]);
+    if (pathname === prevPathRef.current) {
+      // Same path — update content if not mid-transition
+      if (!isTransitioning.current) setFrozen(children);
+      return;
     }
-    return () => clearTimeout(timer.current);
-  }, [phase]);
 
-  // Keep frozen in sync when idle and children change (e.g. config updates)
-  if (phase === "idle" && !transitioning.current) {
-    if (frozen !== children) {
+    const wasHero = NO_SIDEBAR_ROUTES.includes(prevPathRef.current);
+    const goingToHero = NO_SIDEBAR_ROUTES.includes(pathname);
+    prevPathRef.current = pathname;
+
+    if (wasHero === goingToHero) {
+      // App↔App or Hero↔Hero: instant swap
       setFrozen(children);
+      return;
     }
-  }
 
-  // ---- Render ----
+    // Hero↔App: start transition
+    isTransitioning.current = true;
+    pendingRef.current = children;
+
+    const exitPhase: Phase = wasHero ? "hero-exit" : "app-exit";
+    const enterPhase: Phase = wasHero ? "app-enter" : "hero-enter";
+    const showSidebarNext = wasHero;
+
+    setPhase(exitPhase);
+
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      // Exit done → swap content + switch layout + start enter
+      setFrozen(pendingRef.current);
+      setSidebar(showSidebarNext);
+      setPhase(enterPhase);
+
+      timerRef.current = setTimeout(() => {
+        setPhase("idle");
+        isTransitioning.current = false;
+      }, TIMING[enterPhase]);
+    }, TIMING[exitPhase]);
+
+    return () => clearTimeout(timerRef.current);
+  }, [pathname, children]);
+
+  // Inline style to prevent flash: hide content instantly when children
+  // change but frozen hasn't updated yet (between render and effect)
+  const isHeroTransition = phase !== "idle";
+  const hideFlash = isTransitioning.current && !isHeroTransition
+    ? { opacity: 0 } as React.CSSProperties
+    : undefined;
+
   if (!sidebar) {
     return (
       <ErrorBoundary>
         <div className="h-screen overflow-hidden flex flex-col">
-          <div className={`flex-1 flex flex-col min-h-0 ${
-            phase === "hero-exit" ? "hero-exit" :
-            phase === "hero-enter" ? "hero-enter" : ""
-          }`}>
+          <div
+            className={`flex-1 flex flex-col min-h-0 ${
+              phase === "hero-exit" ? "hero-exit" :
+              phase === "hero-enter" ? "hero-enter" : ""
+            }`}
+            style={hideFlash}
+          >
             {frozen}
           </div>
         </div>
@@ -108,10 +104,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         }>
           <Sidebar />
         </div>
-        <main className={`flex-1 min-h-0 min-w-0 flex flex-col ${
-          phase === "app-enter" ? "main-enter" :
-          phase === "app-exit" ? "main-exit" : ""
-        }`}>
+        <main
+          className={`flex-1 min-h-0 min-w-0 flex flex-col ${
+            phase === "app-enter" ? "main-enter" :
+            phase === "app-exit" ? "main-exit" : ""
+          }`}
+          style={hideFlash}
+        >
           {frozen}
         </main>
       </div>
