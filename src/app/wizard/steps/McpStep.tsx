@@ -87,6 +87,7 @@ export default function McpStep() {
 
   return (
     <div className="flex flex-col gap-4">
+      <p className="text-xs text-[#888888]">{t("mcp.intro")}</p>
       <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
         <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">{t("mcp.popular")}</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

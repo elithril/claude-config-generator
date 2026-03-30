@@ -1,6 +1,7 @@
 "use client";
 
 import { useConfig } from "@/context/ConfigContext";
+import { useT } from "@/i18n";
 import type { RuleEntry } from "@/types";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -14,6 +15,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function RulesStep() {
   const { config, dispatch } = useConfig();
+  const t = useT();
 
   const toggleRule = (ruleId: string) => {
     const updated = config.rules.map((r: RuleEntry) =>
@@ -24,6 +26,7 @@ export default function RulesStep() {
 
   return (
     <div className="flex flex-col gap-3">
+      <p className="text-xs text-[#888888]">{t("rules.intro")}</p>
       {config.rules.map((rule: RuleEntry) => (
         <div
           key={rule.id}

@@ -25,9 +25,14 @@ export default function HooksStep() {
     <div className="flex flex-col gap-4">
       {Object.entries(groupedHooks).map(([event, hooks]) => (
         <div key={event} className="bg-white rounded-md border border-[#E5E5E5] p-5">
-          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
-            <span className="px-2 py-0.5 bg-[#F0FAFA] text-[#0D6E6E] text-xs rounded font-mono">{event}</span>
-          </h4>
+          <div className="mb-3">
+            <h4 className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-2">
+              <span className="px-2 py-0.5 bg-[#F0FAFA] text-[#0D6E6E] text-xs rounded font-mono">{event}</span>
+            </h4>
+            {t(`hooks.event.${event}`) !== `hooks.event.${event}` && (
+              <p className="text-xs text-[#888888] mt-1">{t(`hooks.event.${event}`)}</p>
+            )}
+          </div>
           <div className="flex flex-col gap-2">
             {hooks.map((hook) => (
               <label

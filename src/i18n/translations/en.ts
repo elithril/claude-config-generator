@@ -292,6 +292,7 @@ const en = {
   "toast.copied": "Copied to clipboard",
 
   // === MCP Step ===
+  "mcp.intro": "MCP servers give Claude access to external tools. Config is generated in .mcp.json at the project root.",
   "mcp.popular": "Popular servers",
   "mcp.others": "Other servers",
   "mcp.custom": "Custom servers",
@@ -310,9 +311,22 @@ const en = {
 
   // === HOOKS Step ===
   "hooks.matcher": "Matcher",
+  "hooks.event.PreToolUse": "Before a tool runs — can block the action",
+  "hooks.event.PostToolUse": "After a tool runs successfully",
+  "hooks.event.PostToolUseFailure": "After a tool fails",
+  "hooks.event.PermissionRequest": "When Claude requests a permission",
+  "hooks.event.UserPromptSubmit": "Before your message is sent — can block it",
+  "hooks.event.Stop": "When Claude finishes its work — can restart it",
+  "hooks.event.SessionStart": "When a session starts",
+  "hooks.event.SessionEnd": "When a session ends",
+  "hooks.event.Notification": "When Claude sends a notification (idle, permission...)",
+  "hooks.event.SubagentStart": "When a sub-agent is launched",
+  "hooks.event.SubagentStop": "When a sub-agent finishes",
+  "hooks.event.TaskCompleted": "When a task is marked as completed",
 
   // === RULES Step ===
   "rules.category": "category",
+  "rules.intro": "Each rule generates a file in .claude/rules/. Claude loads them automatically based on defined paths.",
 
   // === ERROR ===
   "error.title": "Something went wrong",

@@ -292,6 +292,7 @@ const es = {
   "toast.copied": "Copiado al portapapeles",
 
   // === MCP Step ===
+  "mcp.intro": "Los servidores MCP dan a Claude acceso a herramientas externas. La config se genera en .mcp.json en la raíz del proyecto.",
   "mcp.popular": "Servidores populares",
   "mcp.others": "Otros servidores",
   "mcp.custom": "Servidores personalizados",
@@ -310,9 +311,22 @@ const es = {
 
   // === HOOKS Step ===
   "hooks.matcher": "Matcher",
+  "hooks.event.PreToolUse": "Antes de que una herramienta se ejecute — puede bloquear la acción",
+  "hooks.event.PostToolUse": "Después de que una herramienta se ejecute con éxito",
+  "hooks.event.PostToolUseFailure": "Después de que una herramienta falle",
+  "hooks.event.PermissionRequest": "Cuando Claude solicita un permiso",
+  "hooks.event.UserPromptSubmit": "Antes de enviar tu mensaje — puede bloquearlo",
+  "hooks.event.Stop": "Cuando Claude termina su trabajo — puede reiniciarlo",
+  "hooks.event.SessionStart": "Al iniciar una sesión",
+  "hooks.event.SessionEnd": "Al finalizar una sesión",
+  "hooks.event.Notification": "Cuando Claude envía una notificación (espera, permiso...)",
+  "hooks.event.SubagentStart": "Cuando se lanza un sub-agente",
+  "hooks.event.SubagentStop": "Cuando un sub-agente termina",
+  "hooks.event.TaskCompleted": "Cuando una tarea se marca como completada",
 
   // === RULES Step ===
   "rules.category": "categoría",
+  "rules.intro": "Cada regla genera un archivo en .claude/rules/. Claude los carga automáticamente según los paths definidos.",
 
   // === ERROR ===
   "error.title": "Algo salió mal",

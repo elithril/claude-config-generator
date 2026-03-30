@@ -292,6 +292,7 @@ const fr = {
   "toast.copied": "Copié dans le presse-papiers",
 
   // === MCP Step ===
+  "mcp.intro": "Les MCP servers donnent à Claude accès à des outils externes. La config est générée dans .mcp.json à la racine du projet.",
   "mcp.popular": "Serveurs populaires",
   "mcp.others": "Autres serveurs",
   "mcp.custom": "Serveurs personnalisés",
@@ -310,9 +311,22 @@ const fr = {
 
   // === HOOKS Step ===
   "hooks.matcher": "Matcher",
+  "hooks.event.PreToolUse": "Avant qu'un outil s'exécute — peut bloquer l'action",
+  "hooks.event.PostToolUse": "Après qu'un outil s'exécute avec succès",
+  "hooks.event.PostToolUseFailure": "Après qu'un outil échoue",
+  "hooks.event.PermissionRequest": "Quand Claude demande une permission",
+  "hooks.event.UserPromptSubmit": "Avant l'envoi de ton message — peut le bloquer",
+  "hooks.event.Stop": "Quand Claude termine son travail — peut le relancer",
+  "hooks.event.SessionStart": "Au démarrage d'une session",
+  "hooks.event.SessionEnd": "À la fin d'une session",
+  "hooks.event.Notification": "Quand Claude envoie une notification (attente, permission...)",
+  "hooks.event.SubagentStart": "Quand un sous-agent est lancé",
+  "hooks.event.SubagentStop": "Quand un sous-agent termine",
+  "hooks.event.TaskCompleted": "Quand une tâche est marquée comme terminée",
 
   // === RULES Step ===
   "rules.category": "catégorie",
+  "rules.intro": "Chaque règle génère un fichier dans .claude/rules/. Claude les charge automatiquement selon les paths définis.",
 
   // === ERROR ===
   "error.title": "Quelque chose s'est mal passé",
