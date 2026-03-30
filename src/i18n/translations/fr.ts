@@ -227,6 +227,11 @@ const fr = {
   "wizard.preview.rules": "Règles",
   "wizard.preview.total": "Total",
   "wizard.preview.noContent": "// Aucun contenu",
+  "wizard.preview.fileDesc.CLAUDE.md": "Instructions que Claude suit dans ce projet",
+  "wizard.preview.fileDesc.settings.json": "Permissions, modèle, hooks et préférences",
+  "wizard.preview.fileDesc..claudeignore": "Fichiers invisibles pour Claude (comme .gitignore)",
+  "wizard.preview.fileDesc..mcp.json": "Serveurs MCP connectés au projet",
+  "wizard.preview.fileDesc.rules": "Règle chargée automatiquement selon les paths",
 
   // === EXPERT ===
   "expert.breadcrumb": "MODE ÉDITEUR",
@@ -337,6 +342,8 @@ const fr = {
   "common.cancel": "Annuler",
   "common.files": "fichiers",
   "common.recommended": "Recommandé",
+  "common.learnMore": "En savoir plus",
+  "common.showLess": "Réduire",
 };
 
 export default fr;

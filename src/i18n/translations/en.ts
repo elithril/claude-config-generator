@@ -227,6 +227,11 @@ const en = {
   "wizard.preview.rules": "Rules",
   "wizard.preview.total": "Total",
   "wizard.preview.noContent": "// No content",
+  "wizard.preview.fileDesc.CLAUDE.md": "Instructions Claude follows in this project",
+  "wizard.preview.fileDesc.settings.json": "Permissions, model, hooks and preferences",
+  "wizard.preview.fileDesc..claudeignore": "Files invisible to Claude (like .gitignore)",
+  "wizard.preview.fileDesc..mcp.json": "MCP servers connected to the project",
+  "wizard.preview.fileDesc.rules": "Rule loaded automatically based on paths",
 
   // === EXPERT ===
   "expert.breadcrumb": "EXPERT MODE",
@@ -337,6 +342,8 @@ const en = {
   "common.cancel": "Cancel",
   "common.files": "files",
   "common.recommended": "Recommended",
+  "common.learnMore": "Learn more",
+  "common.showLess": "Show less",
 };
 
 export default en;

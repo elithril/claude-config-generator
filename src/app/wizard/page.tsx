@@ -45,7 +45,7 @@ export default function WizardPage() {
   const [envValue, setEnvValue] = useState("");
 
   // Quick vs Advanced wizard mode
-  const [wizardMode, setWizardMode] = useState<"quick" | "advanced">("quick");
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const scrollRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [stepFade, setStepFade] = useState<"visible" | "fading-out" | "hidden">("visible");
@@ -243,7 +243,7 @@ export default function WizardPage() {
     ? (config.enableHooks || config.enableMCP || config.enableRules ? t("wizard.refine") : t("wizard.finalize"))
     : isRecap ? null : t("wizard.continue");
 
-  const adv = wizardMode === "advanced";
+  const toggleSection = (id: string) => setExpandedSections(s => ({ ...s, [id]: !s[id] }));
 
   // === Render step content ===
   const renderStepContent = () => {
@@ -283,8 +283,12 @@ export default function WizardPage() {
                 <RadioOption selected={config.model === "claude-haiku-4-5"} onClick={() => dispatch({ type: "SET_FIELD", field: "model", value: "claude-haiku-4-5" })} title={t("wizard.step2.haiku")} description={t("wizard.step2.haikuDesc")} />
               </QuestionCard>
 
-              {/* === ADVANCED ONLY === */}
-              {adv && (
+              {/* === Collapsible advanced === */}
+              <button onClick={() => toggleSection("step2")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:underline py-1">
+                <span className={`transition-transform ${expandedSections.step2 ? "rotate-90" : ""}`}>▸</span>
+                {expandedSections.step2 ? t("common.showLess") : t("common.learnMore")}
+              </button>
+              {expandedSections.step2 && (
                 <>
                   <QuestionCard title={t("wizard.step2.effort")}>
                     <div className="flex gap-3">
@@ -385,8 +389,12 @@ export default function WizardPage() {
                 <RadioOption selected={config.permissionMode === "dontAsk"} onClick={() => dispatch({ type: "SET_FIELD", field: "permissionMode", value: "dontAsk" })} title={t("wizard.step3.modeDontAsk")} description={t("wizard.step3.modeDontAskDesc")} />
               </QuestionCard>
 
-              {/* === ADVANCED ONLY === */}
-              {adv && (
+              {/* === Collapsible advanced === */}
+              <button onClick={() => toggleSection("step3")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:underline py-1">
+                <span className={`transition-transform ${expandedSections.step3 ? "rotate-90" : ""}`}>▸</span>
+                {expandedSections.step3 ? t("common.showLess") : t("common.learnMore")}
+              </button>
+              {expandedSections.step3 && (
                 <>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
                     <label className="flex items-center justify-between cursor-pointer">
@@ -516,8 +524,12 @@ export default function WizardPage() {
                 </div>
               </div>
 
-              {/* === ADVANCED ONLY === */}
-              {adv && (
+              {/* === Collapsible advanced === */}
+              <button onClick={() => toggleSection("step4")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:underline py-1">
+                <span className={`transition-transform ${expandedSections.step4 ? "rotate-90" : ""}`}>▸</span>
+                {expandedSections.step4 ? t("common.showLess") : t("common.learnMore")}
+              </button>
+              {expandedSections.step4 && (
                 <>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
                     <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">{t("wizard.step4.envVars")}</h4>
@@ -594,25 +606,11 @@ export default function WizardPage() {
       <div ref={scrollRef} className="flex-1 bg-[#FAFAFA] overflow-auto">
         {/* Sticky header */}
         <div className="sticky top-0 z-10 bg-[#FAFAFA] px-4 md:px-8 pt-4 md:pt-5 pb-3 border-b border-[#E5E5E5]">
-          {/* Breadcrumb + Mode toggle */}
-          <div className="flex items-center justify-between mb-2">
+          {/* Breadcrumb */}
+          <div className="mb-2">
             <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">
               {stepMeta.breadcrumb}
             </span>
-            <div className="flex items-center bg-[#F0F0F0] rounded-full p-0.5">
-              <button
-                onClick={() => setWizardMode("quick")}
-                className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "quick" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
-              >
-                {t("wizard.quick")}
-              </button>
-              <button
-                onClick={() => setWizardMode("advanced")}
-                className={`px-3 py-1 rounded-full text-[11px] font-medium transition-colors ${wizardMode === "advanced" ? "bg-white text-[#0D6E6E] shadow-sm" : "text-[#888888]"}`}
-              >
-                {t("wizard.advanced")}
-              </button>
-            </div>
           </div>
 
           <div className="mb-4" style={{ opacity: stepFade === "visible" ? 1 : 0, transition: "opacity 500ms ease-in-out" }}>
@@ -671,18 +669,30 @@ export default function WizardPage() {
             ))}
           </div>
           <div className="bg-white rounded-md rounded-tl-none border border-[#E0E0E0] flex-1 overflow-auto">
-          <div className="px-3 py-2 border-b border-[#E0E0E0] bg-[#FAFAFA] flex items-center justify-between">
-            <span className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666]">{selectedPreviewFile}</span>
-            {currentFile && (() => {
-              const lineCount = currentFile.content.split("\n").length;
-              const isClaudeMd = selectedPreviewFile === "CLAUDE.md";
-              const warn = isClaudeMd && lineCount > 150;
-              return (
-                <span className={`font-[family-name:var(--font-jetbrains)] text-[10px] ${warn ? "text-[#dc2626] font-medium" : "text-[#999999]"}`}>
-                  {lineCount} {t("home.terminalLines")}{warn ? " ⚠" : ""}
-                </span>
-              );
-            })()}
+          <div className="px-3 py-2 border-b border-[#E0E0E0] bg-[#FAFAFA]">
+            <div className="flex items-center justify-between">
+              <span className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666]">{selectedPreviewFile}</span>
+              {currentFile && (() => {
+                const lineCount = currentFile.content.split("\n").length;
+                const isClaudeMd = selectedPreviewFile === "CLAUDE.md";
+                const warn = isClaudeMd && lineCount > 150;
+                return (
+                  <span className={`font-[family-name:var(--font-jetbrains)] text-[10px] ${warn ? "text-[#dc2626] font-medium" : "text-[#999999]"}`}>
+                    {lineCount} {t("home.terminalLines")}{warn ? " ⚠" : ""}
+                  </span>
+                );
+              })()}
+            </div>
+            <p className="text-[10px] text-[#999999] mt-0.5">
+              {(() => {
+                const name = selectedPreviewFile.split("/").pop() || "";
+                const key = selectedPreviewFile.includes("/rules/")
+                  ? "wizard.preview.fileDesc.rules"
+                  : `wizard.preview.fileDesc.${name}`;
+                const desc = t(key);
+                return desc !== key ? desc : "";
+              })()}
+            </p>
           </div>
           <pre className="p-4 text-xs font-[family-name:var(--font-jetbrains)] leading-5 text-[#333333] whitespace-pre-wrap break-words">
             {currentFile?.content || t("wizard.preview.noContent")}
