@@ -5,74 +5,72 @@ import { useRouter, usePathname } from "next/navigation";
 
 const NO_SIDEBAR_ROUTES = ["/"];
 
-type Phase = "idle" | "hero-exit" | "app-enter" | "app-exit" | "hero-enter";
-
-const TIMING = {
-  "hero-exit": 600,
-  "app-enter": 700,
-  "app-exit": 500,
-  "hero-enter": 700,
-};
-
 interface TransitionContextType {
-  phase: Phase;
   navigateTo: (href: string) => void;
+  overlayVisible: boolean;
+  overlayPhase: "none" | "covering" | "revealing";
 }
 
 const TransitionContext = createContext<TransitionContextType>({
-  phase: "idle",
   navigateTo: () => {},
+  overlayVisible: false,
+  overlayPhase: "none",
 });
+
+const COVER_DURATION = 500;
+const REVEAL_DURATION = 600;
 
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [phase, setPhase] = useState<Phase>("idle");
+  const [overlayPhase, setOverlayPhase] = useState<"none" | "covering" | "revealing">("none");
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const isTransitioning = useRef(false);
+  const busy = useRef(false);
 
   const navigateTo = useCallback((href: string) => {
-    // Already there or mid-transition
-    if (href === pathname || isTransitioning.current) return;
+    if (href === pathname || busy.current) return;
 
-    const isHero = NO_SIDEBAR_ROUTES.includes(pathname);
-    const goingToHero = NO_SIDEBAR_ROUTES.includes(href);
+    const isHeroNav = NO_SIDEBAR_ROUTES.includes(pathname) !== NO_SIDEBAR_ROUTES.includes(href);
 
-    // Same layout type (app↔app): navigate instantly
-    if (isHero === goingToHero) {
+    if (!isHeroNav) {
+      // App↔App: just navigate, no fancy transition
       router.push(href);
       return;
     }
 
-    // Hero↔App: animate exit FIRST, then navigate
-    isTransitioning.current = true;
-    const exitPhase: Phase = isHero ? "hero-exit" : "app-exit";
-    const enterPhase: Phase = isHero ? "app-enter" : "hero-enter";
-
-    setPhase(exitPhase);
+    // Hero↔App: overlay transition
+    busy.current = true;
+    setOverlayPhase("covering");
 
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
-      // Exit animation done → now actually navigate
+      // Overlay is fully covering — navigate now (invisible to user)
       router.push(href);
 
-      // Start enter animation after a tick (new page needs to render)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setPhase(enterPhase);
+      // Wait a tick for the new page to render behind the overlay
+      setTimeout(() => {
+        setOverlayPhase("revealing");
 
-          timerRef.current = setTimeout(() => {
-            setPhase("idle");
-            isTransitioning.current = false;
-          }, TIMING[enterPhase]);
-        });
-      });
-    }, TIMING[exitPhase]);
+        timerRef.current = setTimeout(() => {
+          setOverlayPhase("none");
+          busy.current = false;
+        }, REVEAL_DURATION);
+      }, 100);
+    }, COVER_DURATION);
   }, [pathname, router]);
 
   return (
-    <TransitionContext.Provider value={{ phase, navigateTo }}>
+    <TransitionContext.Provider value={{ navigateTo, overlayVisible: overlayPhase !== "none", overlayPhase }}>
       {children}
+      {/* Transition overlay */}
+      {overlayPhase !== "none" && (
+        <div
+          className={`fixed inset-0 z-[100] pointer-events-none ${
+            overlayPhase === "covering" ? "overlay-cover" : "overlay-reveal"
+          }`}
+          style={{ backgroundColor: "#1A1A1A" }}
+        />
+      )}
     </TransitionContext.Provider>
   );
 }
