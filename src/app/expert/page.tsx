@@ -193,10 +193,13 @@ export default function ExpertPage() {
           {/* Left Panel - Editor */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Tabs */}
-            <div className="flex gap-1 overflow-x-auto">
+            <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Configuration files">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  aria-controls="editor-panel"
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-5 py-3 font-[family-name:var(--font-jetbrains)] text-[13px] rounded-t-md transition-all duration-200 whitespace-nowrap cursor-pointer ${
                     activeTab === tab.id
@@ -210,7 +213,7 @@ export default function ExpertPage() {
             </div>
 
             {/* Code Editor */}
-            <div className="flex-1 bg-white border border-[#E5E5E5] rounded-b-md rounded-tr-md overflow-hidden">
+            <div id="editor-panel" role="tabpanel" className="flex-1 bg-white border border-[#E5E5E5] rounded-b-md rounded-tr-md overflow-hidden">
               <CodeEditor
                 key={activeTabDef.id}
                 value={activeTabDef.getValue()}

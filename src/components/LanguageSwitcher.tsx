@@ -27,6 +27,12 @@ export default function LanguageSwitcher({ variant = "dark" }: LanguageSwitcherP
       >
         EN
       </button>
+      <button
+        onClick={() => setLocale("es")}
+        className={`px-2.5 py-1 rounded-full text-[11px] font-medium cursor-pointer transition-colors ${locale === "es" ? activeClass : inactiveClass}`}
+      >
+        ES
+      </button>
     </div>
   );
 }

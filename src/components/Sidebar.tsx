@@ -46,6 +46,7 @@ export default function Sidebar() {
       key={item.href}
       href={item.href}
       onClick={(e) => handleNav(e, item.href)}
+      aria-current={isActive(item.href) ? "page" : undefined}
       className={className}
     >
       {item.name}
@@ -64,7 +65,7 @@ export default function Sidebar() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#0D6E6E]" />
           </Link>
 
-          <nav className="flex flex-col gap-1">
+          <nav className="flex flex-col gap-1" aria-label="Main navigation">
             {navItems.map((item) =>
               navLink(
                 item,
@@ -95,7 +96,7 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-2 px-1">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-2 px-1" aria-label="Mobile navigation">
         {navItems.map((item) =>
           navLink(
             item,

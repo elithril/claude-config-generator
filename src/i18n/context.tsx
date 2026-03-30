@@ -3,11 +3,12 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import fr from "./translations/fr";
 import en from "./translations/en";
+import es from "./translations/es";
 
-type Locale = "fr" | "en";
+type Locale = "fr" | "en" | "es";
 type Translations = typeof fr;
 
-const translations: Record<Locale, Translations> = { fr, en };
+const translations: Record<Locale, Translations> = { fr, en, es };
 
 const STORAGE_KEY = "claude-config-locale";
 
@@ -25,7 +26,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   // Load from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === "en" || saved === "fr") {
+    if (saved === "en" || saved === "fr" || saved === "es") {
       setLocaleState(saved);
     }
   }, []);

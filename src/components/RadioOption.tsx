@@ -20,8 +20,11 @@ export default function RadioOption({
   return (
     <button
       type="button"
+      role="radio"
+      aria-checked={selected}
+      aria-label={title}
       onClick={onClick}
-      className={`w-full text-left p-4 rounded border-2 transition-all ${
+      className={`w-full text-left p-4 rounded border-2 transition-all cursor-pointer ${
         selected
           ? "bg-[#F0FAFA] border-[#0D6E6E]"
           : "bg-white border-[#E5E5E5] hover:border-[#CCCCCC]"
