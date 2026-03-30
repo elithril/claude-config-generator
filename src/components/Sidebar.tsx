@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useT } from "@/i18n";
 import { useConfig } from "@/context/ConfigContext";
+import { useTransition } from "@/context/TransitionContext";
 import Modal from "./Modal";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -13,6 +14,7 @@ export default function Sidebar() {
   const router = useRouter();
   const t = useT();
   const { hasUnsavedChanges, setHasUnsavedChanges } = useConfig();
+  const { navigateTo } = useTransition();
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const navItems = [
@@ -24,17 +26,19 @@ export default function Sidebar() {
   const isActive = (href: string) => pathname.startsWith(href);
 
   const handleNav = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
     if (hasUnsavedChanges && !pathname.startsWith(href)) {
-      e.preventDefault();
       setPendingHref(href);
+      return;
     }
+    navigateTo(href);
   };
 
   const confirmLeave = () => {
     setHasUnsavedChanges(false);
     const href = pendingHref;
     setPendingHref(null);
-    if (href) router.push(href);
+    if (href) navigateTo(href);
   };
 
   const cancelLeave = () => {

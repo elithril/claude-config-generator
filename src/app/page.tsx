@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "@/context/TransitionContext";
 import { loadVault } from "@/lib/storage";
 import { useI18n } from "@/i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -160,6 +161,7 @@ function getFileLines(locale: string) {
 
 export default function Home() {
   const router = useRouter();
+  const { navigateTo } = useTransition();
   const { locale, t } = useI18n();
   const [vaultCount, setVaultCount] = useState(0);
   const [activeFile, setActiveFile] = useState(0);
@@ -254,7 +256,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-3">
             <button
-              onClick={() => router.push("/wizard")}
+              onClick={() => navigateTo("/wizard")}
               className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
             >
               <span className="text-white text-[15px] font-medium">{t("home.cta")}</span>
@@ -264,7 +266,7 @@ export default function Home() {
               </svg>
             </button>
             <button
-              onClick={() => router.push("/expert")}
+              onClick={() => navigateTo("/expert")}
               className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl cursor-pointer border border-[#333333] hover:border-[#0D6E6E] text-[#777777] hover:text-[#0D6E6E] transition-colors"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -280,7 +282,7 @@ export default function Home() {
           {vaultCount > 0 && (
             <div className="relative z-10">
               <button
-                onClick={() => router.push("/vault")}
+                onClick={() => navigateTo("/vault")}
                 className="flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer border border-[#2A2A2A] hover:border-[#0D6E6E] transition-colors w-full"
               >
                 <span className="text-sm">🔐</span>
