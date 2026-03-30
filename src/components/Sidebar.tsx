@@ -56,7 +56,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col justify-between py-6 px-5 flex-shrink-0">
+      <aside className="hidden md:flex w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col py-6 px-5 flex-shrink-0">
         <div className="flex flex-col gap-8">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
             <span className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-white">
@@ -79,7 +79,7 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mt-auto">
           <LanguageSwitcher variant="dark" />
           <div className="flex items-center gap-3">
             <a
