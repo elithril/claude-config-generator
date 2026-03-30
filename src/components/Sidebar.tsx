@@ -31,7 +31,7 @@ export default function Sidebar() {
       setPendingHref(href);
       return;
     }
-    navigateTo(href, e);
+    navigateTo(href);
   };
 
   const confirmLeave = () => {
