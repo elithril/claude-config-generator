@@ -79,25 +79,29 @@ body {
 }
 
 /* ============================
-   Hero ↔ App overlay transition
+   Hero ↔ App wipe transition
    ============================ */
 
-.overlay-cover {
-  animation: overlay-fade-in 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+/* Strips sweep in from right */
+.wipe-strip-enter {
+  transform: translateX(100%);
+  animation: wipe-in 600ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
-.overlay-reveal {
-  animation: overlay-fade-out 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Strips sweep out to left */
+.wipe-strip-exit {
+  transform: translateX(0);
+  animation: wipe-out 600ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
-@keyframes overlay-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+@keyframes wipe-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
 }
 
-@keyframes overlay-fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+@keyframes wipe-out {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
 }
 
 /* Fade-in for wizard step transitions */

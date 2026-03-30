@@ -17,8 +17,8 @@ const TransitionContext = createContext<TransitionContextType>({
   overlayPhase: "none",
 });
 
-const COVER_DURATION = 500;
-const REVEAL_DURATION = 600;
+const COVER_DURATION = 700;
+const REVEAL_DURATION = 700;
 
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -62,14 +62,27 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   return (
     <TransitionContext.Provider value={{ navigateTo, overlayVisible: overlayPhase !== "none", overlayPhase }}>
       {children}
-      {/* Transition overlay */}
+      {/* Transition overlay — 3 staggered strips */}
       {overlayPhase !== "none" && (
-        <div
-          className={`fixed inset-0 z-[100] pointer-events-none ${
-            overlayPhase === "covering" ? "overlay-cover" : "overlay-reveal"
-          }`}
-          style={{ backgroundColor: "#1A1A1A" }}
-        />
+        <div className="fixed inset-0 z-[100] pointer-events-none" aria-hidden="true">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className={overlayPhase === "covering" ? "wipe-strip-enter" : "wipe-strip-exit"}
+              style={{
+                position: "absolute",
+                top: `${i * 33.34}%`,
+                left: 0,
+                right: 0,
+                height: "33.4%",
+                backgroundColor: i === 1 ? "#0D6E6E" : "#1A1A1A",
+                animationDelay: overlayPhase === "covering"
+                  ? `${i * 80}ms`
+                  : `${(2 - i) * 80}ms`,
+              }}
+            />
+          ))}
+        </div>
       )}
     </TransitionContext.Provider>
   );
