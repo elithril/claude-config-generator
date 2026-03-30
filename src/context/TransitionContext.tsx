@@ -5,24 +5,22 @@ import { useRouter, usePathname } from "next/navigation";
 
 const NO_SIDEBAR_ROUTES = ["/"];
 
-// hero→app: hero-out → morph → app-in → idle
-// app→hero: app-out → morph-back → hero-in → idle
 type Phase =
   | "idle"
-  | "hero-out"     // hero content fades out
-  | "morph"        // panel shrinks 40%→260px, navigation happens mid-way
-  | "app-in"       // sidebar text + main content enter
+  | "hero-out"     // hero content fades out (panel stays at 100vw)
+  | "morph"        // panel shrinks 100vw → 260px (new page already loaded behind)
+  | "app-in"       // sidebar text + main content animate in
   | "app-out"      // main content + sidebar text fade out
-  | "morph-back"   // panel expands 260px→40%, navigation happens mid-way
+  | "morph-back"   // panel expands 260px → 100vw (new page already loaded behind)
   | "hero-in";     // hero content fades in
 
 const TIMING = {
-  "hero-out": 350,
-  "morph": 500,
-  "app-in": 450,
-  "app-out": 300,
-  "morph-back": 500,
-  "hero-in": 400,
+  "hero-out": 400,
+  "morph": 600,
+  "app-in": 500,
+  "app-out": 350,
+  "morph-back": 600,
+  "hero-in": 500,
 };
 
 interface TransitionContextType {
@@ -39,21 +37,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [phase, setPhase] = useState<Phase>("idle");
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const busy = useRef(false);
-
-  const chain = (steps: [Phase, number][]) => {
-    let delay = 0;
-    for (const [p, d] of steps) {
-      const capturedDelay = delay;
-      setTimeout(() => setPhase(p), capturedDelay);
-      delay += d;
-    }
-    setTimeout(() => {
-      setPhase("idle");
-      busy.current = false;
-    }, delay);
-  };
 
   const navigateTo = useCallback((href: string) => {
     if (href === pathname || busy.current) return;
@@ -65,37 +49,47 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
     }
 
     busy.current = true;
-    clearTimeout(timerRef.current);
-
     const goingToApp = NO_SIDEBAR_ROUTES.includes(pathname);
 
     if (goingToApp) {
       // Hero → App
+      // 1. Fade out hero content (panel at 100vw covers everything)
       setPhase("hero-out");
       setTimeout(() => {
-        setPhase("morph");
-        // Navigate mid-morph (panel covers everything)
-        setTimeout(() => router.push(href), TIMING["morph"] * 0.5);
+        // 2. Navigate NOW — panel at 100vw hides everything
+        router.push(href);
+        // 3. Small delay for React to render new page behind panel
         setTimeout(() => {
-          setPhase("app-in");
+          // 4. Shrink panel to reveal new page
+          setPhase("morph");
           setTimeout(() => {
-            setPhase("idle");
-            busy.current = false;
-          }, TIMING["app-in"]);
-        }, TIMING["morph"]);
+            // 5. Panel done shrinking → animate sidebar + content in
+            setPhase("app-in");
+            setTimeout(() => {
+              setPhase("idle");
+              busy.current = false;
+            }, TIMING["app-in"]);
+          }, TIMING["morph"]);
+        }, 50);
       }, TIMING["hero-out"]);
     } else {
       // App → Hero
+      // 1. Fade out sidebar + content
       setPhase("app-out");
       setTimeout(() => {
+        // 2. Expand panel to cover everything
         setPhase("morph-back");
-        setTimeout(() => router.push(href), TIMING["morph-back"] * 0.5);
         setTimeout(() => {
-          setPhase("hero-in");
+          // 3. Panel at 100vw — navigate behind it
+          router.push(href);
           setTimeout(() => {
-            setPhase("idle");
-            busy.current = false;
-          }, TIMING["hero-in"]);
+            // 4. Fade in hero content
+            setPhase("hero-in");
+            setTimeout(() => {
+              setPhase("idle");
+              busy.current = false;
+            }, TIMING["hero-in"]);
+          }, 50);
         }, TIMING["morph-back"]);
       }, TIMING["app-out"]);
     }
@@ -107,8 +101,6 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
     </TransitionContext.Provider>
   );
 }
-
-export const TRANSITION_TIMING = TIMING;
 
 export function useTransition() {
   return useContext(TransitionContext);
