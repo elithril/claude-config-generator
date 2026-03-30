@@ -17,7 +17,7 @@ const fr = {
   "sidebar.wizard": "Assistant",
   "sidebar.expert": "Éditeur",
   "sidebar.vault": "Coffre",
-  "sidebar.docs": "Documentation →",
+  "sidebar.docs": "Docs Claude Code",
 
   // === WIZARD ===
   "wizard.quick": "Rapide",
