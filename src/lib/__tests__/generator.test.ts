@@ -14,6 +14,8 @@ function makeConfig(overrides: Partial<ClaudeConfig> = {}): ClaudeConfig {
   return { ...getDefaultConfig(), ...overrides };
 }
 
+// ========== CLAUDE.md ==========
+
 describe("generateClaudeMd", () => {
   it("should include language in output", () => {
     const result = generateClaudeMd(makeConfig({ language: "fr" }));
@@ -58,7 +60,44 @@ describe("generateClaudeMd", () => {
     const result = generateClaudeMd(makeConfig({ language: "es" }));
     expect(result).toContain("Siempre responder en Español");
   });
+
+  it("should include HTML comment header", () => {
+    const result = generateClaudeMd(makeConfig({ language: "fr" }));
+    expect(result).toContain("<!--");
+    expect(result).toContain("-->");
+  });
+
+  it("should include project stack when provided", () => {
+    const result = generateClaudeMd(makeConfig({ projectStack: "Next.js 15, TypeScript" }));
+    expect(result).toContain("Stack technique");
+    expect(result).toContain("Next.js 15, TypeScript");
+  });
+
+  it("should include build/test/lint commands when provided", () => {
+    const result = generateClaudeMd(makeConfig({
+      buildCommand: "npm run build",
+      testCommand: "npm test",
+      lintCommand: "npm run lint",
+    }));
+    expect(result).toContain("Commandes");
+    expect(result).toContain("`npm run build`");
+    expect(result).toContain("`npm test`");
+    expect(result).toContain("`npm run lint`");
+  });
+
+  it("should not include commands section when empty", () => {
+    const result = generateClaudeMd(makeConfig());
+    expect(result).not.toContain("Commandes");
+  });
+
+  it("should include project structure when provided", () => {
+    const result = generateClaudeMd(makeConfig({ projectStructure: "src/ → code" }));
+    expect(result).toContain("Structure du projet");
+    expect(result).toContain("src/ → code");
+  });
 });
+
+// ========== settings.json ==========
 
 describe("generateSettingsJson", () => {
   it("should return valid JSON", () => {
@@ -85,6 +124,14 @@ describe("generateSettingsJson", () => {
     const result = JSON.parse(generateSettingsJson(makeConfig({ bundle: "safe" })));
     expect(result.permissions.deny).toContain("Bash(rm -rf *)");
     expect(result.permissions.deny).toContain("Bash(git push --force *)");
+    expect(result.permissions.deny).toContain("Bash(git reset --hard *)");
+  });
+
+  it("should add ask rules for safe bundle", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ bundle: "safe" })));
+    expect(result.permissions.ask).toContain("Bash(git push *)");
+    expect(result.permissions.ask).toContain("Bash(docker *)");
+    expect(result.permissions.ask).toContain("Bash(kubectl *)");
   });
 
   it("should add allow rules for dev bundle", () => {
@@ -98,6 +145,34 @@ describe("generateSettingsJson", () => {
     const result = JSON.parse(generateSettingsJson(config));
     expect(result.hooks).toBeDefined();
     expect(result.hooks.PostToolUse).toBeDefined();
+  });
+
+  it("should merge hooks with same event and matcher", () => {
+    const config = makeConfig({ enableHooks: true });
+    // Enable both lint and format hooks (same event + matcher)
+    config.hooks = config.hooks.map((h) =>
+      h.id === "hook-lint-on-save" || h.id === "hook-format-on-save"
+        ? { ...h, enabled: true }
+        : h
+    );
+    const result = JSON.parse(generateSettingsJson(config));
+    // Should be ONE entry for PostToolUse with matcher Write|Edit
+    expect(result.hooks.PostToolUse).toHaveLength(1);
+    expect(result.hooks.PostToolUse[0].hooks).toHaveLength(2);
+    expect(result.hooks.PostToolUse[0].matcher).toBe("Write|Edit");
+  });
+
+  it("should not merge hooks with different matchers", () => {
+    const config = makeConfig({ enableHooks: true });
+    // Enable lint (PostToolUse Write|Edit) and validate-bash (PreToolUse Bash)
+    config.hooks = config.hooks.map((h) =>
+      h.id === "hook-lint-on-save" || h.id === "hook-validate-bash"
+        ? { ...h, enabled: true }
+        : h
+    );
+    const result = JSON.parse(generateSettingsJson(config));
+    expect(result.hooks.PostToolUse).toHaveLength(1);
+    expect(result.hooks.PreToolUse).toHaveLength(1);
   });
 
   it("should not include hooks when none enabled", () => {
@@ -165,7 +240,21 @@ describe("generateSettingsJson", () => {
     const result = JSON.parse(generateSettingsJson(makeConfig({ permissionMode: "plan" })));
     expect(result.permissions.defaultMode).toBe("plan");
   });
+
+  it("should set auto mode correctly", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig({ permissionMode: "auto" })));
+    expect(result.permissions.defaultMode).toBe("auto");
+  });
+
+  it("should include credentials in default deny rules", () => {
+    const result = JSON.parse(generateSettingsJson(makeConfig()));
+    expect(result.permissions.deny).toContain("Read(./**/*.pem)");
+    expect(result.permissions.deny).toContain("Read(./**/*.key)");
+    expect(result.permissions.deny).toContain("Read(./**/credentials.json)");
+  });
 });
+
+// ========== .mcp.json ==========
 
 describe("generateMcpJson", () => {
   it("should return null when MCP is disabled", () => {
@@ -197,15 +286,38 @@ describe("generateMcpJson", () => {
     expect(result.mcpServers["chrome-devtools"].command).toBe("npx");
   });
 
-  it("should include url for http transport", () => {
+  it("should include command and args for GitHub stdio transport", () => {
     const config = makeConfig({ enableMCP: true });
     config.mcpServers = config.mcpServers.map((s) =>
       s.id === "mcp-github" ? { ...s, enabled: true } : s
     );
     const result = JSON.parse(generateMcpJson(config)!);
-    expect(result.mcpServers["github"].url).toBeDefined();
+    expect(result.mcpServers["github"].command).toBe("npx");
+    expect(result.mcpServers["github"].args).toContain("@modelcontextprotocol/server-github");
+  });
+
+  it("should include env vars for servers that need them", () => {
+    const config = makeConfig({ enableMCP: true });
+    config.mcpServers = config.mcpServers.map((s) =>
+      s.id === "mcp-github" ? { ...s, enabled: true } : s
+    );
+    const result = JSON.parse(generateMcpJson(config)!);
+    expect(result.mcpServers["github"].env).toBeDefined();
+    expect(result.mcpServers["github"].env.GITHUB_PERSONAL_ACCESS_TOKEN).toBeDefined();
+  });
+
+  it("should include url for http transport", () => {
+    const config = makeConfig({ enableMCP: true });
+    config.mcpServers = config.mcpServers.map((s) =>
+      s.id === "mcp-sentry" ? { ...s, enabled: true } : s
+    );
+    const result = JSON.parse(generateMcpJson(config)!);
+    expect(result.mcpServers["sentry"].url).toBeDefined();
+    expect(result.mcpServers["sentry"].type).toBe("http");
   });
 });
+
+// ========== .claudeignore ==========
 
 describe("generateClaudeIgnore", () => {
   it("should return custom content when provided", () => {
@@ -226,7 +338,15 @@ describe("generateClaudeIgnore", () => {
     expect(result).toContain("*.pem");
     expect(result).toContain("*.key");
   });
+
+  it("should include bilingual header comment", () => {
+    const result = generateClaudeIgnore(makeConfig());
+    expect(result).toContain("invisible to Claude");
+    expect(result).toContain("invisibles pour Claude");
+  });
 });
+
+// ========== Rule files ==========
 
 describe("generateRuleFiles", () => {
   it("should return empty array when rules disabled", () => {
@@ -252,7 +372,18 @@ describe("generateRuleFiles", () => {
     expect(result[0].content).toContain("---");
     expect(result[0].content).toContain("paths:");
   });
+
+  it("should include HTML comment header", () => {
+    const config = makeConfig({ enableRules: true });
+    config.rules = config.rules.map((r) =>
+      r.id === "rule-code-style" ? { ...r, enabled: true } : r
+    );
+    const result = generateRuleFiles(config);
+    expect(result[0].content).toContain("<!-- Claude rule file");
+  });
 });
+
+// ========== All files ==========
 
 describe("generateAllFiles", () => {
   it("should generate at least 3 files by default", () => {
@@ -276,6 +407,12 @@ describe("generateAllFiles", () => {
     const result = generateAllFiles(config);
     const paths = result.map((f) => f.path);
     expect(paths).toContain(".mcp.json");
+  });
+
+  it("should not include .mcp.json when no servers enabled", () => {
+    const result = generateAllFiles(makeConfig({ enableMCP: true }));
+    const paths = result.map((f) => f.path);
+    expect(paths).not.toContain(".mcp.json");
   });
 
   it("should include rule files when rules are enabled", () => {
