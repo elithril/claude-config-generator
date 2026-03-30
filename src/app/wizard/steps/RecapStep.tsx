@@ -18,6 +18,7 @@ export default function RecapStep() {
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [saveName, setSaveName] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const saveInputRef = useRef<HTMLInputElement>(null);
 
   const generatedFiles: GeneratedFile[] = generateAllFiles(config);
@@ -31,6 +32,7 @@ export default function RecapStep() {
     try {
       await downloadAsZip(generatedFiles);
       addToast(t("toast.downloaded"));
+      setShowGuide(true);
     } catch {
       addToast(t("toast.downloadError"), "error");
     } finally {
@@ -162,6 +164,68 @@ export default function RecapStep() {
           </div>
         )}
       </div>
+
+      {/* Post-download guide */}
+      {showGuide && (
+        <div className="bg-[#F0FAFA] rounded-lg border border-[#0D6E6E]/20 p-6">
+          <h3 className="font-[family-name:var(--font-newsreader)] text-lg font-medium text-[#0D6E6E] mb-5">
+            {t("wizard.recap.guideTitle")}
+          </h3>
+
+          {/* Project scope */}
+          <div className="mb-5">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm">📁</span>
+              <h4 className="text-sm font-semibold text-[#1A1A1A]">{t("wizard.recap.guideProjectTitle")}</h4>
+            </div>
+            <p className="text-xs text-[#666666] mb-3 ml-6">{t("wizard.recap.guideProjectDesc")}</p>
+            <div className="flex flex-col gap-3 ml-6">
+              {[
+                { step: t("wizard.recap.guideStep1"), detail: t("wizard.recap.guideStep1Detail"), cmd: t("wizard.recap.guideCmd1") },
+                { step: t("wizard.recap.guideStep2"), detail: t("wizard.recap.guideStep2Detail"), cmd: t("wizard.recap.guideCmd2") },
+              ].map((item, i) => (
+                <div key={i} className="flex gap-3">
+                  <span className="w-5 h-5 rounded-full bg-[#0D6E6E] text-white text-[10px] font-medium flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-[#1A1A1A]">{item.step}</p>
+                    <p className="text-xs text-[#666666] mt-0.5">{item.detail}</p>
+                    <code className="inline-block mt-1.5 px-3 py-1.5 bg-[#1A1A1A] text-[#0D6E6E] text-xs font-[family-name:var(--font-jetbrains)] rounded break-all">
+                      {item.cmd}
+                    </code>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-[#0D6E6E]/10 my-4" />
+
+          {/* Global scope */}
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm">🌐</span>
+              <h4 className="text-sm font-semibold text-[#1A1A1A]">{t("wizard.recap.guideGlobalTitle")}</h4>
+            </div>
+            <p className="text-xs text-[#666666] mb-3 ml-6">{t("wizard.recap.guideGlobalDesc")}</p>
+            <div className="flex gap-3 ml-6">
+              <span className="w-5 h-5 rounded-full bg-[#888888] text-white text-[10px] font-medium flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-[#1A1A1A]">{t("wizard.recap.guideGlobalStep1")}</p>
+                <p className="text-xs text-[#666666] mt-0.5">{t("wizard.recap.guideGlobalStep1Detail")}</p>
+                <code className="inline-block mt-1.5 px-3 py-1.5 bg-[#1A1A1A] text-[#888888] text-xs font-[family-name:var(--font-jetbrains)] rounded break-all">
+                  {t("wizard.recap.guideGlobalCmd1")}
+                </code>
+              </div>
+            </div>
+          </div>
+
+          {/* Precedence note */}
+          <div className="mt-4 flex gap-2 items-start p-3 bg-[#0D6E6E]/5 rounded border border-[#0D6E6E]/15">
+            <span className="text-sm flex-shrink-0">💡</span>
+            <p className="text-xs font-medium text-[#0D6E6E]">{t("wizard.recap.guidePrecedence")}</p>
+          </div>
+        </div>
+      )}
 
       <button
         onClick={() => router.push("/expert")}
