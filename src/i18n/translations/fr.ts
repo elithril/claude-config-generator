@@ -342,7 +342,7 @@ const fr = {
   "common.cancel": "Annuler",
   "common.files": "fichiers",
   "common.recommended": "Recommandé",
-  "common.learnMore": "En savoir plus",
+  "common.learnMore": "Pour aller plus loin",
   "common.showLess": "Réduire",
 };
 

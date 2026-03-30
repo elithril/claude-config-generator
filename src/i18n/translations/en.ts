@@ -342,7 +342,7 @@ const en = {
   "common.cancel": "Cancel",
   "common.files": "files",
   "common.recommended": "Recommended",
-  "common.learnMore": "Learn more",
+  "common.learnMore": "Go further",
   "common.showLess": "Show less",
 };
 

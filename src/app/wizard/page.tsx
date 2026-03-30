@@ -669,30 +669,27 @@ export default function WizardPage() {
             ))}
           </div>
           <div className="bg-white rounded-md rounded-tl-none border border-[#E0E0E0] flex-1 overflow-auto">
-          <div className="px-3 py-2 border-b border-[#E0E0E0] bg-[#FAFAFA]">
-            <div className="flex items-center justify-between">
-              <span className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666]">{selectedPreviewFile}</span>
-              {currentFile && (() => {
-                const lineCount = currentFile.content.split("\n").length;
-                const isClaudeMd = selectedPreviewFile === "CLAUDE.md";
-                const warn = isClaudeMd && lineCount > 150;
-                return (
-                  <span className={`font-[family-name:var(--font-jetbrains)] text-[10px] ${warn ? "text-[#dc2626] font-medium" : "text-[#999999]"}`}>
-                    {lineCount} {t("home.terminalLines")}{warn ? " ⚠" : ""}
-                  </span>
-                );
-              })()}
-            </div>
-            <p className="text-[10px] text-[#999999] mt-0.5">
+          <div className="px-3 py-2 border-b border-[#E0E0E0] bg-[#FAFAFA] flex items-center justify-between">
+            <span className="text-[11px] text-[#888888]">
               {(() => {
                 const name = selectedPreviewFile.split("/").pop() || "";
                 const key = selectedPreviewFile.includes("/rules/")
                   ? "wizard.preview.fileDesc.rules"
                   : `wizard.preview.fileDesc.${name}`;
                 const desc = t(key);
-                return desc !== key ? desc : "";
+                return desc !== key ? desc : selectedPreviewFile;
               })()}
-            </p>
+            </span>
+            {currentFile && (() => {
+              const lineCount = currentFile.content.split("\n").length;
+              const isClaudeMd = selectedPreviewFile === "CLAUDE.md";
+              const warn = isClaudeMd && lineCount > 150;
+              return (
+                <span className={`font-[family-name:var(--font-jetbrains)] text-[10px] ${warn ? "text-[#dc2626] font-medium" : "text-[#999999]"}`}>
+                  {lineCount} {t("home.terminalLines")}{warn ? " ⚠" : ""}
+                </span>
+              );
+            })()}
           </div>
           <pre className="p-4 text-xs font-[family-name:var(--font-jetbrains)] leading-5 text-[#333333] whitespace-pre-wrap break-words">
             {currentFile?.content || t("wizard.preview.noContent")}

@@ -342,8 +342,8 @@ const es = {
   "common.cancel": "Cancelar",
   "common.files": "archivos",
   "common.recommended": "Recomendado",
-  "common.learnMore": "Más opciones",
-  "common.showLess": "Menos opciones",
+  "common.learnMore": "Ir más lejos",
+  "common.showLess": "Reducir",
 };
 
 export default es;
