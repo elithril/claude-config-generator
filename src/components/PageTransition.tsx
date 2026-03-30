@@ -7,18 +7,22 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState(pathname);
   const [ready, setReady] = useState(true);
+  const [fromHero, setFromHero] = useState(false);
+  const prevPath = useRef(pathname);
   const frameRef = useRef(0);
 
-  // Detect path change DURING render (synchronous, before paint)
-  // React will re-render before committing to DOM, so browser never sees opacity:1 flash
+  // Detect path change synchronously before paint
   if (pathname !== currentPath) {
+    const wasHero = prevPath.current === "/";
+    const goingToApp = pathname !== "/";
+    setFromHero(wasHero && goingToApp);
+    prevPath.current = pathname;
     setCurrentPath(pathname);
     setReady(false);
   }
 
   useEffect(() => {
     if (!ready) {
-      // Wait for mount effects to settle, then fade in
       cancelAnimationFrame(frameRef.current);
       frameRef.current = requestAnimationFrame(() => {
         frameRef.current = requestAnimationFrame(() => {
@@ -29,14 +33,19 @@ export default function PageTransition({ children }: { children: ReactNode }) {
     return () => cancelAnimationFrame(frameRef.current);
   }, [ready]);
 
-  return (
-    <div
-      className="flex-1 flex flex-col min-h-0"
-      style={{
+  const heroTransition: React.CSSProperties = fromHero
+    ? {
+        opacity: ready ? 1 : 0,
+        transform: ready ? "scale(1) translateY(0)" : "scale(0.97) translateY(12px)",
+        transition: ready ? "opacity 400ms ease-out, transform 400ms ease-out" : "none",
+      }
+    : {
         opacity: ready ? 1 : 0,
         transition: ready ? "opacity 180ms ease-in" : "none",
-      }}
-    >
+      };
+
+  return (
+    <div className="flex-1 flex flex-col min-h-0" style={heroTransition}>
       {children}
     </div>
   );
