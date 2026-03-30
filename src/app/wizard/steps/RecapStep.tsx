@@ -59,7 +59,7 @@ export default function RecapStep() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
           <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">{t("wizard.recap.bundle")}</span>
-            <p className="font-medium text-[#1A1A1A]">{config.bundle === "safe" ? "Safe Mode" : "Dev Rapide"}</p>
+            <p className="font-medium text-[#1A1A1A]">{config.bundle === "safe" ? t("wizard.recap.bundleSafe") : t("wizard.recap.bundleDev")}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">{t("wizard.recap.language")}</span>
@@ -67,7 +67,7 @@ export default function RecapStep() {
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">{t("wizard.recap.tone")}</span>
-            <p className="font-medium text-[#1A1A1A]">{config.tone === "cool" ? "Cool" : config.tone === "pro" ? "Pro" : "Pédagogue"}</p>
+            <p className="font-medium text-[#1A1A1A]">{t(`wizard.recap.tone${config.tone.charAt(0).toUpperCase()}${config.tone.slice(1)}`)}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">{t("wizard.recap.model")}</span>
@@ -75,14 +75,12 @@ export default function RecapStep() {
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">{t("wizard.recap.style")}</span>
-            <p className="font-medium text-[#1A1A1A]">{config.responseStyle === "concise" ? "Concis" : config.responseStyle === "detailed" ? "Détaillé" : "Technique"}</p>
+            <p className="font-medium text-[#1A1A1A]">{t(`wizard.recap.style${config.responseStyle.charAt(0).toUpperCase()}${config.responseStyle.slice(1)}`)}</p>
           </div>
           <div className="p-3 bg-[#FAFAFA] rounded">
             <span className="text-[#888888] text-xs">{t("wizard.recap.permissions")}</span>
             <p className="font-medium text-[#1A1A1A]">{
-              config.permissionMode === "default" ? "Demander" :
-              config.permissionMode === "plan" ? "Mode Plan" :
-              config.permissionMode === "acceptEdits" ? "Auto-édition" : "Confiance totale"
+              ({ default: t("wizard.recap.permDefault"), plan: t("wizard.recap.permPlan"), acceptEdits: t("wizard.recap.permAcceptEdits"), auto: t("wizard.recap.permAuto"), dontAsk: t("wizard.recap.permDontAsk"), bypassPermissions: "Bypass" } as Record<string, string>)[config.permissionMode] || config.permissionMode
             }</p>
           </div>
         </div>
