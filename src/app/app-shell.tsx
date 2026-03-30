@@ -7,67 +7,92 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 
 const NO_SIDEBAR_ROUTES = ["/"];
 
-type TransitionPhase = "idle" | "hero-exit" | "app-enter" | "app-exit" | "hero-enter";
+type Phase = "idle" | "hero-exit" | "app-enter" | "app-exit" | "hero-enter";
 
-const PHASE_DURATION = {
-  "hero-exit": 400,
-  "app-enter": 500,
-  "app-exit": 300,
-  "hero-enter": 500,
+const TIMING = {
+  "hero-exit": 600,
+  "app-enter": 700,
+  "app-exit": 500,
+  "hero-enter": 700,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [frozen, setFrozen] = useState<ReactNode>(children);
+  const [sidebar, setSidebar] = useState(!NO_SIDEBAR_ROUTES.includes(pathname));
   const prevPath = useRef(pathname);
-  const [phase, setPhase] = useState<TransitionPhase>("idle");
-  const [displayedChildren, setDisplayedChildren] = useState<ReactNode>(children);
-  const [showSidebar, setShowSidebar] = useState(!NO_SIDEBAR_ROUTES.includes(pathname));
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const pending = useRef<ReactNode>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const transitioning = useRef(false);
 
-  useEffect(() => {
-    if (pathname === prevPath.current) {
-      setDisplayedChildren(children);
-      return;
-    }
-
+  // ---- SYNCHRONOUS detection (runs during render, before paint) ----
+  if (pathname !== prevPath.current && !transitioning.current) {
     const wasHero = NO_SIDEBAR_ROUTES.includes(prevPath.current);
     const goingToHero = NO_SIDEBAR_ROUTES.includes(pathname);
     prevPath.current = pathname;
 
-    clearTimeout(timerRef.current);
-
-    if (wasHero && !goingToHero) {
-      // Hero → App
-      setPhase("hero-exit");
-      timerRef.current = setTimeout(() => {
-        setDisplayedChildren(children);
-        setShowSidebar(true);
-        setPhase("app-enter");
-        timerRef.current = setTimeout(() => setPhase("idle"), PHASE_DURATION["app-enter"]);
-      }, PHASE_DURATION["hero-exit"]);
-    } else if (!wasHero && goingToHero) {
-      // App → Hero
-      setPhase("app-exit");
-      timerRef.current = setTimeout(() => {
-        setDisplayedChildren(children);
-        setShowSidebar(false);
-        setPhase("hero-enter");
-        timerRef.current = setTimeout(() => setPhase("idle"), PHASE_DURATION["hero-enter"]);
-      }, PHASE_DURATION["app-exit"]);
+    if (wasHero !== goingToHero) {
+      // Hero ↔ App transition: freeze current content, store new for later
+      transitioning.current = true;
+      pending.current = children;
+      // Start exit phase — frozen still shows OLD content, no flash
+      if (wasHero) {
+        setPhase("hero-exit");
+      } else {
+        setPhase("app-exit");
+      }
     } else {
-      // App → App (simple swap)
-      setDisplayedChildren(children);
+      // App → App: just swap
+      setFrozen(children);
     }
+  }
 
-    return () => clearTimeout(timerRef.current);
-  }, [pathname, children]);
+  // ---- Timer-driven phase progression ----
+  useEffect(() => {
+    if (phase === "hero-exit") {
+      timer.current = setTimeout(() => {
+        setFrozen(pending.current);
+        setSidebar(true);
+        setPhase("app-enter");
+      }, TIMING["hero-exit"]);
+    } else if (phase === "app-enter") {
+      timer.current = setTimeout(() => {
+        setPhase("idle");
+        transitioning.current = false;
+      }, TIMING["app-enter"]);
+    } else if (phase === "app-exit") {
+      timer.current = setTimeout(() => {
+        setFrozen(pending.current);
+        setSidebar(false);
+        setPhase("hero-enter");
+      }, TIMING["app-exit"]);
+    } else if (phase === "hero-enter") {
+      timer.current = setTimeout(() => {
+        setPhase("idle");
+        transitioning.current = false;
+      }, TIMING["hero-enter"]);
+    }
+    return () => clearTimeout(timer.current);
+  }, [phase]);
 
-  if (!showSidebar) {
+  // Keep frozen in sync when idle and children change (e.g. config updates)
+  if (phase === "idle" && !transitioning.current) {
+    if (frozen !== children) {
+      setFrozen(children);
+    }
+  }
+
+  // ---- Render ----
+  if (!sidebar) {
     return (
       <ErrorBoundary>
         <div className="h-screen overflow-hidden flex flex-col">
-          <div className={getHeroClass(phase)}>
-            {displayedChildren}
+          <div className={`flex-1 flex flex-col min-h-0 ${
+            phase === "hero-exit" ? "hero-exit" :
+            phase === "hero-enter" ? "hero-enter" : ""
+          }`}>
+            {frozen}
           </div>
         </div>
       </ErrorBoundary>
@@ -77,48 +102,19 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary>
       <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#FAFAFA]">
-        <div className={getSidebarClass(phase)}>
+        <div className={
+          phase === "app-enter" ? "sidebar-enter" :
+          phase === "app-exit" ? "sidebar-exit" : ""
+        }>
           <Sidebar />
         </div>
-        <main className={getMainClass(phase)}>
-          {displayedChildren}
+        <main className={`flex-1 min-h-0 min-w-0 flex flex-col ${
+          phase === "app-enter" ? "main-enter" :
+          phase === "app-exit" ? "main-exit" : ""
+        }`}>
+          {frozen}
         </main>
       </div>
     </ErrorBoundary>
   );
-}
-
-function getHeroClass(phase: TransitionPhase): string {
-  const base = "flex-1 flex flex-col min-h-0 will-change-transform";
-  switch (phase) {
-    case "hero-exit":
-      return `${base} hero-exit`;
-    case "hero-enter":
-      return `${base} hero-enter`;
-    default:
-      return `${base}`;
-  }
-}
-
-function getSidebarClass(phase: TransitionPhase): string {
-  switch (phase) {
-    case "app-enter":
-      return "sidebar-enter";
-    case "app-exit":
-      return "sidebar-exit";
-    default:
-      return "";
-  }
-}
-
-function getMainClass(phase: TransitionPhase): string {
-  const base = "flex-1 min-h-0 min-w-0 flex flex-col will-change-transform";
-  switch (phase) {
-    case "app-enter":
-      return `${base} main-enter`;
-    case "app-exit":
-      return `${base} main-exit`;
-    default:
-      return base;
-  }
 }
