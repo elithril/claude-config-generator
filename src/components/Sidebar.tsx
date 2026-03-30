@@ -81,17 +81,19 @@ export default function Sidebar() {
 
         <div className="flex flex-col gap-3">
           <LanguageSwitcher variant="dark" />
-          <a
-            href="https://code.claude.com/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#888888] text-[13px] hover:text-[#AAAAAA] transition-colors"
-          >
-            {t("sidebar.docs")}
-          </a>
-          <span className="font-[family-name:var(--font-jetbrains)] text-[11px] text-[#666666]">
-            v1.0.0
-          </span>
+          <div className="flex items-center justify-between">
+            <a
+              href="https://code.claude.com/docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#666666] text-[12px] hover:text-[#AAAAAA] transition-colors"
+            >
+              {t("sidebar.docs")}
+            </a>
+            <span className="font-[family-name:var(--font-jetbrains)] text-[10px] text-[#444444]">
+              v1.0.0
+            </span>
+          </div>
         </div>
       </aside>
 
