@@ -659,7 +659,7 @@ export default function WizardPage() {
           ))}
         </div>
         <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex gap-1 overflow-x-auto">
+          <div className="flex gap-1 overflow-x-auto pt-2">
             {generatedFiles.map((file) => (
               <button key={file.path} onClick={() => setSelectedPreviewFile(file.path)}
                 className={`relative px-3 py-1.5 text-xs font-mono rounded-t whitespace-nowrap cursor-pointer transition-all duration-200 ${selectedPreviewFile === file.path ? "bg-white text-[#0D6E6E] font-semibold border border-b-0 border-[#E0E0E0]" : "text-[#888888] hover:text-[#666666] hover:bg-[#F0F0F0] hover:-translate-y-[1px]"}`}>
