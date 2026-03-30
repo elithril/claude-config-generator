@@ -79,7 +79,7 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-3 mt-auto">
+        <div className="flex flex-col gap-3 mt-auto items-start">
           <LanguageSwitcher variant="dark" />
           <div className="flex items-center gap-3">
             <a
