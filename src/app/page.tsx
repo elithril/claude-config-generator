@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { loadVault } from "@/lib/storage";
 import { setTransitionDirection } from "@/lib/transition";
-import { VT } from "@/components/VT";
 import { useI18n } from "@/i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
@@ -184,7 +183,7 @@ export default function Home() {
     : t("home.vaultCount_one", { count: vaultCount });
 
   return (
-    <VT name="dark-panel"><div className="flex flex-col lg:flex-row h-full bg-[#1A1A1A]">
+    <div className="flex flex-col lg:flex-row h-full bg-[#1A1A1A]" style={{ viewTransitionName: "dark-panel" }}>
         {/* Left: dark — 40% on desktop, full on mobile */}
         <div className="min-h-screen lg:min-h-0 lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col p-6 pb-6 md:p-10 lg:p-14">
           <div className="absolute inset-0 opacity-[0.04]" style={{
@@ -192,7 +191,7 @@ export default function Home() {
             backgroundSize: "40px 40px",
           }} />
 
-          <VT name="hero-content"><div className="hero-left-content relative z-10 flex flex-col justify-between flex-1">
+          <div className="hero-left-content relative z-10 flex flex-col justify-between flex-1" style={{ viewTransitionName: "hero-content" }}>
           {/* Top: title + language switcher */}
           <div>
             <div className="flex items-start justify-between mb-6 md:mb-10">
@@ -294,11 +293,11 @@ export default function Home() {
               </Link>
             </div>
           )}
-          </div></VT>
+          </div>
         </div>
 
         {/* Right: code preview — 60% */}
-        <VT name="hero-right"><div className="hero-right-content hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden">
+        <div className="hero-right-content hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden" style={{ viewTransitionName: "hero-right" }}>
           <div className="hidden lg:block absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#1A1A1A] to-transparent z-10" />
 
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">
@@ -354,7 +353,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div></VT>
-    </div></VT>
+        </div>
+    </div>
   );
 }
