@@ -240,7 +240,7 @@ html[data-vt-direction="hero-to-app"]::view-transition-group(sidebar-panel) {
   animation: none !important;
 }
 html[data-vt-direction="hero-to-app"]::view-transition-new(sidebar-panel) {
-  animation: vt-fade-in 280ms ease-out 700ms both !important;
+  animation: vt-fade-in 400ms ease-out 700ms both !important;
 }
 html[data-vt-direction="hero-to-app"]::view-transition-old(sidebar-panel) {
   animation: none !important;
@@ -281,7 +281,7 @@ html[data-vt-direction="app-to-hero"]::view-transition-new(page-content) {
 
 /* 2. Sidebar panel fades out after page content */
 html[data-vt-direction="app-to-hero"]::view-transition-old(sidebar-panel) {
-  animation: vt-fade-out 250ms ease-in 300ms both !important;
+  animation: vt-fade-out 350ms ease-in 300ms both !important;
 }
 html[data-vt-direction="app-to-hero"]::view-transition-new(sidebar-panel) {
   animation: none !important;

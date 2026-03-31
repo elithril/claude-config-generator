@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import dynamic from "next/dynamic";
 import { PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
@@ -19,12 +18,7 @@ import type { GeneratedFile } from "@/types";
 import Modal from "@/components/Modal";
 import { useT } from "@/i18n";
 
-import EditorLoading from "@/components/EditorLoading";
-
-const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
-  ssr: false,
-  loading: () => <EditorLoading />,
-});
+import CodeEditor from "@/components/CodeEditor";
 
 interface EditorTab {
   id: string;
