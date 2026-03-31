@@ -318,7 +318,6 @@ const es = {
   "toast.claudeMdImported": "CLAUDE.md importado",
   "toast.templateLoaded": "Preset \"{name}\" cargado",
   "toast.fileSaved": "{path} descargado",
-  "toast.copied": "Copiado al portapapeles",
 
   // === MCP Step ===
   "mcp.intro": "Los servidores MCP dan a Claude acceso a herramientas externas. La config se genera en .mcp.json en la raíz del proyecto.",

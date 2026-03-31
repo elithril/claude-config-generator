@@ -15,11 +15,13 @@ import { useToast } from "@/context/ToastContext";
 import { useI18n } from "@/i18n";
 import { generateAllFiles } from "@/lib/generator";
 import { formatFileSize } from "@/lib/download";
+import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import type { RuleEntry } from "@/types";
 import HooksStep from "./steps/HooksStep";
 import McpStep from "./steps/McpStep";
 import RulesStep from "./steps/RulesStep";
 import RecapStep from "./steps/RecapStep";
+import PreviewStats from "@/components/PreviewStats";
 
 export default function WizardPage() {
   const router = useRouter();
@@ -663,18 +665,7 @@ export default function WizardPage() {
       {/* Right Panel - Preview */}
       <div className="hidden lg:flex w-[520px] bg-[#F0F0F0] border-l border-[#E0E0E0] p-8 flex-col gap-4 overflow-auto">
         <span className="font-[family-name:var(--font-jetbrains)] text-[11px] font-semibold text-[#0D6E6E] tracking-[2px]">{t("wizard.preview.title")}</span>
-        <div className="flex gap-3">
-          {[
-            { value: generatedFiles.length, label: t("wizard.preview.files"), highlight: true },
-            { value: `~${Math.round(totalSize / 4)}`, label: t("wizard.preview.tokens") },
-            { value: formatFileSize(totalSize), label: t("wizard.preview.total") },
-          ].map((m, i) => (
-            <div key={i} className="flex-1 bg-white rounded-md border border-[#E0E0E0] p-3 flex flex-col gap-1">
-              <span className={`font-[family-name:var(--font-jetbrains)] text-xl font-semibold ${m.highlight ? "text-[#0D6E6E]" : "text-[#1A1A1A]"}`}>{m.value}</span>
-              <span className="text-[11px] text-[#888888]">{m.label}</span>
-            </div>
-          ))}
-        </div>
+        <PreviewStats fileCount={generatedFiles.length} tokenCount={Math.round(totalSize / 4)} totalBytes={totalSize} labels={[t("wizard.preview.files"), t("wizard.preview.tokens"), t("wizard.preview.total")]} />
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex gap-1 overflow-x-auto pt-2">
             {generatedFiles.map((file) => (
