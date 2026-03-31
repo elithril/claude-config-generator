@@ -75,9 +75,10 @@ describe("saveToVault", () => {
     expect(vault[1].name).toBe("first");
   });
 
-  it("should include tags", () => {
-    const entry = saveToVault("test", getDefaultConfig(), ["node", "backend"]);
-    expect(entry.tags).toEqual(["node", "backend"]);
+  it("should auto-generate tags from config", () => {
+    const entry = saveToVault("test", getDefaultConfig());
+    expect(entry.tags).toContain("safe");
+    expect(entry.tags.length).toBeGreaterThan(0);
   });
 });
 
