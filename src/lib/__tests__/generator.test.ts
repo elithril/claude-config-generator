@@ -162,17 +162,17 @@ describe("generateSettingsJson", () => {
     expect(result.hooks.PostToolUse[0].matcher).toBe("Write|Edit");
   });
 
-  it("should not merge hooks with different matchers", () => {
+  it("should not merge hooks with different events", () => {
     const config = makeConfig({ enableHooks: true });
-    // Enable lint (PostToolUse Write|Edit) and validate-bash (PreToolUse Bash)
+    // Enable lint (PostToolUse Write|Edit) and test-before-stop (Stop)
     config.hooks = config.hooks.map((h) =>
-      h.id === "hook-lint-on-save" || h.id === "hook-validate-bash"
+      h.id === "hook-lint-on-save" || h.id === "hook-test-before-stop"
         ? { ...h, enabled: true }
         : h
     );
     const result = JSON.parse(generateSettingsJson(config));
     expect(result.hooks.PostToolUse).toHaveLength(1);
-    expect(result.hooks.PreToolUse).toHaveLength(1);
+    expect(result.hooks.Stop).toHaveLength(1);
   });
 
   it("should not include hooks when none enabled", () => {

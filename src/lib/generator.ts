@@ -178,9 +178,12 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   // Extended thinking
   settings.alwaysThinkingEnabled = config.extendedThinking;
 
-  // Attribution
+  // Attribution — only include non-empty fields
   if (config.attribution) {
-    settings.attribution = config.attribution;
+    const attr: Record<string, string> = {};
+    if (config.attribution.commit) attr.commit = config.attribution.commit;
+    if (config.attribution.pr) attr.pr = config.attribution.pr;
+    if (Object.keys(attr).length > 0) settings.attribution = attr;
   }
 
   // Output style

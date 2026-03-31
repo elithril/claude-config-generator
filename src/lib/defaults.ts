@@ -20,15 +20,6 @@ export const DEFAULT_HOOKS: HookEntry[] = [
     enabled: false,
   },
   {
-    id: "hook-validate-bash",
-    event: "PreToolUse",
-    matcher: "Bash",
-    action: "command",
-    command: ".claude/hooks/validate-bash.sh",
-    description: "Valider les commandes Bash avant exécution",
-    enabled: false,
-  },
-  {
     id: "hook-test-before-stop",
     event: "Stop",
     action: "command",
