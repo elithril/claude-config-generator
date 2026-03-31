@@ -260,9 +260,12 @@ html[data-vt-direction="hero-to-app"]::view-transition-old(page-content) {
    ====================================================== */
 
 /* Freeze groups */
-html[data-vt-direction="app-to-hero"]::view-transition-group(page-content),
+html[data-vt-direction="app-to-hero"]::view-transition-group(page-content) {
+  animation: none !important;
+}
 html[data-vt-direction="app-to-hero"]::view-transition-group(sidebar-panel) {
   animation: none !important;
+  z-index: 10 !important;
 }
 /* Hero groups: hide completely so they don't cover sidebar */
 html[data-vt-direction="app-to-hero"]::view-transition-group(hero-content),
