@@ -61,7 +61,17 @@ export default function HooksStep() {
                   </div>
                   {hook.enabled && (
                     <p className="font-[family-name:var(--font-jetbrains)] text-xs text-[#666666] mt-1 bg-[#F5F5F5] px-2 py-1 rounded break-all">
-                      {hook.action === "prompt" || hook.action === "agent" ? "prompt: " : ""}{hook.command}
+                      {hook.action === "prompt" || hook.action === "agent" ? "prompt: " : ""}
+                      {hook.command.split(/(\$[A-Z_]+)/).map((part, i) =>
+                        part.startsWith("$") ? (
+                          <span key={i} className="relative group text-[#0D6E6E] cursor-help">
+                            {part}
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 text-[11px] text-white bg-[#1A1A1A] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                              {t(`hooks.var.${part.slice(1)}`) !== `hooks.var.${part.slice(1)}` ? t(`hooks.var.${part.slice(1)}`) : part}
+                            </span>
+                          </span>
+                        ) : part
+                      )}
                     </p>
                   )}
                   {hook.matcher && (

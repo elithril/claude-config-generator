@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useConfig } from "@/context/ConfigContext";
 import { useT } from "@/i18n";
+import McpIcon from "@/components/McpIcon";
 import type { McpServer, McpTransportType } from "@/types";
 
 export default function McpStep() {
@@ -20,9 +21,34 @@ export default function McpStep() {
   const [customHeaderValue, setCustomHeaderValue] = useState("");
   const [customHeaders, setCustomHeaders] = useState<Record<string, string>>({});
 
+  // Configurable fields per MCP server
+  const configurableFields: Record<string, { label: string; placeholder: string; getValue: (s: McpServer) => string; setValue: (s: McpServer, v: string) => McpServer }> = {
+    "mcp-github": {
+      label: t("mcp.githubToken"),
+      placeholder: "ghp_xxxxxxxxxxxx",
+      getValue: (s) => s.env?.GITHUB_PERSONAL_ACCESS_TOKEN || "",
+      setValue: (s, v) => ({ ...s, env: { ...s.env, GITHUB_PERSONAL_ACCESS_TOKEN: v } }),
+    },
+    "mcp-postgres": {
+      label: t("mcp.postgresDsn"),
+      placeholder: "postgresql://user:pass@localhost:5432/mydb",
+      getValue: (s) => s.args?.[3] || "",
+      setValue: (s, v) => ({ ...s, args: [s.args?.[0] || "-y", s.args?.[1] || "@bytebase/dbhub", "--dsn", v] }),
+    },
+  };
+
   const toggleMcpServer = (serverId: string) => {
     const updated = config.mcpServers.map((s: McpServer) =>
       s.id === serverId ? { ...s, enabled: !s.enabled } : s
+    );
+    dispatch({ type: "SET_FIELD", field: "mcpServers", value: updated });
+  };
+
+  const updateMcpServer = (serverId: string, value: string) => {
+    const field = configurableFields[serverId];
+    if (!field) return;
+    const updated = config.mcpServers.map((s: McpServer) =>
+      s.id === serverId ? field.setValue(s, value) : s
     );
     dispatch({ type: "SET_FIELD", field: "mcpServers", value: updated });
   };
@@ -101,11 +127,21 @@ export default function McpStep() {
               <input type="checkbox" checked={server.enabled} onChange={() => toggleMcpServer(server.id)} className="mt-0.5 w-4 h-4 accent-[#0D6E6E]" />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">{server.icon}</span>
+                  <McpIcon id={server.id} fallback={server.icon || "🔧"} />
                   <span className="text-sm font-medium text-[#1A1A1A]">{server.name}</span>
                   <span className="px-1.5 py-0.5 text-[10px] bg-[#F0F0F0] text-[#666666] rounded">{server.transport}</span>
                 </div>
                 <p className="text-xs text-[#666666] mt-1">{server.description}</p>
+                {server.enabled && configurableFields[server.id] && (
+                  <input
+                    type="text"
+                    value={configurableFields[server.id].getValue(server)}
+                    onChange={(e) => { e.stopPropagation(); updateMcpServer(server.id, e.target.value); }}
+                    onClick={(e) => e.stopPropagation()}
+                    placeholder={configurableFields[server.id].placeholder}
+                    className="mt-2 w-full px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono"
+                  />
+                )}
               </div>
             </label>
           ))}
@@ -116,20 +152,30 @@ export default function McpStep() {
         <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">{t("mcp.others")}</h4>
         <div className="flex flex-col gap-2">
           {others.map((server) => (
-            <label
-              key={server.id}
-              className={`flex items-center gap-3 p-3 border rounded cursor-pointer transition-colors ${
-                server.enabled ? "border-[#0D6E6E] bg-[#F0FAFA]" : "border-[#E5E5E5] hover:bg-[#FAFAFA]"
-              }`}
-            >
-              <input type="checkbox" checked={server.enabled} onChange={() => toggleMcpServer(server.id)} className="w-4 h-4 accent-[#0D6E6E]" />
-              <span className="text-lg">{server.icon}</span>
-              <div className="flex-1">
-                <span className="text-sm font-medium text-[#1A1A1A]">{server.name}</span>
-                <span className="text-xs text-[#666666] ml-2">{server.description}</span>
-              </div>
-              <span className="px-1.5 py-0.5 text-[10px] bg-[#F0F0F0] text-[#666666] rounded">{server.transport}</span>
-            </label>
+            <div key={server.id}>
+              <label
+                className={`flex items-center gap-3 p-3 border rounded cursor-pointer transition-colors ${
+                  server.enabled ? "border-[#0D6E6E] bg-[#F0FAFA]" : "border-[#E5E5E5] hover:bg-[#FAFAFA]"
+                }`}
+              >
+                <input type="checkbox" checked={server.enabled} onChange={() => toggleMcpServer(server.id)} className="w-4 h-4 accent-[#0D6E6E]" />
+                <McpIcon id={server.id} fallback={server.icon || "🔧"} />
+                <div className="flex-1">
+                  <span className="text-sm font-medium text-[#1A1A1A]">{server.name}</span>
+                  <span className="text-xs text-[#666666] ml-2">{server.description}</span>
+                </div>
+                <span className="px-1.5 py-0.5 text-[10px] bg-[#F0F0F0] text-[#666666] rounded">{server.transport}</span>
+              </label>
+              {server.enabled && configurableFields[server.id] && (
+                <input
+                  type="text"
+                  value={configurableFields[server.id].getValue(server)}
+                  onChange={(e) => updateMcpServer(server.id, e.target.value)}
+                  placeholder={configurableFields[server.id].placeholder}
+                  className="mt-2 ml-10 w-[calc(100%-2.5rem)] px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono"
+                />
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -141,7 +187,7 @@ export default function McpStep() {
           <div className="flex flex-col gap-2">
             {custom.map((server) => (
               <div key={server.id} className="flex items-center gap-3 p-3 border border-[#0D6E6E] bg-[#F0FAFA] rounded">
-                <span className="text-lg">{server.icon}</span>
+                <McpIcon id={server.id} fallback={server.icon || "🔧"} />
                 <div className="flex-1">
                   <span className="text-sm font-medium text-[#1A1A1A]">{server.name}</span>
                   <span className="text-xs text-[#666666] ml-2">

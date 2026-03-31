@@ -31,9 +31,11 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
       aria-label={title}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className={`bg-white rounded-lg p-6 w-[400px] max-w-[90vw] shadow-xl transition-all duration-200 ${visible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
-        <h3 className="text-lg font-medium text-[#1A1A1A] mb-4">{title}</h3>
-        {children}
+      <div className={`bg-white rounded-lg p-6 w-[680px] max-w-[90vw] max-h-[90vh] flex flex-col shadow-xl transition-all duration-200 ${visible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
+        <h3 className="text-lg font-medium text-[#1A1A1A] mb-4 flex-shrink-0">{title}</h3>
+        <div className="overflow-y-auto flex-1 min-h-0">
+          {children}
+        </div>
       </div>
     </div>
   );

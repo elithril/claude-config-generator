@@ -37,23 +37,6 @@ export const DEFAULT_HOOKS: HookEntry[] = [
     enabled: false,
   },
   {
-    id: "hook-context-on-start",
-    event: "SessionStart",
-    matcher: "startup",
-    action: "command",
-    command: ".claude/hooks/load-context.sh",
-    description: "Charger le contexte au démarrage",
-    enabled: false,
-  },
-  {
-    id: "hook-validate-prompt",
-    event: "UserPromptSubmit",
-    action: "command",
-    command: ".claude/hooks/validate-prompt.sh",
-    description: "Valider le prompt utilisateur avant envoi",
-    enabled: false,
-  },
-  {
     id: "hook-on-failure",
     event: "PostToolUseFailure",
     matcher: "Bash",
@@ -67,7 +50,7 @@ export const DEFAULT_HOOKS: HookEntry[] = [
     event: "Stop",
     action: "prompt",
     command: "Vérifie que toutes les tâches demandées sont complètes et que le code compile: $ARGUMENTS",
-    description: "Vérification IA avant de terminer",
+    description: "Auto-review — Claude relit son travail avant de terminer",
     enabled: false,
   },
   {
@@ -75,8 +58,8 @@ export const DEFAULT_HOOKS: HookEntry[] = [
     event: "Notification",
     matcher: "idle_prompt",
     action: "command",
-    command: "curl -s -X POST $WEBHOOK_URL -H 'Content-Type: application/json' -d '{\"text\": \"Claude a terminé sa tâche\"}'",
-    description: "Envoyer une notification webhook quand Claude attend",
+    command: "BRANCH=$(git -C \"$CLAUDE_PROJECT_DIR\" rev-parse --abbrev-ref HEAD 2>/dev/null || echo '?'); if command -v osascript >/dev/null 2>&1; then osascript -e \"display notification \\\"Branche: $BRANCH\\\" with title \\\"Claude Code - Terminé\\\"\"; elif command -v notify-send >/dev/null 2>&1; then notify-send 'Claude Code - Terminé' \"Branche: $BRANCH\"; fi",
+    description: "Notification native (macOS/Linux) quand Claude a terminé — affiche la branche git",
     enabled: false,
   },
   {
@@ -122,7 +105,7 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     command: "npx",
     args: ["-y", "@bytebase/dbhub", "--dsn", "postgresql://localhost:5432/mydb"],
     enabled: false,
-    popular: true,
+    popular: false,
     icon: "🐘",
   },
   {
@@ -142,7 +125,7 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     transport: "http",
     url: "https://mcp.supabase.com/mcp",
     enabled: false,
-    popular: true,
+    popular: false,
     icon: "⚡",
   },
   {
@@ -163,7 +146,7 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     transport: "http",
     url: "https://mcp.notion.com/mcp",
     enabled: false,
-    popular: false,
+    popular: true,
     icon: "📝",
   },
   {
@@ -173,7 +156,7 @@ export const DEFAULT_MCP_SERVERS: McpServer[] = [
     transport: "http",
     url: "https://mcp.slack.com/mcp",
     enabled: false,
-    popular: false,
+    popular: true,
     icon: "💬",
   },
   {

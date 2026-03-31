@@ -13,13 +13,29 @@ const CATEGORY_COLORS: Record<string, string> = {
   custom: "bg-gray-50 text-gray-700 border-gray-200",
 };
 
-export default function RulesStep() {
+interface RulesStepProps {
+  onSelectFile?: (path: string) => void;
+}
+
+export default function RulesStep({ onSelectFile }: RulesStepProps) {
   const { config, dispatch } = useConfig();
   const t = useT();
 
-  const toggleRule = (ruleId: string) => {
+  const toggleRule = (rule: RuleEntry) => {
     const updated = config.rules.map((r: RuleEntry) =>
-      r.id === ruleId ? { ...r, enabled: !r.enabled } : r
+      r.id === rule.id ? { ...r, enabled: !r.enabled } : r
+    );
+    dispatch({ type: "SET_FIELD", field: "rules", value: updated });
+
+    // Switch preview to the rule's file when enabling
+    if (!rule.enabled && onSelectFile) {
+      onSelectFile(`.claude/rules/${rule.filename}`);
+    }
+  };
+
+  const updateRuleContent = (ruleId: string, content: string) => {
+    const updated = config.rules.map((r: RuleEntry) =>
+      r.id === ruleId ? { ...r, content } : r
     );
     dispatch({ type: "SET_FIELD", field: "rules", value: updated });
   };
@@ -38,7 +54,7 @@ export default function RulesStep() {
             <input
               type="checkbox"
               checked={rule.enabled}
-              onChange={() => toggleRule(rule.id)}
+              onChange={() => toggleRule(rule)}
               className="mt-0.5 w-4 h-4 accent-[#0D6E6E]"
             />
             <div className="flex-1">
@@ -58,13 +74,22 @@ export default function RulesStep() {
                   ))}
                 </div>
               )}
-              {rule.enabled && (
-                <pre className="mt-2 p-3 bg-[#FAFAFA] rounded text-xs font-mono text-[#666666] max-h-24 overflow-auto">
-                  {rule.content}
-                </pre>
-              )}
             </div>
           </label>
+          {rule.enabled && (
+            <textarea
+              value={rule.content}
+              onChange={(e) => updateRuleContent(rule.id, e.target.value)}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onSelectFile) {
+                  onSelectFile(`.claude/rules/${rule.filename}`);
+                }
+              }}
+              className="mt-3 ml-7 w-[calc(100%-1.75rem)] p-3 bg-[#FAFAFA] rounded text-xs font-mono text-[#666666] border border-[#E5E5E5] focus:outline-none focus:border-[#0D6E6E] resize-none"
+              style={{ fieldSizing: "content" } as React.CSSProperties}
+            />
+          )}
         </div>
       ))}
     </div>

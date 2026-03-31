@@ -252,8 +252,8 @@ export default function WizardPage() {
         case 0:
           return (
             <QuestionCard title={t("wizard.step1.question")}>
-              <RadioOption selected={config.bundle === "safe"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "safe" })} emoji="🛡️" title={t("wizard.step1.safe")} description={t("wizard.step1.safeDesc")} detail={t("wizard.step1.safeDetail")} badge={t("common.recommended")} />
-              <RadioOption selected={config.bundle === "dev"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "dev" })} emoji="⚡" title={t("wizard.step1.dev")} description={t("wizard.step1.devDesc")} detail={t("wizard.step1.devDetail")} />
+              <RadioOption selected={config.bundle === "safe"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "safe" })} emoji="🛡️" title={t("wizard.step1.safe")} description={t("wizard.step1.safeDesc")} badge={t("common.recommended")} />
+              <RadioOption selected={config.bundle === "dev"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "dev" })} emoji="⚡" title={t("wizard.step1.dev")} description={t("wizard.step1.devDesc")} />
             </QuestionCard>
           );
 
@@ -261,15 +261,17 @@ export default function WizardPage() {
           return (
             <>
               <QuestionCard title={t("wizard.step2.language")}>
-                <RadioOption selected={config.language === "fr"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "fr" })} emoji="🇫🇷" title={t("wizard.step2.french")} />
-                <RadioOption selected={config.language === "en"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "en" })} emoji="🇬🇧" title={t("wizard.step2.english")} />
-                <RadioOption selected={config.language === "es"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "es" })} emoji="🇪🇸" title={t("wizard.step2.spanish")} />
+                <div className="flex gap-3">
+                  <ChoiceButton emoji="🇫🇷" label={t("wizard.step2.french")} selected={config.language === "fr"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "fr" })} />
+                  <ChoiceButton emoji="🇬🇧" label={t("wizard.step2.english")} selected={config.language === "en"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "en" })} />
+                  <ChoiceButton emoji="🇪🇸" label={t("wizard.step2.spanish")} selected={config.language === "es"} onClick={() => dispatch({ type: "SET_FIELD", field: "language", value: "es" })} />
+                </div>
               </QuestionCard>
               <QuestionCard title={t("wizard.step2.tone")}>
                 <div className="flex gap-3">
-                  <ChoiceButton emoji="😎" label={t("wizard.step2.cool")} selected={config.tone === "cool"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "cool" })} />
-                  <ChoiceButton emoji="👔" label={t("wizard.step2.pro")} selected={config.tone === "pro"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pro" })} />
-                  <ChoiceButton emoji="📚" label={t("wizard.step2.pedagogue")} selected={config.tone === "pedagogue"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pedagogue" })} />
+                  <ChoiceButton label={t("wizard.step2.cool")} selected={config.tone === "cool"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "cool" })} />
+                  <ChoiceButton label={t("wizard.step2.pro")} selected={config.tone === "pro"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pro" })} />
+                  <ChoiceButton label={t("wizard.step2.pedagogue")} selected={config.tone === "pedagogue"} onClick={() => dispatch({ type: "SET_FIELD", field: "tone", value: "pedagogue" })} />
                 </div>
               </QuestionCard>
               <QuestionCard title={t("wizard.step2.responseStyle")}>
@@ -284,7 +286,7 @@ export default function WizardPage() {
               </QuestionCard>
 
               {/* === Collapsible advanced === */}
-              <button onClick={() => toggleSection("step2")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:underline py-1">
+              <button onClick={() => toggleSection("step2")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:text-[#0A5555] py-1">
                 <span className={`transition-transform ${expandedSections.step2 ? "rotate-90" : ""}`}>▸</span>
                 {expandedSections.step2 ? t("common.showLess") : t("common.learnMore")}
               </button>
@@ -292,13 +294,19 @@ export default function WizardPage() {
                 <>
                   <QuestionCard title={t("wizard.step2.effort")}>
                     <div className="flex gap-3">
-                      <ChoiceButton emoji="⚡" label={t("wizard.step2.effortLow")} selected={config.effortLevel === "low"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "low" })} />
-                      <ChoiceButton emoji="⚖️" label={t("wizard.step2.effortMedium")} selected={config.effortLevel === "medium"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "medium" })} />
-                      <ChoiceButton emoji="🧠" label={t("wizard.step2.effortHigh")} selected={config.effortLevel === "high"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "high" })} />
+                      <ChoiceButton label={t("wizard.step2.effortLow")} selected={config.effortLevel === "low"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "low" })} />
+                      <ChoiceButton label={t("wizard.step2.effortMedium")} selected={config.effortLevel === "medium"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "medium" })} />
+                      <ChoiceButton label={t("wizard.step2.effortHigh")} selected={config.effortLevel === "high"} onClick={() => dispatch({ type: "SET_FIELD", field: "effortLevel", value: "high" })} />
                     </div>
                   </QuestionCard>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">{t("wizard.step2.outputStyle")}</h4>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step2.outputStyle")}</h4>
+                      <a href="https://code.claude.com/docs/en/output-styles" target="_blank" rel="noopener noreferrer" className="relative group px-1.5 py-0.5 text-[10px] font-medium bg-[#0D6E6E]/10 text-[#0D6E6E] rounded hover:bg-[#0D6E6E]/20 transition-colors">
+                        ?
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 text-[11px] text-white bg-[#1A1A1A] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">{t("wizard.step2.outputStyleHelp")}</span>
+                      </a>
+                    </div>
                     <p className="text-xs text-[#888888] mb-3">{t("wizard.step2.outputStyleDesc")}</p>
                     <input type="text" value={config.outputStyle} onChange={(e) => dispatch({ type: "SET_FIELD", field: "outputStyle", value: e.target.value })} placeholder={t("wizard.step2.outputStylePlaceholder")} className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
                   </div>
@@ -316,8 +324,14 @@ export default function WizardPage() {
                         <span className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step2.attribution")}</span>
                         <p className="text-xs text-[#888888] mb-2">{t("wizard.step2.attributionDesc")}</p>
                         <div className="flex flex-col gap-2">
-                          <input type="text" value={config.attribution.commit} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, commit: e.target.value } })} placeholder={t("wizard.step2.commitPlaceholder")} className="px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
-                          <input type="text" value={config.attribution.pr} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, pr: e.target.value } })} placeholder={t("wizard.step2.prPlaceholder")} className="px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                          <div>
+                            <label className="text-[11px] text-[#666666] font-medium mb-1 block">{t("wizard.step2.commitLabel")}</label>
+                            <input type="text" value={config.attribution.commit} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, commit: e.target.value } })} placeholder={t("wizard.step2.commitPlaceholder")} className="w-full px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                          </div>
+                          <div>
+                            <label className="text-[11px] text-[#666666] font-medium mb-1 block">{t("wizard.step2.prLabel")}</label>
+                            <input type="text" value={config.attribution.pr} onChange={(e) => dispatch({ type: "SET_FIELD", field: "attribution", value: { ...config.attribution, pr: e.target.value } })} placeholder={t("wizard.step2.prPlaceholder")} className="w-full px-2 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] font-mono" />
+                          </div>
                         </div>
                       </div>
                       <label className="flex items-center justify-between p-3 border border-[#E5E5E5] rounded cursor-pointer hover:bg-[#FAFAFA]">
@@ -342,7 +356,7 @@ export default function WizardPage() {
                       <div>
                         <label className="text-xs font-medium text-[#666666] mb-1 block">{t("wizard.step2.projectStack")}</label>
                         <p className="text-xs text-[#888888] mb-1">{t("wizard.step2.projectStackDesc")}</p>
-                        <input type="text" value={config.projectStack} onChange={(e) => dispatch({ type: "SET_FIELD", field: "projectStack", value: e.target.value })} placeholder={t("wizard.step2.projectStackPlaceholder")} className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
+                        <textarea value={config.projectStack} onChange={(e) => dispatch({ type: "SET_FIELD", field: "projectStack", value: e.target.value })} placeholder={t("wizard.step2.projectStackPlaceholder")} className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] resize-none" style={{ fieldSizing: "content" } as React.CSSProperties} />
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <div>
@@ -360,18 +374,9 @@ export default function WizardPage() {
                       </div>
                       <div>
                         <label className="text-xs font-medium text-[#666666] mb-1 block">{t("wizard.step2.projectStructure")}</label>
-                        <input type="text" value={config.projectStructure} onChange={(e) => dispatch({ type: "SET_FIELD", field: "projectStructure", value: e.target.value })} placeholder={t("wizard.step2.projectStructurePlaceholder")} className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E]" />
+                        <textarea value={config.projectStructure} onChange={(e) => dispatch({ type: "SET_FIELD", field: "projectStructure", value: e.target.value })} placeholder={t("wizard.step2.projectStructurePlaceholder")} className="w-full px-3 py-2 text-sm border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] resize-none" style={{ fieldSizing: "content" } as React.CSSProperties} />
                       </div>
                     </div>
-                  </div>
-                  <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-2">{t("wizard.step2.claudeMd")}</h4>
-                    <p className="text-xs text-[#888888] mb-3">{t("wizard.step2.claudeMdDesc")}</p>
-                    <FileDropZone
-                      onFileLoaded={(content) => { dispatch({ type: "IMPORT_CLAUDE_MD", content }); addToast(t("wizard.step2.claudeMdImported")); }}
-                      currentContent={config.claudeMdImported ? config.claudeMdContent : ""}
-                      accept=".md"
-                    />
                   </div>
                 </>
               )}
@@ -390,7 +395,7 @@ export default function WizardPage() {
               </QuestionCard>
 
               {/* === Collapsible advanced === */}
-              <button onClick={() => toggleSection("step3")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:underline py-1">
+              <button onClick={() => toggleSection("step3")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:text-[#0A5555] py-1">
                 <span className={`transition-transform ${expandedSections.step3 ? "rotate-90" : ""}`}>▸</span>
                 {expandedSections.step3 ? t("common.showLess") : t("common.learnMore")}
               </button>
@@ -399,14 +404,26 @@ export default function WizardPage() {
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
                     <label className="flex items-center justify-between cursor-pointer">
                       <div>
-                        <span className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step3.sandbox")}</span>
+                        <span className="text-sm font-medium text-[#1A1A1A] flex items-center gap-2">
+                          {t("wizard.step3.sandbox")}
+                          <a href="https://code.claude.com/docs/en/sandboxing" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="relative group px-1.5 py-0.5 text-[10px] font-medium bg-[#0D6E6E]/10 text-[#0D6E6E] rounded hover:bg-[#0D6E6E]/20 transition-colors">
+                            ?
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 text-[11px] text-white bg-[#1A1A1A] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">{t("wizard.step3.sandboxHelp")}</span>
+                          </a>
+                        </span>
                         <p className="text-xs text-[#888888]">{t("wizard.step3.sandboxDesc")}</p>
                       </div>
                       <input type="checkbox" checked={config.sandboxEnabled} onChange={(e) => dispatch({ type: "SET_FIELD", field: "sandboxEnabled", value: e.target.checked })} className="w-4 h-4 accent-[#0D6E6E]" />
                     </label>
                   </div>
                   <div className="bg-white rounded-md border border-[#E5E5E5] p-5">
-                    <h4 className="text-sm font-medium text-[#1A1A1A] mb-1">{t("wizard.step3.disallowedTools")}</h4>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="text-sm font-medium text-[#1A1A1A]">{t("wizard.step3.disallowedTools")}</h4>
+                      <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer" className="relative group px-1.5 py-0.5 text-[10px] font-medium bg-[#0D6E6E]/10 text-[#0D6E6E] rounded hover:bg-[#0D6E6E]/20 transition-colors">
+                        ?
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 text-[11px] text-white bg-[#1A1A1A] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">{t("wizard.step3.disallowedToolsHelp")}</span>
+                      </a>
+                    </div>
                     <p className="text-xs text-[#888888] mb-3">{t("wizard.step3.disallowedToolsDesc")}</p>
                     <div className="flex flex-col gap-2">
                       {([
@@ -525,7 +542,7 @@ export default function WizardPage() {
               </div>
 
               {/* === Collapsible advanced === */}
-              <button onClick={() => toggleSection("step4")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:underline py-1">
+              <button onClick={() => toggleSection("step4")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:text-[#0A5555] py-1">
                 <span className={`transition-transform ${expandedSections.step4 ? "rotate-90" : ""}`}>▸</span>
                 {expandedSections.step4 ? t("common.showLess") : t("common.learnMore")}
               </button>
@@ -592,7 +609,7 @@ export default function WizardPage() {
     switch (stepKey) {
       case "hooks": return <HooksStep />;
       case "mcp": return <McpStep />;
-      case "rules": return <RulesStep />;
+      case "rules": return <RulesStep onSelectFile={setSelectedPreviewFile} />;
       case "recap": return <RecapStep />;
     }
     return null;
@@ -649,7 +666,7 @@ export default function WizardPage() {
         <div className="flex gap-3">
           {[
             { value: generatedFiles.length, label: t("wizard.preview.files"), highlight: true },
-            { value: config.rules.filter((r: RuleEntry) => r.enabled).length, label: t("wizard.preview.rules") },
+            { value: `~${Math.round(totalSize / 4)}`, label: t("wizard.preview.tokens") },
             { value: formatFileSize(totalSize), label: t("wizard.preview.total") },
           ].map((m, i) => (
             <div key={i} className="flex-1 bg-white rounded-md border border-[#E0E0E0] p-3 flex flex-col gap-1">
@@ -661,7 +678,7 @@ export default function WizardPage() {
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex gap-1 overflow-x-auto pt-2">
             {generatedFiles.map((file) => (
-              <button key={file.path} onClick={() => setSelectedPreviewFile(file.path)}
+              <button key={file.path} ref={(el) => { if (el && selectedPreviewFile === file.path) el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" }); }} onClick={() => setSelectedPreviewFile(file.path)}
                 className={`relative px-3 py-1.5 text-xs font-mono rounded-t whitespace-nowrap cursor-pointer transition-all duration-200 ${selectedPreviewFile === file.path ? "bg-white text-[#0D6E6E] font-semibold border border-b-0 border-[#E0E0E0]" : "text-[#888888] hover:text-[#666666] hover:bg-[#F0F0F0] hover:-translate-y-[1px]"}`}>
                 {file.path.split("/").pop()}
                 {changedFiles.has(file.path) && <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#0D6E6E] rounded-full animate-pulse-fade" />}

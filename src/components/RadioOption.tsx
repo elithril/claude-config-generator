@@ -55,7 +55,7 @@ export default function RadioOption({
             {badge && <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-[#0D6E6E]/10 text-[#0D6E6E] rounded">{badge}</span>}
           </span>
           {description && (
-            <span className="text-[13px] text-[#666666]">{description}</span>
+            <span className="text-[13px] text-[#666666] whitespace-pre-line">{description}</span>
           )}
           {detail && (
             <span
