@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useT } from "@/i18n";
 import { useConfig } from "@/context/ConfigContext";
+import { setTransitionDirection } from "@/lib/transition";
+import { VT } from "./VT";
 import Modal from "./Modal";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -24,7 +26,8 @@ export default function Sidebar() {
   const isActive = (href: string) => pathname.startsWith(href);
 
   const handleNav = (e: React.MouseEvent, href: string) => {
-    if (hasUnsavedChanges && !pathname.startsWith(href)) {
+    setTransitionDirection(href === "/" ? "app-to-hero" : "app-to-app");
+    if (hasUnsavedChanges && pathname !== href && !pathname.startsWith(href + "/")) {
       e.preventDefault();
       setPendingHref(href);
     }
@@ -34,7 +37,10 @@ export default function Sidebar() {
     setHasUnsavedChanges(false);
     const href = pendingHref;
     setPendingHref(null);
-    if (href) router.push(href);
+    if (href) {
+      setTransitionDirection(href === "/" ? "app-to-hero" : "app-to-app");
+      router.push(href);
+    }
   };
 
   const cancelLeave = () => {
@@ -56,7 +62,8 @@ export default function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col py-6 px-5 flex-shrink-0">
+      <VT name="dark-panel"><aside className="hidden md:flex w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col flex-shrink-0">
+        <VT name="sidebar-content"><div className="flex flex-col flex-1 py-6 px-5">
         <div className="flex flex-col gap-8">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
             <span className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-white">
@@ -105,7 +112,8 @@ export default function Sidebar() {
             v1.0.0
           </span>
         </div>
-      </aside>
+        </div></VT>
+      </aside></VT>
 
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-2 px-1" aria-label="Mobile navigation">

@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    viewTransition: true,
+    transitionIndicator: false,
+  },
 };
 
 export default nextConfig;

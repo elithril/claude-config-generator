@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { loadVault } from "@/lib/storage";
+import { setTransitionDirection } from "@/lib/transition";
+import { VT } from "@/components/VT";
 import { useI18n } from "@/i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
@@ -159,7 +161,6 @@ function getFileLines(locale: string) {
 }
 
 export default function Home() {
-  const router = useRouter();
   const { locale, t } = useI18n();
   const [vaultCount, setVaultCount] = useState(0);
   const [activeFile, setActiveFile] = useState(0);
@@ -183,16 +184,17 @@ export default function Home() {
     : t("home.vaultCount_one", { count: vaultCount });
 
   return (
-    <div className="flex flex-col lg:flex-row h-full bg-[#1A1A1A]">
+    <VT name="dark-panel"><div className="flex flex-col lg:flex-row h-full bg-[#1A1A1A]">
         {/* Left: dark — 40% on desktop, full on mobile */}
-        <div className="min-h-screen lg:min-h-0 lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col justify-between p-6 pb-6 md:p-10 lg:p-14">
+        <div className="min-h-screen lg:min-h-0 lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col p-6 pb-6 md:p-10 lg:p-14">
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }} />
 
+          <VT name="hero-content"><div className="relative z-10 flex flex-col justify-between flex-1">
           {/* Top: title + language switcher */}
-          <div className="relative z-10">
+          <div>
             <div className="flex items-start justify-between mb-6 md:mb-10">
               <h1 className="font-[family-name:var(--font-newsreader)] text-[26px] md:text-[32px] lg:text-[40px] font-medium text-white tracking-[-1.5px] leading-[1.25] flex-1">
                 {t("home.title")}&nbsp;<span className="text-[#0D6E6E] italic" style={{ paddingRight: "0.3em" }}>{t("home.titleHighlight")}</span>{t("home.titleEnd")}
@@ -207,7 +209,7 @@ export default function Home() {
           </div>
 
           {/* Mini terminal card — mobile only */}
-          <div className="lg:hidden relative z-10 mt-6 bg-[#111111] rounded-xl overflow-hidden">
+          <div className="lg:hidden mt-6 bg-[#111111] rounded-xl overflow-hidden">
             <div className="flex items-center justify-between px-4 pt-3 pb-2">
               <div className="flex gap-1">
                 {fileLines.map((f, i) => (
@@ -239,7 +241,7 @@ export default function Home() {
           </div>
 
           {/* Value points + CTAs — centered between top content and vault */}
-          <div className={`relative z-10 flex flex-col gap-5 ${vaultCount > 0 ? "my-auto" : "mt-auto"}`}>
+          <div className={`flex flex-col gap-5 ${vaultCount > 0 ? "my-auto" : "mt-auto"}`}>
             <div className="flex flex-col gap-3 mb-8">
               {[
                 { icon: "✦", key: "home.value1" },
@@ -253,8 +255,9 @@ export default function Home() {
               ))}
             </div>
             <div className="flex flex-col gap-3">
-            <button
-              onClick={() => router.push("/wizard")}
+            <Link
+              href="/wizard"
+              onClick={() => setTransitionDirection("hero-to-app")}
               className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-[#0D6E6E] rounded-xl cursor-pointer hover:bg-[#0A5555] transition-all hover:scale-[1.02] active:scale-[0.99] shadow-lg shadow-[#0D6E6E]/20"
             >
               <span className="text-white text-[15px] font-medium">{t("home.cta")}</span>
@@ -262,9 +265,10 @@ export default function Home() {
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
               </svg>
-            </button>
-            <button
-              onClick={() => router.push("/expert")}
+            </Link>
+            <Link
+              href="/expert"
+              onClick={() => setTransitionDirection("hero-to-app")}
               className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl cursor-pointer border border-[#333333] hover:border-[#0D6E6E] text-[#777777] hover:text-[#0D6E6E] transition-colors"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -272,27 +276,29 @@ export default function Home() {
                 <polyline points="8 6 2 12 8 18" />
               </svg>
               <span className="text-[13px] font-medium">{t("home.ctaSecondary")}</span>
-            </button>
+            </Link>
             </div>
           </div>
 
           {/* Vault */}
           {vaultCount > 0 && (
-            <div className="relative z-10">
-              <button
-                onClick={() => router.push("/vault")}
+            <div>
+              <Link
+                href="/vault"
+                onClick={() => setTransitionDirection("hero-to-app")}
                 className="flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer border border-[#2A2A2A] hover:border-[#0D6E6E] transition-colors w-full"
               >
                 <span className="text-sm">🔐</span>
                 <span className="text-[12px] text-[#888888]">{vaultText}</span>
                 <span className="text-[#555555] text-xs ml-auto">→</span>
-              </button>
+              </Link>
             </div>
           )}
+          </div></VT>
         </div>
 
         {/* Right: code preview — 60% */}
-        <div className="hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden">
+        <VT name="hero-right"><div className="hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden">
           <div className="hidden lg:block absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#1A1A1A] to-transparent z-10" />
 
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">
@@ -348,7 +354,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
-    </div>
+        </div></VT>
+    </div></VT>
   );
 }

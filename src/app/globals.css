@@ -131,6 +131,221 @@ body {
   animation: spin 1s linear infinite;
 }
 
+/* ============================================
+   VIEW TRANSITIONS — Hero ↔ App choreography
+   Group morph on dark-panel, frozen groups on content
+   !important needed to override React ViewTransition defaults
+   ============================================ */
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vt-slide-fade-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes vt-slide-fade-out {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(24px); }
+}
+
+/* --- Fallback: simple cross-fade (browser back/forward) --- */
+::view-transition-old(root) {
+  animation: vt-fade-out 250ms ease-in both !important;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in 250ms ease-out both !important;
+}
+
+/* ======================================================
+   HERO → APP
+   ====================================================== */
+
+/* Freeze content groups — fade in place, no morph */
+html[data-vt-direction="hero-to-app"]::view-transition-group(hero-right),
+html[data-vt-direction="hero-to-app"]::view-transition-group(hero-content),
+html[data-vt-direction="hero-to-app"]::view-transition-group(sidebar-content),
+html[data-vt-direction="hero-to-app"]::view-transition-group(page-content) {
+  animation: none !important;
+}
+
+html[data-vt-direction="hero-to-app"]::view-transition-old(hero-right) {
+  animation: vt-fade-out 300ms ease-in both !important;
+}
+html[data-vt-direction="hero-to-app"]::view-transition-new(hero-right) {
+  animation: none !important;
+  display: none !important;
+}
+
+html[data-vt-direction="hero-to-app"]::view-transition-old(hero-content) {
+  animation: vt-fade-out 300ms ease-in 120ms both !important;
+}
+html[data-vt-direction="hero-to-app"]::view-transition-new(hero-content) {
+  animation: none !important;
+  display: none !important;
+}
+
+/* Dark panel: group morphs from hero (100vw) → sidebar (260px) */
+html[data-vt-direction="hero-to-app"]::view-transition-group(dark-panel) {
+  animation-duration: 600ms !important;
+  animation-delay: 280ms !important;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+html[data-vt-direction="hero-to-app"]::view-transition-old(dark-panel) {
+  animation-duration: 400ms !important;
+}
+html[data-vt-direction="hero-to-app"]::view-transition-new(dark-panel) {
+  animation-duration: 400ms !important;
+}
+
+/* Root: invisible, dark-panel handles the visual */
+html[data-vt-direction="hero-to-app"]::view-transition-old(root) {
+  animation: none !important;
+  opacity: 0 !important;
+}
+html[data-vt-direction="hero-to-app"]::view-transition-new(root) {
+  animation: none !important;
+}
+
+html[data-vt-direction="hero-to-app"]::view-transition-new(sidebar-content) {
+  animation: vt-fade-in 280ms ease-out 700ms both !important;
+}
+html[data-vt-direction="hero-to-app"]::view-transition-old(sidebar-content) {
+  animation: none !important;
+  display: none !important;
+}
+
+html[data-vt-direction="hero-to-app"]::view-transition-new(page-content) {
+  animation: vt-slide-fade-in 320ms ease-out 750ms both !important;
+}
+html[data-vt-direction="hero-to-app"]::view-transition-old(page-content) {
+  animation: none !important;
+  display: none !important;
+}
+
+/* ======================================================
+   APP → HERO (mirror)
+   ====================================================== */
+
+/* Freeze content groups */
+html[data-vt-direction="app-to-hero"]::view-transition-group(page-content),
+html[data-vt-direction="app-to-hero"]::view-transition-group(sidebar-content),
+html[data-vt-direction="app-to-hero"]::view-transition-group(hero-content),
+html[data-vt-direction="app-to-hero"]::view-transition-group(hero-right) {
+  animation: none !important;
+}
+
+html[data-vt-direction="app-to-hero"]::view-transition-old(page-content) {
+  animation: vt-slide-fade-out 280ms ease-in both !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-new(page-content) {
+  animation: none !important;
+  display: none !important;
+}
+
+html[data-vt-direction="app-to-hero"]::view-transition-old(sidebar-content) {
+  animation: vt-fade-out 250ms ease-in 120ms both !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-new(sidebar-content) {
+  animation: none !important;
+  display: none !important;
+}
+
+/* Dark panel: group morphs from sidebar (260px) → hero (100vw) */
+html[data-vt-direction="app-to-hero"]::view-transition-group(dark-panel) {
+  animation-duration: 600ms !important;
+  animation-delay: 280ms !important;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-old(dark-panel) {
+  animation-duration: 400ms !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-new(dark-panel) {
+  animation-duration: 400ms !important;
+}
+
+/* Root: invisible, dark-panel handles the visual */
+html[data-vt-direction="app-to-hero"]::view-transition-old(root) {
+  animation: none !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-new(root) {
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+html[data-vt-direction="app-to-hero"]::view-transition-new(hero-content) {
+  animation: vt-fade-in 300ms ease-out 750ms both !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-old(hero-content) {
+  animation: none !important;
+  display: none !important;
+}
+
+html[data-vt-direction="app-to-hero"]::view-transition-new(hero-right) {
+  animation: vt-fade-in 300ms ease-out 700ms both !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-old(hero-right) {
+  animation: none !important;
+  display: none !important;
+}
+
+/* ========== APP → APP (simple cross-fade) ========== */
+
+html[data-vt-direction="app-to-app"]::view-transition-old(root),
+html[data-vt-direction="app-to-app"]::view-transition-new(root),
+html[data-vt-direction="app-to-app"]::view-transition-old(sidebar-content),
+html[data-vt-direction="app-to-app"]::view-transition-new(sidebar-content),
+html[data-vt-direction="app-to-app"]::view-transition-old(dark-panel),
+html[data-vt-direction="app-to-app"]::view-transition-new(dark-panel) {
+  animation: none !important;
+}
+
+html[data-vt-direction="app-to-app"]::view-transition-group(dark-panel) {
+  animation: none !important;
+}
+
+html[data-vt-direction="app-to-app"]::view-transition-old(page-content) {
+  animation: vt-fade-out 220ms ease-in both !important;
+}
+html[data-vt-direction="app-to-app"]::view-transition-new(page-content) {
+  animation: vt-fade-in 220ms ease-out 100ms both !important;
+}
+
+/* ========== MOBILE: simple fade only ========== */
+@media (max-width: 767px) {
+  html[data-vt-direction]::view-transition-group(dark-panel) {
+    animation: none !important;
+  }
+  html[data-vt-direction]::view-transition-old(root) {
+    animation: vt-fade-out 250ms ease-in both !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+  }
+  html[data-vt-direction]::view-transition-new(root) {
+    animation: vt-fade-in 250ms ease-out both !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+  }
+}
+
+/* ========== ACCESSIBILITY ========== */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

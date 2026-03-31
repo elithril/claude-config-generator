@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components";
+import { VT } from "@/components/VT";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import PageTransition from "@/components/PageTransition";
 
@@ -26,9 +27,11 @@ export function AppShell({ children }: { children: ReactNode }) {
     <ErrorBoundary>
       <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#FAFAFA]">
         <Sidebar />
-        <main className="flex-1 min-h-0 min-w-0 flex flex-col">
-          <PageTransition>{children}</PageTransition>
-        </main>
+        <VT name="page-content">
+          <main className="flex-1 min-h-0 min-w-0 flex flex-col">
+            <PageTransition>{children}</PageTransition>
+          </main>
+        </VT>
       </div>
     </ErrorBoundary>
   );
