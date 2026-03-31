@@ -267,6 +267,12 @@ export default function RecapStep() {
             </div>
           </div>
 
+          {/* Claude tip */}
+          <div className="flex gap-3 items-start p-3 bg-[#F0FAFA] rounded-lg border border-[#0D6E6E]/15">
+            <span className="text-sm flex-shrink-0">✨</span>
+            <p className="text-xs text-[#0D6E6E] whitespace-pre-line">{t("wizard.recap.guideClaude")}</p>
+          </div>
+
           <button
             onClick={() => setShowGuide(false)}
             className="w-full py-2.5 bg-[#0D6E6E] text-white rounded-lg text-sm font-medium hover:bg-[#0A5555] transition-colors"
