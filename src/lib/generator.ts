@@ -141,6 +141,11 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   let askRules = [...(config.permissions.ask || [])];
   let denyRules = [...config.permissions.deny];
 
+  // Disallowed tools → merge into deny rules
+  if (config.disallowedTools && config.disallowedTools.length > 0) {
+    denyRules = [...denyRules, ...config.disallowedTools];
+  }
+
   // Bundle presets
   if (config.bundle === "safe") {
     denyRules = [...denyRules, "Bash(rm -rf *)", "Bash(git push --force *)", "Bash(git reset --hard *)"];
@@ -191,11 +196,6 @@ export function generateSettingsJson(config: ClaudeConfig): string {
   // Git instructions
   if (!config.includeGitInstructions) {
     settings.includeGitInstructions = false;
-  }
-
-  // Disallowed tools
-  if (config.disallowedTools && config.disallowedTools.length > 0) {
-    settings.disallowedTools = config.disallowedTools;
   }
 
   // Teammate mode (agent teams)

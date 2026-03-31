@@ -216,9 +216,11 @@ describe("generateSettingsJson", () => {
     expect(result.sandbox.enabled).toBe(true);
   });
 
-  it("should include disallowedTools when set", () => {
+  it("should merge disallowedTools into permissions.deny", () => {
     const result = JSON.parse(generateSettingsJson(makeConfig({ disallowedTools: ["WebFetch", "Bash"] })));
-    expect(result.disallowedTools).toEqual(["WebFetch", "Bash"]);
+    expect(result.disallowedTools).toBeUndefined();
+    expect(result.permissions.deny).toContain("WebFetch");
+    expect(result.permissions.deny).toContain("Bash");
   });
 
   it("should include env when set", () => {
