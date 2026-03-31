@@ -157,6 +157,26 @@ body {
   to { opacity: 0; transform: translateX(24px); }
 }
 
+@keyframes vt-clip-expand {
+  from { clip-path: inset(0 calc(100% - 260px) 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes hero-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-slide-down {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(16px); }
+}
+
+@keyframes vt-clip-shrink {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 calc(100% - 260px) 0 0); }
+}
+
 /* --- Fallback: simple cross-fade (browser back/forward) --- */
 ::view-transition-old(root) {
   animation: vt-fade-out 250ms ease-in both !important;
@@ -252,27 +272,32 @@ html[data-vt-direction="app-to-hero"]::view-transition-new(page-content) {
 }
 
 html[data-vt-direction="app-to-hero"]::view-transition-old(sidebar-content) {
-  animation: vt-fade-out 250ms ease-in 120ms both !important;
+  animation: vt-fade-out 220ms ease-in 120ms both !important;
 }
 html[data-vt-direction="app-to-hero"]::view-transition-new(sidebar-content) {
   animation: none !important;
   display: none !important;
 }
 
-/* Dark panel: group morphs from sidebar (260px) → hero (100vw) */
-html[data-vt-direction="app-to-hero"]::view-transition-group(dark-panel) {
-  animation-duration: 600ms !important;
-  animation-delay: 280ms !important;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-html[data-vt-direction="app-to-hero"]::view-transition-old(dark-panel) {
-  animation-duration: 400ms !important;
-}
-html[data-vt-direction="app-to-hero"]::view-transition-new(dark-panel) {
-  animation-duration: 400ms !important;
+/* Hide sidebar text BEFORE snapshot capture */
+html[data-vt-direction="app-to-hero"] .sidebar-vt-content {
+  opacity: 0 !important;
+  transition: none !important;
 }
 
-/* Root: invisible, dark-panel handles the visual */
+/* Dark panel: group jumps to full width instantly, new snapshot clips as drawer */
+html[data-vt-direction="app-to-hero"]::view-transition-group(dark-panel) {
+  animation-duration: 1ms !important;
+  animation-delay: 400ms !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-old(dark-panel) {
+  animation: vt-fade-out 1ms ease-in 400ms both !important;
+}
+html[data-vt-direction="app-to-hero"]::view-transition-new(dark-panel) {
+  animation: vt-clip-expand 600ms cubic-bezier(0.16, 1, 0.3, 1) 400ms both !important;
+}
+
+/* Root: old stays visible as background behind drawer, new hidden */
 html[data-vt-direction="app-to-hero"]::view-transition-old(root) {
   animation: none !important;
 }
@@ -281,17 +306,21 @@ html[data-vt-direction="app-to-hero"]::view-transition-new(root) {
   opacity: 0 !important;
 }
 
-html[data-vt-direction="app-to-hero"]::view-transition-new(hero-content) {
-  animation: vt-fade-in 300ms ease-out 750ms both !important;
+/* Hero content: hidden during drawer via animation fill-mode both (from: opacity 0),
+   then slides up after drawer finishes. No separate opacity rule needed. */
+html[data-vt-direction="app-to-hero"] .hero-left-content {
+  animation: hero-slide-up 350ms ease-out 1100ms both !important;
+  transition: none !important;
 }
-html[data-vt-direction="app-to-hero"]::view-transition-old(hero-content) {
-  animation: none !important;
-  display: none !important;
+html[data-vt-direction="app-to-hero"] .hero-right-content {
+  animation: hero-slide-up 350ms ease-out 1050ms both !important;
+  transition: none !important;
 }
 
-html[data-vt-direction="app-to-hero"]::view-transition-new(hero-right) {
-  animation: vt-fade-in 300ms ease-out 700ms both !important;
-}
+/* Disable VT pseudo-elements for hero content (real DOM handles it) */
+html[data-vt-direction="app-to-hero"]::view-transition-new(hero-content),
+html[data-vt-direction="app-to-hero"]::view-transition-old(hero-content),
+html[data-vt-direction="app-to-hero"]::view-transition-new(hero-right),
 html[data-vt-direction="app-to-hero"]::view-transition-old(hero-right) {
   animation: none !important;
   display: none !important;

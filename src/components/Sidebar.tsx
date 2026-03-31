@@ -63,7 +63,7 @@ export default function Sidebar() {
     <>
       {/* Desktop sidebar */}
       <VT name="dark-panel"><aside className="hidden md:flex w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col flex-shrink-0">
-        <VT name="sidebar-content"><div className="flex flex-col flex-1 py-6 px-5">
+        <VT name="sidebar-content"><div className="sidebar-vt-content flex flex-col flex-1 py-6 px-5">
         <div className="flex flex-col gap-8">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
             <span className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-white">

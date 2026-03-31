@@ -192,7 +192,7 @@ export default function Home() {
             backgroundSize: "40px 40px",
           }} />
 
-          <VT name="hero-content"><div className="relative z-10 flex flex-col justify-between flex-1">
+          <VT name="hero-content"><div className="hero-left-content relative z-10 flex flex-col justify-between flex-1">
           {/* Top: title + language switcher */}
           <div>
             <div className="flex items-start justify-between mb-6 md:mb-10">
@@ -298,7 +298,7 @@ export default function Home() {
         </div>
 
         {/* Right: code preview — 60% */}
-        <VT name="hero-right"><div className="hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden">
+        <VT name="hero-right"><div className="hero-right-content hidden lg:flex lg:w-[60%] bg-[#111111] flex-col relative overflow-hidden">
           <div className="hidden lg:block absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#1A1A1A] to-transparent z-10" />
 
           <div className="flex items-center justify-between px-6 lg:pl-28 pr-6 pt-5 pb-3 relative z-20">
