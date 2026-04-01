@@ -201,35 +201,48 @@ export default function VaultPage() {
 
         {/* Config List */}
         <div className="flex-1 px-6 md:px-10 overflow-auto pb-20 md:pb-10">
-          <div className="flex items-center justify-between mb-4 gap-3">
-            <h2 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A] flex-shrink-0">
+          <div className="grid grid-cols-[auto_1fr_auto] items-center mb-4 gap-3">
+            <h2 className="font-[family-name:var(--font-newsreader)] text-xl font-medium text-[#1A1A1A]">
               {t("vault.configurations")}
             </h2>
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={t("vault.search")}
-                className="px-3 py-1.5 text-xs border border-[#E5E5E5] rounded focus:outline-none focus:border-[#0D6E6E] w-40"
-              />
-              <input ref={importInputRef} type="file" accept=".zip" onChange={handleImportZip} className="hidden" />
-              <button
-                onClick={() => importInputRef.current?.click()}
-                className="px-3 py-1.5 text-xs font-medium text-[#0D6E6E] border border-[#0D6E6E] rounded hover:bg-[#F0FAFA] transition-colors"
-              >
-                {t("vault.import")}
-              </button>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "date" | "name" | "starred")}
-                className="text-xs text-[#1A1A1A] bg-white border border-[#E5E5E5] rounded px-2 py-1 focus:outline-none focus:border-[#0D6E6E]"
-              >
-                <option value="date">{t("vault.sortDate")}</option>
-                <option value="starred">{t("vault.sortStarred")}</option>
-                <option value="name">{t("vault.sortName")}</option>
-              </select>
+            <div className="flex items-center justify-center gap-2">
+                {/* Search with icon */}
+                <div className="relative">
+                  <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#AAAAAA]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder={t("vault.search")}
+                    className="pl-8 pr-3 py-1.5 text-xs border border-[#E5E5E5] rounded-lg focus:outline-none focus:border-[#0D6E6E] w-44"
+                  />
+                </div>
+
+                {/* Sort with icon */}
+                <div className="relative">
+                  <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#AAAAAA] pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as "date" | "name" | "starred")}
+                    className="pl-8 pr-6 py-1.5 text-xs text-[#1A1A1A] bg-white border border-[#E5E5E5] rounded-lg focus:outline-none focus:border-[#0D6E6E] appearance-none"
+                  >
+                    <option value="date">{t("vault.sortDate")}</option>
+                    <option value="starred">{t("vault.sortStarred")}</option>
+                    <option value="name">{t("vault.sortName")}</option>
+                  </select>
+                  <svg className="absolute right-2 top-1/2 -translate-y-1/2 text-[#AAAAAA] pointer-events-none" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
             </div>
+
+            {/* Import button — right aligned */}
+            <input ref={importInputRef} type="file" accept=".zip" onChange={handleImportZip} className="hidden" />
+            <button
+              onClick={() => importInputRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#0D6E6E] rounded-lg hover:bg-[#0A5555] transition-colors flex-shrink-0"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3"/><path d="M21 15H8"/><path d="m15 18-3-3 3-3"/></svg>
+              {t("vault.import")}
+            </button>
           </div>
 
           {sortedVault.length === 0 ? (
