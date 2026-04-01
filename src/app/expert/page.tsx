@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { PageHeader } from "@/components";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
@@ -36,7 +36,7 @@ const DOC_LINK_KEYS = [
 ];
 
 export default function ExpertPage() {
-  const { config, dispatch, setHasUnsavedChanges } = useConfig();
+  const { config, dispatch, setHasUnsavedChanges, hasUnsavedChanges } = useConfig();
   const { addToast } = useToast();
   const t = useT();
   const [activeTab, setActiveTab] = useState("CLAUDE.md");
@@ -48,7 +48,17 @@ export default function ExpertPage() {
   const [localSettings, setLocalSettings] = useState<string | null>(null);
   const [localClaudeIgnore, setLocalClaudeIgnore] = useState<string | null>(null);
   const [localMcpJson, setLocalMcpJson] = useState<string | null>(null);
+  const [localRules, setLocalRules] = useState<Record<string, string>>({});
   const [isDownloading, setIsDownloading] = useState(false);
+
+  // Warn before closing tab with unsaved changes
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) { e.preventDefault(); }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [hasUnsavedChanges]);
 
   const generatedClaudeMd = useMemo(() => generateClaudeMd(config), [config]);
   const generatedSettings = useMemo(() => generateSettingsJson(config), [config]);
@@ -94,19 +104,43 @@ export default function ExpertPage() {
 
     if (config.enableRules) {
       for (const rule of generatedRules) {
+        const ruleId = rule.path;
         t.push({
-          id: rule.path,
+          id: ruleId,
           label: rule.path.split("/").pop() || rule.path,
           language: "markdown",
-          getValue: () => rule.content,
+          getValue: () => localRules[ruleId] ?? rule.content,
+          onUpdate: (v: string) => { setLocalRules(prev => ({ ...prev, [ruleId]: v })); setHasUnsavedChanges(true); },
         });
       }
     }
 
     return t;
-  }, [config, generatedClaudeMd, generatedSettings, generatedClaudeIgnore, generatedMcpJson, generatedRules, localClaudeMd, localSettings, localClaudeIgnore, localMcpJson]);
+  }, [config, generatedClaudeMd, generatedSettings, generatedClaudeIgnore, generatedMcpJson, generatedRules, localClaudeMd, localSettings, localClaudeIgnore, localMcpJson, localRules]);
 
   const activeTabDef = tabs.find((t) => t.id === activeTab) || tabs[0];
+
+  // JSON validation for settings.json and .mcp.json
+  const jsonError = useMemo(() => {
+    if (activeTabDef.language !== "json") return null;
+    const value = activeTabDef.getValue();
+    try { JSON.parse(value); return null; }
+    catch (e) { return (e as Error).message; }
+  }, [activeTabDef]);
+
+  const hasLocalEdit = activeTab === "CLAUDE.md" ? localClaudeMd !== null
+    : activeTab === "settings.json" ? localSettings !== null
+    : activeTab === ".claudeignore" ? localClaudeIgnore !== null
+    : activeTab === ".mcp.json" ? localMcpJson !== null
+    : !!localRules[activeTab];
+
+  const revertToGenerated = () => {
+    if (activeTab === "CLAUDE.md") setLocalClaudeMd(null);
+    else if (activeTab === "settings.json") setLocalSettings(null);
+    else if (activeTab === ".claudeignore") setLocalClaudeIgnore(null);
+    else if (activeTab === ".mcp.json") setLocalMcpJson(null);
+    else setLocalRules(prev => { const next = { ...prev }; delete next[activeTab]; return next; });
+  };
 
   // Build files for download (using local edits if any)
   const getFilesForDownload = useCallback((): GeneratedFile[] => {
@@ -126,10 +160,13 @@ export default function ExpertPage() {
       files.push({ path: ".mcp.json", content: mcpContent, size: new TextEncoder().encode(mcpContent).length });
     }
 
-    files.push(...generatedRules);
+    for (const rule of generatedRules) {
+      const content = localRules[rule.path] ?? rule.content;
+      files.push({ path: rule.path, content, size: new TextEncoder().encode(content).length });
+    }
 
     return files;
-  }, [localClaudeMd, localSettings, localClaudeIgnore, localMcpJson, generatedClaudeMd, generatedSettings, generatedClaudeIgnore, generatedMcpJson, generatedRules, config.enableMCP]);
+  }, [localClaudeMd, localSettings, localClaudeIgnore, localMcpJson, localRules, generatedClaudeMd, generatedSettings, generatedClaudeIgnore, generatedMcpJson, generatedRules, config.enableMCP]);
 
   const allFiles = getFilesForDownload();
   const totalSize = allFiles.reduce((a, f) => a + f.size, 0);
@@ -142,6 +179,7 @@ export default function ExpertPage() {
     if (localClaudeIgnore !== null) {
       dispatch({ type: "SET_FIELD", field: "claudeIgnoreContent", value: localClaudeIgnore });
     }
+    // settings.json and .mcp.json are synced via the config snapshot in handleSaveToVault
   };
 
   const handleDownload = async () => {
@@ -158,13 +196,15 @@ export default function ExpertPage() {
 
   const handleSaveToVault = () => {
     if (!saveName.trim()) return;
-    // Sync edits then save with the actual file contents
     syncEditsToContext();
-    // Build a config snapshot with synced edits
+    // Build config snapshot with ALL local edits
     const configSnapshot = {
       ...config,
       ...(localClaudeMd !== null ? { claudeMdContent: localClaudeMd, claudeMdImported: true } : {}),
       ...(localClaudeIgnore !== null ? { claudeIgnoreContent: localClaudeIgnore } : {}),
+      ...(localSettings !== null ? { settingsJsonOverride: localSettings } : {}),
+      ...(localMcpJson !== null ? { mcpJsonOverride: localMcpJson } : {}),
+      ...(Object.keys(localRules).length > 0 ? { rulesOverrides: localRules } : {}),
     };
     saveToVault(saveName.trim(), configSnapshot);
     setHasUnsavedChanges(false);
@@ -217,6 +257,13 @@ export default function ExpertPage() {
               />
             </div>
 
+            {/* JSON validation error */}
+            {jsonError && (
+              <div className="px-3 py-2 bg-red-50 border border-red-200 text-red-600 text-xs font-mono rounded-b-md -mt-[1px]">
+                {jsonError}
+              </div>
+            )}
+
             {/* Action bar */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mt-4 gap-3">
               <div className="flex items-center gap-4 text-xs text-[#888888]">
@@ -224,6 +271,14 @@ export default function ExpertPage() {
                 <span>{formatFileSize(totalSize)}</span>
               </div>
               <div className="flex flex-wrap gap-2 md:gap-3">
+                {hasLocalEdit && (
+                  <button
+                    onClick={revertToGenerated}
+                    className="px-4 py-2 text-sm text-[#E07B54] border border-[#E07B54]/30 rounded-lg hover:bg-[#FFF5F0] transition-colors"
+                  >
+                    {t("expert.revert")}
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     const content = activeTabDef.getValue();

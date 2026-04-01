@@ -41,10 +41,13 @@ describe("loadVault", () => {
     expect(loadVault()).toEqual([]);
   });
 
-  it("should return saved entries", () => {
+  it("should return saved entries with migrated tags", () => {
     const entries = [{ id: "1", name: "test", config: getDefaultConfig(), createdAt: "", updatedAt: "", starred: false, tags: [] }];
     mockStorage["claude-config-vault"] = JSON.stringify(entries);
-    expect(loadVault()).toEqual(entries);
+    const result = loadVault();
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("1");
+    expect(result[0].tags).toContain("safe"); // migrated from empty
   });
 
   it("should return empty array on invalid JSON", () => {

@@ -260,7 +260,8 @@ const es = {
   "expert.breadcrumb": "MODO EDITOR",
   "expert.title": "Editor de Configuración",
   "expert.subtitle": "Edita directamente tus archivos de configuración Claude Code.",
-  "expert.singleFile": "Archivo individual",
+  "expert.singleFile": "Descargar este archivo",
+  "expert.revert": "Volver a la versión generada",
   "expert.copy": "Copiar",
   "expert.saveVault": "Guardar en el Vault",
   "expert.download": "Descargar el ZIP",
@@ -271,7 +272,7 @@ const es = {
   "expert.docSettings": "Permisos, hooks, modelo, entorno.",
   "expert.docHooks": "Scripts que se ejecutan automáticamente.",
   "expert.docMcp": "Conectar Claude a herramientas externas.",
-  "expert.tipText": "Las modificaciones en el editor son en tiempo real. Descarga el ZIP cuando estés satisfecho.",
+  "expert.tipText": "Todos los archivos son editables. Guarda en la bóveda o descarga el ZIP cuando estés satisfecho.",
   "expert.docs": "Documentación",
 
   // === VAULT ===

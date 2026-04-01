@@ -15,7 +15,7 @@ const en = {
 
   // === SIDEBAR ===
   "sidebar.wizard": "Wizard",
-  "sidebar.expert": "Expert",
+  "sidebar.expert": "Editor",
   "sidebar.vault": "Vault",
   "sidebar.docs": "Claude Code Docs",
 
@@ -257,10 +257,11 @@ const en = {
   "wizard.preview.fileDesc.rules": "Rule loaded automatically based on paths",
 
   // === EXPERT ===
-  "expert.breadcrumb": "EXPERT MODE",
+  "expert.breadcrumb": "EDITOR",
   "expert.title": "Configuration Editor",
   "expert.subtitle": "Directly edit your Claude Code configuration files.",
-  "expert.singleFile": "Single file",
+  "expert.singleFile": "Download this file",
+  "expert.revert": "Revert to generated",
   "expert.copy": "Copy",
   "expert.saveVault": "Save to Vault",
   "expert.download": "Download ZIP",
@@ -271,7 +272,7 @@ const en = {
   "expert.docSettings": "Permissions, hooks, model, environment.",
   "expert.docHooks": "Scripts that run automatically.",
   "expert.docMcp": "Connect Claude to external tools.",
-  "expert.tipText": "Edits are live. Download the ZIP when you're satisfied.",
+  "expert.tipText": "All files are editable. Save to vault or download the ZIP when you're satisfied.",
   "expert.docs": "Documentation",
 
   // === VAULT ===

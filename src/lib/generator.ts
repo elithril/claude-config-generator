@@ -132,6 +132,11 @@ export function generateClaudeMd(config: ClaudeConfig): string {
 }
 
 export function generateSettingsJson(config: ClaudeConfig): string {
+  // If expert mode overrode the entire JSON, use that
+  if ((config as unknown as Record<string, unknown>).settingsJsonOverride) {
+    return (config as unknown as Record<string, unknown>).settingsJsonOverride as string;
+  }
+
   const settings: Record<string, unknown> = {
     $schema: "https://json.schemastore.org/claude-code-settings.json",
   };
@@ -276,6 +281,10 @@ export function generateSettingsJson(config: ClaudeConfig): string {
 }
 
 export function generateMcpJson(config: ClaudeConfig): string | null {
+  if ((config as unknown as Record<string, unknown>).mcpJsonOverride) {
+    return (config as unknown as Record<string, unknown>).mcpJsonOverride as string;
+  }
+
   const enabledServers = config.mcpServers.filter((s) => s.enabled);
   if (!config.enableMCP || enabledServers.length === 0) return null;
 
@@ -346,20 +355,26 @@ export function generateClaudeIgnore(config: ClaudeConfig): string {
 export function generateRuleFiles(config: ClaudeConfig): GeneratedFile[] {
   if (!config.enableRules) return [];
 
+  const overrides = (config as unknown as Record<string, unknown>).rulesOverrides as Record<string, string> | undefined;
+
   return config.rules
     .filter((r) => r.enabled)
     .map((rule) => {
+      const rulePath = `.claude/rules/${rule.filename}`;
+
+      // Use override if expert mode edited this rule
+      if (overrides?.[rulePath]) {
+        const content = overrides[rulePath];
+        return { path: rulePath, content, size: new TextEncoder().encode(content).length };
+      }
+
       let content = "<!-- Claude rule file — loaded automatically based on paths. -->\n";
       if (rule.paths && rule.paths.length > 0) {
         content += `---\npaths:\n${rule.paths.map((p) => `  - "${p}"`).join("\n")}\n---\n\n`;
       }
       content += rule.content;
 
-      return {
-        path: `.claude/rules/${rule.filename}`,
-        content,
-        size: new TextEncoder().encode(content).length,
-      };
+      return { path: rulePath, content, size: new TextEncoder().encode(content).length };
     });
 }
 
