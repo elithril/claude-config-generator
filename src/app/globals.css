@@ -364,20 +364,62 @@ html[data-vt-direction="app-to-app"]::view-transition-new(page-content) {
   animation: vt-fade-in 220ms ease-out 100ms both !important;
 }
 
-/* ========== MOBILE: simple fade only ========== */
+/* ========== MOBILE VIEW TRANSITIONS ========== */
+/*
+  Strategy:
+  - hero↔app uses "mobile-hero-to-app" / "mobile-app-to-hero" directions
+    → desktop rules (targeting "hero-to-app") never match → no opacity:0, no z-index:-1
+  - view-transition-name: none on all elements → no extraction from root → no holes
+  - root captures the full page → clean cross-fade
+  - app→app keeps standard direction → desktop page-content cross-fade works
+*/
+
+@keyframes vt-mobile-fade-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.97); }
+}
+@keyframes vt-mobile-fade-in {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 767px) {
-  html[data-vt-direction]::view-transition-group(dark-panel) {
+
+  /* === HERO ↔ APP === */
+
+  /* Remove all VT names → nothing extracted from root → no holes */
+  html[data-vt-direction^="mobile-"] * {
+    view-transition-name: none !important;
+  }
+
+  /* Hero → App: old shrinks + fades, new slides up */
+  html[data-vt-direction="mobile-hero-to-app"]::view-transition-old(root) {
+    animation: vt-mobile-fade-out 280ms ease-in both !important;
+  }
+  html[data-vt-direction="mobile-hero-to-app"]::view-transition-new(root) {
+    animation: vt-mobile-fade-in 350ms cubic-bezier(0.2, 0, 0, 1) 120ms both !important;
+  }
+
+  /* App → Hero: old slides down, new scales up */
+  html[data-vt-direction="mobile-app-to-hero"]::view-transition-old(root) {
+    animation: vt-mobile-fade-in 280ms ease-in reverse both !important;
+  }
+  html[data-vt-direction="mobile-app-to-hero"]::view-transition-new(root) {
+    animation: vt-mobile-fade-out 350ms cubic-bezier(0.2, 0, 0, 1) 120ms reverse both !important;
+  }
+
+  /* Disable hero DOM slide-up animations */
+  html[data-vt-direction="mobile-app-to-hero"] .hero-left-content,
+  html[data-vt-direction="mobile-app-to-hero"] .hero-right-content {
     animation: none !important;
   }
-  html[data-vt-direction]::view-transition-old(root) {
-    animation: vt-fade-out 250ms ease-in both !important;
-    opacity: 1 !important;
-    z-index: auto !important;
+
+  /* === APP → APP mobile: fast cross-fade === */
+  html[data-vt-direction="mobile-app-to-app"]::view-transition-old(root) {
+    animation: vt-fade-out 200ms ease-in both !important;
   }
-  html[data-vt-direction]::view-transition-new(root) {
-    animation: vt-fade-in 250ms ease-out both !important;
-    opacity: 1 !important;
-    z-index: auto !important;
+  html[data-vt-direction="mobile-app-to-app"]::view-transition-new(root) {
+    animation: vt-fade-in 200ms ease-out both !important;
   }
 }
 

@@ -10,7 +10,7 @@ import { VT } from "./VT";
 import Modal from "./Modal";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-export default function Sidebar() {
+export default function Sidebar({ hidden }: { hidden?: boolean } = {}) {
   const pathname = usePathname();
   const router = useRouter();
   const t = useT();
@@ -67,7 +67,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col flex-shrink-0">
+      <aside className={`${hidden ? 'hidden' : 'hidden md:flex'} w-[260px] h-screen bg-[#1A1A1A] border-r border-[#2D2D2D] flex-col flex-shrink-0`}>
         <div className="sidebar-vt-content flex flex-col flex-1 py-6 px-5 bg-[#1A1A1A]" style={{ viewTransitionName: "sidebar-panel" }}>
         <div className="flex flex-col gap-8">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
@@ -121,7 +121,7 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-3 px-2" aria-label="Mobile navigation">
+      <nav className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-3 px-2${hidden ? ' invisible' : ''}`} aria-label="Mobile navigation">
         <Link href="/" onClick={(e) => handleNav(e, "/")} className="flex flex-col items-center gap-0.5 px-3 py-2 rounded text-[12px] text-[#888888]">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </Link>
