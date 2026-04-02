@@ -26,8 +26,13 @@ export default function Sidebar() {
   const isActive = (href: string) => pathname.startsWith(href);
 
   const handleNav = (e: React.MouseEvent, href: string) => {
+    // Don't navigate to the current page
+    if (pathname === href || pathname.startsWith(href + "/")) {
+      e.preventDefault();
+      return;
+    }
     setTransitionDirection(href === "/" ? "app-to-hero" : "app-to-app");
-    if (hasUnsavedChanges && pathname !== href && !pathname.startsWith(href + "/")) {
+    if (hasUnsavedChanges) {
       e.preventDefault();
       setPendingHref(href);
     }
@@ -116,11 +121,14 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-2 px-1" aria-label="Mobile navigation">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t border-[#2D2D2D] flex items-center justify-around py-3 px-2" aria-label="Mobile navigation">
+        <Link href="/" onClick={(e) => handleNav(e, "/")} className="flex flex-col items-center gap-0.5 px-3 py-2 rounded text-[12px] text-[#888888]">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </Link>
         {navItems.map((item) =>
           navLink(
             item,
-            `flex flex-col items-center gap-0.5 px-2 py-1.5 rounded text-[11px] ${
+            `flex flex-col items-center gap-0.5 px-3 py-2 rounded text-[12px] ${
               isActive(item.href)
                 ? "text-[#0D6E6E] font-medium"
                 : "text-[#888888]"

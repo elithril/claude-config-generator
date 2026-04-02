@@ -641,7 +641,7 @@ export default function WizardPage() {
         </div>
 
         {/* Content + Buttons */}
-        <div ref={contentRef} className="px-4 md:px-8 pt-2 pb-14 md:pb-6 overflow-auto flex-1">
+        <div ref={contentRef} className="px-4 md:px-8 pt-2 pb-24 md:pb-6 overflow-auto flex-1">
           <div className="flex flex-col gap-4" style={{ opacity: stepFade === "visible" ? 1 : 0, transition: "opacity 500ms ease-in-out" }}>
             {renderStepContent()}
           </div>
