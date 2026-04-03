@@ -185,8 +185,8 @@ export default function Home() {
   return (
     <div className="flex flex-col lg:flex-row h-full bg-[#1A1A1A]" style={{ viewTransitionName: "dark-panel" }}>
         {/* Left: dark — 40% on desktop, full on mobile */}
-        <div className="min-h-screen lg:min-h-0 lg:w-[40%] bg-[#1A1A1A] relative overflow-hidden flex flex-col p-6 pb-6 md:p-10 lg:p-14">
-          <div className="absolute inset-0 opacity-[0.04]" style={{
+        <div className="min-h-screen lg:min-h-0 lg:w-[40%] bg-[#1A1A1A] relative flex flex-col p-6 pb-6 md:p-10 lg:p-14">
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
             backgroundImage: "linear-gradient(#0D6E6E 1px, transparent 1px), linear-gradient(90deg, #0D6E6E 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }} />
