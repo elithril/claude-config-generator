@@ -223,7 +223,7 @@ export default function ExpertPage() {
         />
 
         {/* Editor Area */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-6 px-4 md:px-10 pb-20 md:pb-10 overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row gap-6 px-4 md:px-10 pb-20 md:pb-10 overflow-y-auto lg:overflow-hidden">
           {/* Left Panel - Editor */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Tabs */}
@@ -247,7 +247,7 @@ export default function ExpertPage() {
             </div>
 
             {/* Code Editor */}
-            <div id="editor-panel" role="tabpanel" className="flex-1 bg-white border border-[#E5E5E5] rounded-b-md rounded-tr-md overflow-hidden">
+            <div id="editor-panel" role="tabpanel" className="min-h-[50vh] lg:flex-1 bg-white border border-[#E5E5E5] rounded-b-md rounded-tr-md overflow-hidden">
               <CodeEditor
                 key={activeTabDef.id}
                 value={activeTabDef.getValue()}
