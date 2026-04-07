@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "benchmark": "npx tsx benchmark/run.ts",
+    "benchmark:dry": "npx tsx benchmark/run.ts --dry-run",
+    "benchmark:x3": "npx tsx benchmark/run.ts --runs 3"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
