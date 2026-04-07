@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   WizardProgress,
@@ -253,10 +253,34 @@ export default function WizardPage() {
       switch (currentStep) {
         case 0:
           return (
-            <QuestionCard title={t("wizard.step1.question")}>
-              <RadioOption selected={config.bundle === "safe"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "safe" })} emoji="🛡️" title={t("wizard.step1.safe")} description={t("wizard.step1.safeDesc")} badge={t("common.recommended")} />
-              <RadioOption selected={config.bundle === "dev"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "dev" })} emoji="⚡" title={t("wizard.step1.dev")} description={t("wizard.step1.devDesc")} />
-            </QuestionCard>
+            <>
+              <QuestionCard title={t("wizard.step1.question")}>
+                <RadioOption selected={config.bundle === "safe"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "safe" })} emoji="🛡️" title={t("wizard.step1.safe")} description={t("wizard.step1.safeDesc")} badge={t("common.recommended")} />
+                <RadioOption selected={config.bundle === "dev"} onClick={() => dispatch({ type: "SET_FIELD", field: "bundle", value: "dev" })} emoji="⚡" title={t("wizard.step1.dev")} description={t("wizard.step1.devDesc")} />
+              </QuestionCard>
+
+              <button onClick={() => toggleSection("step1")} className="flex items-center gap-2 text-xs text-[#0D6E6E] font-medium cursor-pointer hover:text-[#0A5555] py-1">
+                <span className={`transition-transform ${expandedSections.step1 ? "rotate-90" : ""}`}>▸</span>
+                {t("wizard.step1.whyTitle")}
+              </button>
+              {expandedSections.step1 && (
+                <div className="rounded-xl bg-[#0D6E6E]/8 border border-[#0D6E6E]/20 p-4 flex flex-col gap-3 text-[13px]">
+                  <p className="text-[#555555] px-1">
+                    {t("wizard.step1.whyIntro")}{" "}
+                    <span className="text-[#0D6E6E] font-semibold">{t("wizard.step1.whyIntroHighlight")}</span>
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="flex items-center gap-3 rounded-lg bg-white/80 px-4 py-2.5">
+                        <span className="text-[#BBBBBB] line-through flex-1">{t(`wizard.step1.whyRow${i}.without`)}</span>
+                        <span className="text-[#0D6E6E]">→</span>
+                        <span className="text-[#222222] font-medium flex-1">{t(`wizard.step1.whyRow${i}.with`)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           );
 
         case 1:

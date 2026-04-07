@@ -247,9 +247,12 @@ export default function Home() {
                 { icon: "↓", key: "home.value2" },
                 { icon: "◆", key: "home.value3" },
               ].map(({ icon, key }) => (
-                <div key={key} className="flex items-center gap-3">
-                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0">{icon}</span>
-                  <span className="text-[13px] text-[#777777]">{t(key)}</span>
+                <div key={key} className="flex items-start gap-3">
+                  <span className="text-[#0D6E6E] text-xs w-4 text-center flex-shrink-0 mt-0.5">{icon}</span>
+                  <div className="flex flex-col">
+                    <span className="text-[13px] text-white font-medium">{t(key)}</span>
+                    <span className="text-[12px] text-[#888888]">{t(`${key}.sub`)}</span>
+                  </div>
                 </div>
               ))}
             </div>
